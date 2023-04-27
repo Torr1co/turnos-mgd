@@ -5,11 +5,11 @@ import { useForm } from "react-hook-form";
 export default function DogWalkerForm() {
   const methods = useForm({
     defaultValues: {
-      test: "",
-      test2: "",
+      email: "",
+      password: "",
     },
   });
-  // console.log(methods.watch());
+
   return (
     <Form
       methods={methods}
@@ -18,8 +18,8 @@ export default function DogWalkerForm() {
       }}
     >
       DogWalkerForm
-      <Form.Input className="bg" path="test" placeholder="Enter your name" />
-      <Form.Input className="test" path="test2" />
+      <Form.Input className="bg" path="email" placeholder="Enterr your name" />
+      <Form.Input type="password" className="test" path="password" />
     </Form>
   );
 }

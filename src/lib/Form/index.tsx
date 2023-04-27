@@ -1,17 +1,23 @@
 import React, { type FormHTMLAttributes } from "react";
-import { Field } from "../Input";
+import { FieldInput } from "../Input";
 import FormField, { type FieldPropsInitial } from "./Field";
 import {
   FormProvider,
   type UseFormReturn,
   type FieldValues,
 } from "react-hook-form";
+import { hasKey } from "~/utils/obj";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
   methods: UseFormReturn<T>;
-  onSubmit: (data: T) => void;
+  onSubmit: (data: T) => void | Promise<void>;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FieldConvertion<T extends (...args: any) => any> = (
+  props: Parameters<T>[0] & FieldPropsInitial
+) => JSX.Element;
 
 function Form<T extends FieldValues>({
   methods,
@@ -19,25 +25,30 @@ function Form<T extends FieldValues>({
   onSubmit,
   ...props
 }: FormProps<T>) {
+  const handleSubmit = methods.handleSubmit(onSubmit) as () => void;
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={() => methods.handleSubmit(onSubmit)} {...props}>
+      <form onSubmit={handleSubmit} {...props}>
         {children}
       </form>
     </FormProvider>
   );
 }
 
-// Form.Input = FormInput;
-Form.Input = Field;
+Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 
-const keys = Object.keys(Form) as Array<keyof typeof Form>;
+const ProxyForm = new Proxy(Form, {
+  get: function (target, key) {
+    if (hasKey(target, key)) {
+      const KeyComponent = target[key];
 
-keys.forEach((key: keyof typeof Form) => {
-  const KeyComponent = Form[key];
-  Form[key] = (
-    props: Parameters<typeof KeyComponent>[0] & FieldPropsInitial
-  ) => <FormField Component={KeyComponent} {...props} />;
+      return function Field(props: Parameters<typeof KeyComponent>[0]) {
+        return <FormField Component={KeyComponent} {...props} />;
+      };
+    }
+    return null;
+  },
 });
 
-export default Form;
+export default ProxyForm;

@@ -11,8 +11,12 @@ export type FieldPropsOmitted = Omit<FieldProps, "Component" | "label">;
 
 export default function Field({ label, Component, ...props }: FieldProps) {
   return (
-    <div>
-      {label && <label htmlFor={props.path}>{label}</label>}
+    <div className="flex flex-col gap-2">
+      {label && (
+        <label className="text-white" htmlFor={props.path}>
+          {label}
+        </label>
+      )}
       <Component {...props} />
     </div>
   );

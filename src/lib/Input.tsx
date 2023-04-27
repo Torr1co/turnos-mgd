@@ -21,12 +21,11 @@ const Input = forwardRef<Ref, InputProps>(function ForwardInput(
         className
       )}
       ref={ref}
-      name="test"
     />
   );
 });
 
-export function Field(props: InputProps & FieldPropsOmitted) {
+export function FieldInput(props: InputProps & FieldPropsOmitted) {
   const { register } = useFormContext();
   return <Input {...register(props.path)} {...props} />;
 }
