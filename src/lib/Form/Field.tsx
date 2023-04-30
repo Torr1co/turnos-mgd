@@ -1,23 +1,45 @@
 import React, { type ComponentType, type ElementType } from "react";
+import { RegisterOptions, get, useFormContext } from "react-hook-form";
+import Text from "../Typo/Text";
+import { cn } from "~/utils/styles";
 
 export interface FieldProps<P = unknown> {
   label?: string;
-  path: string;
   Component: ComponentType<P> | ElementType;
+  path: string;
+  options?: RegisterOptions;
 }
 export type FieldPropsInitial = Omit<FieldProps, "Component">;
 
-export type FieldPropsOmitted = Omit<FieldProps, "Component" | "label">;
+export type FieldOmmitted = Omit<FieldProps, "Component" | "label">;
+export type FieldAdded = { error?: { type: string; message: string } };
+export type Field<C> = C & FieldOmmitted & FieldAdded;
 
 export default function Field({ label, Component, ...props }: FieldProps) {
+  const { formState } = useFormContext();
+  const error = get(formState.errors, props.path);
+  console.log(error, formState.errors);
   return (
-    <div className="flex flex-col gap-2">
+    <div
+      className={cn(
+        error && "motion-safe:animate-shake",
+        "flex flex-col gap-3"
+      )}
+    >
       {label && (
-        <label className="text-white" htmlFor={props.path}>
+        <label
+          className="text-md font-semibold text-gray-600"
+          htmlFor={props.path}
+        >
           {label}
         </label>
       )}
-      <Component {...props} />
+      <Component {...props} error={error} />
+      {error && (
+        <Text className="capitalize text-red-500">
+          {error.message || error.type}
+        </Text>
+      )}
     </div>
   );
 }

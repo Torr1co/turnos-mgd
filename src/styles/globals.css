@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .no-ring {
+    @apply ring-0 ring-transparent ring-offset-0 ring-offset-transparent;
+  }
+}

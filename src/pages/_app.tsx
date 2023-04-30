@@ -4,9 +4,10 @@ import { api } from "~/utils/api";
 import { Poppins } from "next/font/google";
 import "~/styles/globals.css";
 import React from "react";
+import { cn } from "~/utils/styles";
 
 const poppins = Poppins({
-  weight: ["200", "300", "400", "500"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
 });
 
@@ -19,7 +20,9 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <main className={poppins.className}>
+      <main
+        className={cn(poppins.className, "font-custom text-base text-gray-600")}
+      >
         <Component {...pageProps} />
       </main>
     </SessionProvider>
