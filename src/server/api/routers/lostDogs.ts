@@ -1,8 +1,12 @@
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-const SumaInputSchema = z.object({ numero1: z.number(), numero2: z.number() });
+export const LostDogSchema = z.object({
+  lastTimeView: z.date(),
+  message: z.string(),
+  photo: z.optional(z.string()),
+});
+
 export const exampleRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.example.findMany();
@@ -12,7 +16,7 @@ export const exampleRouter = createTRPCRouter({
     return "you can now see this secret message!";
   }),
 
-  suma: publicProcedure.input(SumaInputSchema).mutation(({ input }) => {
-    return input.numero1 + input.numero2;
-  }),
+  //   create: publicProcedure.input(LostDogSchema).mutation(({ctx, input}) => {
+  //     return ctx.prisma.lostDogs.create({data:input})
+  //   })
 });

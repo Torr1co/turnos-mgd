@@ -1,15 +1,12 @@
+import React from "react";
+import { Toaster } from "react-hot-toast";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
-import { Poppins } from "next/font/google";
 import "~/styles/globals.css";
-import React from "react";
 import { cn } from "~/utils/styles";
-
-const poppins = Poppins({
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
-  subsets: ["latin"],
-});
+import Header from "~/components/Layout/Header";
+import Layout from "~/components/Layout";
 
 const MyApp = ({
   Component,
@@ -20,11 +17,10 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <main
-        className={cn(poppins.className, "font-custom text-base text-gray-600")}
-      >
+      <Toaster />
+      <Layout>
         <Component {...pageProps} />
-      </main>
+      </Layout>
     </SessionProvider>
   );
 };

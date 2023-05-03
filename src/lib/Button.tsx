@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes } from "react";
-import { hasKey } from "~/utils/obj";
+import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
 
 const SIZES = {
@@ -21,10 +21,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   style?: React.CSSProperties;
 }
 
-const Button = ({ size = "md", kind = "primary", ...props }: ButtonProps) => {
+const Button = ({
+  size = "md",
+  kind = "primary",
+  className,
+  ...props
+}: ButtonProps) => {
   return (
     <button
       className={cn(
+        className,
         "rounded-md",
         hasKey(SIZES, size) ? SIZES[size] : size,
         hasKey(KINDS, kind) ? KINDS[kind] : kind

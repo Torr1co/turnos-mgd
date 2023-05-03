@@ -8,7 +8,7 @@ import CredentialProviders from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { type User } from "@prisma/client";
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -41,6 +41,9 @@ export const authOptions: NextAuthOptions = {
       session.user = token.user as Omit<User, "password">;
       return Promise.resolve(session);
     },
+    redirect: async () => {
+      return Promise.resolve("/");
+    },
     /* session({ session, user }) {
       if (session.user.id) {
         session.user.id = user.id;
@@ -71,10 +74,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No user found");
         }
 
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
+        // console.log(credentials.password, user.password);
+        const hashedPassword = await hash(
+          credentials.password + process.env.HASH_PASSWORD,
+          10
         );
+        console.log(hashedPassword, user.password);
+        const isPasswordValid = await compare(hashedPassword, user.password);
 
         if (!isPasswordValid) {
           throw new Error("Invalid password");
@@ -94,7 +100,7 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  pages: { signIn: "/signIn" },
+  pages: { signIn: "/auth/signIn", newUser: "/auth/newUser" },
 };
 
 /**

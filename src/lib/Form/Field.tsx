@@ -18,7 +18,7 @@ export type Field<C> = C & FieldOmmitted & FieldAdded;
 export default function Field({ label, Component, ...props }: FieldProps) {
   const { formState } = useFormContext();
   const error = get(formState.errors, props.path);
-  console.log(error, formState.errors);
+
   return (
     <div
       className={cn(

@@ -29,7 +29,7 @@ const config = {
         },
       },
       fontSize: {
-        "3xl": "3rem",
+        "2xl": "3rem",
         xl: "2rem",
         lg: "1.5rem",
         md: "1.25rem",
@@ -38,7 +38,7 @@ const config = {
       },
       borderRadius: {
         md: "10px",
-        lg: "20pxw",
+        lg: "20px",
       },
       animation: {
         shake: "shake 0.82s cubic-bezier(.36,.07,.19,.97) ",

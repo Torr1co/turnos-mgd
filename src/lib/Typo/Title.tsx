@@ -6,12 +6,12 @@ import { FC, Sizes } from "~/utils/types";
 type HeadingTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 const sizeClassNames = {
-  xl: "text-section font-thin",
-  lg: "text-title-big font-thin",
-  md: "text-title",
-  sm: "text-title-small uppercase",
-  xs: "text-title-small uppercase",
-  xxs: "text-title-small uppercase",
+  xl: "text-2xl font-bold text-black",
+  lg: "text-xl font-bold text-black",
+  md: "text-lg font-bold text-black",
+  sm: "text-md",
+  xs: "text-sm",
+  xxs: "text-sm",
 } as const;
 
 const sizeConvertion: { [key in HeadingTags]: Sizes } = {
