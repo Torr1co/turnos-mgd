@@ -2,8 +2,10 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "~/lib/Button";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
+  const { data: session } = useSession();
   return (
     <header className="z-30">
       <nav className="flex items-center justify-between px-10 py-5">
@@ -26,9 +28,13 @@ export default function Header() {
             <Link href="/">Asistencia de perros</Link>
           </li>
         </ul>
-        <Link href="/auth/signIn">
-          <Button>Iniciar Sesion</Button>
-        </Link>
+        {session ? (
+          <Button onClick={() => signOut()}>Cerrar sesion</Button>
+        ) : (
+          <Link href="/signIn">
+            <Button>Iniciar Sesion</Button>
+          </Link>
+        )}
       </nav>
     </header>
   );

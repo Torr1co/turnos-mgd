@@ -8,7 +8,7 @@ import CredentialProviders from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { type User } from "@prisma/client";
-import { compare, hash } from "bcryptjs";
+import { compareSync } from "bcryptjs";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -32,17 +32,20 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     jwt: async ({ token, user }) => {
       user && (token.user = user);
+      console.log(user, token.user);
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
       session.user = token.user as Omit<User, "password">;
+      console.log("--------------------");
       return Promise.resolve(session);
-    },
-    redirect: async () => {
-      return Promise.resolve("/");
     },
     /* session({ session, user }) {
       if (session.user.id) {
@@ -52,7 +55,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     }, */
   },
-  adapter: PrismaAdapter(prisma),
+  // adapter: PrismaAdapter(prisma),
   providers: [
     CredentialProviders({
       id: "credentials",
@@ -74,19 +77,21 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No user found");
         }
 
-        // console.log(credentials.password, user.password);
-        const hashedPassword = await hash(
-          credentials.password + process.env.HASH_PASSWORD,
-          10
+        const isPasswordValid = compareSync(
+          credentials.password + process.env.HASHED_PASSWORD,
+          user.password
         );
-        console.log(hashedPassword, user.password);
-        const isPasswordValid = await compare(hashedPassword, user.password);
 
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }
 
         const { password, ...userWithoutPassword } = user;
+        console.log("--------USER------------");
+
+        console.log(userWithoutPassword);
+        console.log("--------------------");
+
         return userWithoutPassword;
       },
     }),
@@ -100,7 +105,7 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  pages: { signIn: "/auth/signIn", newUser: "/auth/newUser" },
+  pages: { signIn: "/auth/signIn", newUser: "/newUser" },
 };
 
 /**

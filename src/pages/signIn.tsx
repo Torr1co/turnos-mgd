@@ -4,13 +4,12 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Form from "~/lib/Form";
 import { useForm } from "react-hook-form";
 import Button from "~/lib/Button";
-import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Title from "~/lib/Typo/Title";
 import Box from "~/lib/Box";
 import { Blob, Blob2 } from "~/lib/icons";
+import { toast } from "react-hot-toast";
 
 const AuthSchema = z.object({
   email: z.string().email("Email invalido"),
@@ -20,10 +19,6 @@ type Auth = z.infer<typeof AuthSchema>;
 
 const SignIn: NextPage = () => {
   const { data: sessionData } = useSession();
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: !!sessionData }
-  );
   const [loading, setLoading] = useState(false);
 
   const methods = useForm<Auth>({
@@ -44,14 +39,17 @@ const SignIn: NextPage = () => {
             if (!data.email || !data.password) return console.log("no data");
             setLoading(true);
 
-            sessionData
-              ? await signOut()
-              : await signIn("credentials", { ...data, redirect: false }).then(
-                  (m) => {
-                    if (m && !m.ok) console.log(m);
-                  }
-                );
-
+            await signIn("credentials", {
+              ...data,
+              callbackUrl: "/",
+            }).then((res) => {
+              if (res && !res.ok) {
+                if (res?.status === 401) {
+                  toast.error("Credenciales invalidas");
+                }
+                toast.error("Error al iniciar sesion");
+              }
+            });
             setLoading(false);
           }}
           className="flex flex-col gap-6"
@@ -72,13 +70,9 @@ const SignIn: NextPage = () => {
           />
           <div>
             <Button type="submit" disabled={loading}>
-              {"Iniciar Sesion"}
+              Iniciar Sesion
             </Button>
           </div>
-          <p className="text-center text-2xl">
-            {sessionData && <span>Logged in as {sessionData.user.name}</span>}
-            {secretMessage && <span> - {secretMessage}</span>}
-          </p>
         </Form>
       </Box>
     </div>

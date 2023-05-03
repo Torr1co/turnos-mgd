@@ -2,7 +2,6 @@ import Form from "~/lib/Form";
 import Title from "~/lib/Typo/Title";
 import { useForm } from "react-hook-form";
 import Box from "~/lib/Box";
-import { api } from "~/utils/api";
 
 export default function NewUser() {
   const methods = useForm();
