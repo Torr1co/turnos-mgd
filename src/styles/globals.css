@@ -8,4 +8,16 @@
   .no-ring {
     @apply ring-0 ring-transparent ring-offset-0 ring-offset-transparent;
   }
+  .stroke-2 path {
+    stroke-width: 2 !important;
+  }
+  .stroke-1\.75 path {
+    stroke-width: 1.75 !important;
+  }
+  .stroke-1\.5 path {
+    stroke-width: 1.5 !important;
+  }
+  .stroke-1\.2 path {
+    stroke-width: 1.2 !important;
+  }
 }

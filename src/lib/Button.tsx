@@ -1,6 +1,7 @@
-import React, { ButtonHTMLAttributes } from "react";
+import React, { type ButtonHTMLAttributes } from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
+import { type FC } from "~/utils/types";
 
 const SIZES = {
   sm: "px-4 py-2",
@@ -16,9 +17,6 @@ const KINDS = {
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: keyof typeof SIZES | string;
   kind?: keyof typeof KINDS | string;
-  onClick?: () => void;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 const Button = ({
@@ -26,7 +24,7 @@ const Button = ({
   kind = "primary",
   className,
   ...props
-}: ButtonProps) => {
+}: FC<ButtonProps>) => {
   return (
     <button
       className={cn(
