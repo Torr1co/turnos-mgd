@@ -9,6 +9,7 @@ install dependencies:
 
 ```
 npm install -g yarn
+npm install -g prisma
 yarn
 git flow init
 ```
@@ -21,13 +22,15 @@ update prisma: `yarn update prisma`
 
 ### Github
 
-move to another branch: `git chckout <branch>`
+move to another branch: `git checkout <branch>`
 
 ### Before starting coding
 
 move to develop
 
 get last changes: `git pull`
+
+generate schemas from DB: `prisma generate`
 
 create new branch: `git flow <status> start <branch-name>`
 
