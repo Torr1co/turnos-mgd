@@ -2,10 +2,10 @@ import { UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 import { z } from "zod";
 import { UserCreationSchema } from "~/schemas/user";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 
 export const usersRouter = createTRPCRouter({
-  create: publicProcedure
+  create: protectedProcedure
     .input(UserCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { password, ...userData } = input;
