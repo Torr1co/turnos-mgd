@@ -1,72 +1,158 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  url      = env("DATABASE_URL")
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        String   @id @default(cuid()) @map("_id")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+//-----------------------  --- DOCUMENTATION --- ---------------------------
+//https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+//https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
 
-// Necessary for Next auth
-model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.String
-  access_token      String? @db.String
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.String
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken String   @unique
-  userId       String   @db.ObjectId
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+//----------------------------- ENUMS USED ---------------------------------
 
 enum UserRoles {
-  VET
-  CLIENT
+    VET
+    CLIENT
 }
 
+enum InquirieType {
+    VACCINE
+    DEWORMING
+    GENERAL
+}
+
+enum TimeZone {
+    MANANA
+    TARDE
+    TARDE_NOCHE
+}
+
+//-----------------------------   USER     ---------------------------------
 model User {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  email            String    @unique
-  role             UserRoles
-  password         String
-  passwordVerified DateTime?
-  accounts         Account[]
-  sessions         Session[]
+    id                 String             @id @default(cuid()) @map("_id") @db.ObjectId
+    created_at         DateTime           @default(now())
+    updated_at         DateTime           @updatedAt
+    email              String             @unique
+    dni                String             @unique
+    name               String
+    lastname           String
+    role               UserRoles
+    password           String
+    password_verified  DateTime?
+    telephone_number   String?
+    hasDiscount        Boolean            @default(false)
+    discountAmount     Int?               @default(0)
+    dogs               ClientDog[]
+    booking            Booking[]
+    adopt_publications AdoptPublication[]
 }
 
-model VerificationToken {
-  identifier String   @id @default(auto()) @map("_id") @db.ObjectId
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
+// ------------------------------    RESERVATIONS       ----------------------------
+model Booking {
+    id        String       @id @default(auto()) @map("_id") @db.ObjectId
+    date      DateTime
+    type      InquirieType
+    time_zone TimeZone
+    user      User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    user_id   String       @db.ObjectId
+    dog       ClientDog    @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+    dog_id    String       @db.ObjectId
 }
+
+// -------------------------------            ---------------------------------
+model ClientDog {
+    id             String     @id @default(auto()) @map("_id") @db.ObjectId
+    created_at     DateTime   @default(now())
+    updated_at     DateTime   @updatedAt
+    name           String
+    age            Int
+    gender         String
+    img            String?
+    color          String
+    weight         Float
+    race           String
+    lets_cross     Boolean    @default(false)
+    booking        Booking[]
+    health_book    HealthBook @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
+    health_book_id String     @unique @db.ObjectId
+    owner          User       @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+    owner_id       String     @db.ObjectId
+}
+
+//------------------------------- HEALTH BOOK ---------------------------------
+model HealthBook {
+    id           String      @id @default(auto()) @map("_id") @db.ObjectId
+    created_at   DateTime    @default(now())
+    updated_at   DateTime    @updatedAt
+    vaccines     Vaccine[]
+    inquiries    Inquirie[]
+    dewormings   Deworming[]
+    observations String?
+    dog          ClientDog?
+}
+
+// ------------------------------            ---------------------------------
+model Inquirie {
+    id             String      @id @default(auto()) @map("_id") @db.ObjectId
+    date           String
+    observations   String?
+    weight         Float?
+    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
+    health_book_id String      @unique @db.ObjectId
+}
+
+// ------------------------------            ---------------------------------
+model Deworming {
+    id             String      @id @default(auto()) @map("_id") @db.ObjectId
+    date           DateTime
+    product        String
+    dosis          String
+    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
+    health_book_id String      @unique @db.ObjectId
+}
+
+// ------------------------------            ---------------------------------
+model Vaccine {
+    id             String      @id @default(auto()) @map("_id") @db.ObjectId
+    lot            String
+    date           DateTime
+    lab            String
+    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
+    health_book_id String      @unique @db.ObjectId
+}
+
+// ------------------------------     ADOPTION       ---------------------------------
+model AdoptPublication {
+    id         String   @id @default(auto()) @map("_id") @db.ObjectId
+    created_at DateTime @default(now())
+    update_at  DateTime @updatedAt
+    info       String?
+    active     Boolean  @default(true)
+    reason     String
+    dog        Dog?
+    user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    user_id    String   @unique @db.ObjectId
+}
+
+model Dog {
+    id             String           @id @default(auto()) @map("_id") @db.ObjectId
+    created_at     DateTime         @default(now())
+    update_at      DateTime         @updatedAt
+    name           String?
+    age            Int?
+    gender         String?
+    color          String?
+    weight         Float?
+    race           String?
+    publication    AdoptPublication @relation(fields: [publication_id], references: [id], onDelete: Cascade)
+    publication_id String           @unique @db.ObjectId
+}
+
+// //-------------TODO--------------
+
+// model Services{}
+// model LostPublication{}
+// model DonationCampaign{}
