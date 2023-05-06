@@ -3,7 +3,7 @@
 > For every command you can get more info with <command> --help
 > If you dont have the command installed globally, use **npx <command>**
 
-### Setup
+## Setup
 
 install dependencies:
 
@@ -20,7 +20,7 @@ run prisma: `prisma studio`
 
 update prisma: `yarn update prisma`
 
-### Github
+## Develop commands
 
 move to another branch: `git checkout <branch>`
 
@@ -30,11 +30,15 @@ move to develop
 
 get last changes: `git pull`
 
-generate schemas from DB: `prisma generate`
+generate schemas from DB:
+```
+prisma generate
+ctrl+p > Developer: Reload Window
+```
 
 create new branch: `git flow <status> start <branch-name>`
 
-> Send changes to github repo
+### Send changes to github repo
 
 add changes: `git add .`
 
