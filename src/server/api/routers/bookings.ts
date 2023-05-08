@@ -17,7 +17,7 @@ export const bookingsRouter = createTRPCRouter({
           ...booking,
           dog: {
             connect: {
-              id: dog,
+              id: dog,asda
             },
           },
           user: {
