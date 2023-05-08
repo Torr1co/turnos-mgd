@@ -1,6 +1,7 @@
+import React from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
-import { FC } from "~/utils/types";
+import { type FC } from "~/utils/types";
 
 const KINDS = {
   gray: "border-2 border-gray-400",

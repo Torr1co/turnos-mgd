@@ -1,5 +1,5 @@
 import React, { type ComponentType, type ElementType } from "react";
-import { RegisterOptions, get, useFormContext } from "react-hook-form";
+import { type RegisterOptions, get, useFormContext } from "react-hook-form";
 import Text from "../Typo/Text";
 import { cn } from "~/utils/styles";
 
@@ -17,7 +17,9 @@ export type Field<C> = C & FieldOmmitted & FieldAdded;
 
 export default function Field({ label, Component, ...props }: FieldProps) {
   const { formState } = useFormContext();
-  const error = get(formState.errors, props.path);
+  const error = get(formState.errors, props.path) as
+    | Record<string, string>
+    | undefined;
 
   return (
     <div
@@ -37,7 +39,7 @@ export default function Field({ label, Component, ...props }: FieldProps) {
       <Component {...props} error={error} />
       {error && (
         <Text className="capitalize text-red-500">
-          {error.message || error.type}
+          {error.message ?? error.type}
         </Text>
       )}
     </div>

@@ -1,4 +1,4 @@
-export type FC<P = {}> = P & {
+export type FC<P = object> = P & {
   className?: string;
   children?: React.ReactNode;
 };

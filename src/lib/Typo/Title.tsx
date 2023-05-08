@@ -1,7 +1,7 @@
 import React from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
-import { FC, Sizes } from "~/utils/types";
+import { type FC, type Sizes } from "~/utils/types";
 
 type HeadingTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
