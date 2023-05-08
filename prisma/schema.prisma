@@ -25,9 +25,9 @@ enum InquirieType {
 }
 
 enum TimeZone {
-  MANANA
-  TARDE
-  TARDENOCHE
+  MORNING
+  AFTERNOON
+  EVENING
 }
 
 //-----------------------------   USER     ---------------------------------
@@ -46,7 +46,7 @@ model User {
   hasDiscount       Boolean            @default(false)
   discountAmount    Int?               @default(0)
   dogs              ClientDog[]
-  booking           Booking[]
+  bookings          Booking[]
   adoptPublications AdoptPublication[]
 }
 

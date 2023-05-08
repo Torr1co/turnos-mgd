@@ -8,7 +8,7 @@ export const usersRouter = createTRPCRouter({
   createUser: publicProcedure
     .input(UserCreationSchema)
     .mutation(async ({ input, ctx }) => {
-      const { password, ...userData } = input;
+      const { password, booking, dog,  ...userData } = input;
 
       // Hash the password with the secret key
       const hashedPassword = hashSync(
@@ -22,6 +22,20 @@ export const usersRouter = createTRPCRouter({
           ...userData,
           role: UserRoles.CLIENT,
           password: hashedPassword,
+          dogs: {
+            create: {
+              ...dog,
+            }
+          },
+          // bookings: {
+          //   create: {
+          //     ...booking,
+          //   },
+          //   connect:{
+              
+          //   }
+          // }
+
         },
       });
     }),

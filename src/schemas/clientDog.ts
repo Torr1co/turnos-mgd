@@ -1,16 +1,20 @@
 import { z } from "zod";
-import { UserCreationSchema } from "./user";
+
 import { HealtBookCreationSchema } from "./healtBook";
 
-export const DogCreationSchema = z.object({
+export const DogSchema = z.object({
     name: z.string(),
     age: z.number(),
     gender: z.string(),
     color: z.string(),
     weight: z.number(),
     race: z.string(),
-    healthBook: HealtBookCreationSchema,
-    owner: UserCreationSchema
+    healthBook: HealtBookCreationSchema
 });
 
-export type DogCreation = z.infer<typeof DogCreationSchema>;
+export const DogCreationSchema = DogSchema.extend({
+    owner: z.string()
+});
+
+export type DogCreationSchema = z.infer<typeof DogCreationSchema>;
+export type DogSchema = z.infer<typeof DogSchema>;

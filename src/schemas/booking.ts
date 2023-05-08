@@ -1,16 +1,17 @@
 import { InquirieType, TimeZone } from "@prisma/client";
 import { z } from "zod";
-// import { UserCreationSchema } from "./user";
-// import { DogCreationSchema } from "./clientDog";
 
 
-
-export const BookingCreationSchema = z.object({
+export const BookingSchema = z.object({
     date: z.date(),
     type: z.nativeEnum(InquirieType),
     timeZone: z.nativeEnum(TimeZone),
+});
+
+export const BookingCreationSchema = BookingSchema.extend ({
     dog: z.string(),
     user: z.string(),
 });
 
-export type BookingCreation = z.infer<typeof BookingCreationSchema>;
+export type BookingSchema = z.infer<typeof BookingSchema>;
+export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;

@@ -1,4 +1,3 @@
-// import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 import { BookingCreationSchema } from "~/schemas/booking";
@@ -31,10 +30,5 @@ export const bookingsRouter = createTRPCRouter({
     getAll: publicProcedure.query(({ ctx }) => {
         return ctx.prisma.booking.findMany();    
     }),
-
-    getSecretMessage: publicProcedure.query(() => {
-        return "you can now see this secret message!";
-    }),
-
  
 });
