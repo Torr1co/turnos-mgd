@@ -1,10 +1,10 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 //-----------------------  --- DOCUMENTATION --- ---------------------------
@@ -14,141 +14,141 @@ datasource db {
 //----------------------------- ENUMS USED ---------------------------------
 
 enum UserRoles {
-    VET
-    CLIENT
+  VET
+  CLIENT
 }
 
 enum InquirieType {
-    VACCINE
-    DEWORMING
-    GENERAL
+  VACCINE
+  DEWORMING
+  GENERAL
 }
 
 enum TimeZone {
-    MANANA
-    TARDE
-    TARDE_NOCHE
+  MANANA
+  TARDE
+  TARDENOCHE
 }
 
 //-----------------------------   USER     ---------------------------------
 model User {
-    id                 String             @id @default(cuid()) @map("_id") @db.ObjectId
-    created_at         DateTime           @default(now())
-    updated_at         DateTime           @updatedAt
-    email              String             @unique
-    dni                String             @unique
-    name               String
-    lastname           String
-    role               UserRoles
-    password           String
-    password_verified  DateTime?
-    telephone_number   String?
-    hasDiscount        Boolean            @default(false)
-    discountAmount     Int?               @default(0)
-    dogs               ClientDog[]
-    booking            Booking[]
-    adopt_publications AdoptPublication[]
+  id                String             @id @default(cuid()) @map("_id") @db.ObjectId
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  email             String             @unique
+  dni               String             @unique
+  name              String
+  lastname          String
+  role              UserRoles
+  password          String
+  passwordVerified  DateTime?
+  telephoneNumber   String?
+  hasDiscount       Boolean            @default(false)
+  discountAmount    Int?               @default(0)
+  dogs              ClientDog[]
+  booking           Booking[]
+  adoptPublications AdoptPublication[]
 }
 
 // ------------------------------    RESERVATIONS       ----------------------------
 model Booking {
-    id        String       @id @default(auto()) @map("_id") @db.ObjectId
-    date      DateTime
-    type      InquirieType
-    time_zone TimeZone
-    user      User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    user_id   String       @db.ObjectId
-    dog       ClientDog    @relation(fields: [dog_id], references: [id], onDelete: Cascade)
-    dog_id    String       @db.ObjectId
+  id       String       @id @default(auto()) @map("_id") @db.ObjectId
+  date     DateTime
+  type     InquirieType
+  timeZone TimeZone
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String       @db.ObjectId
+  dog      ClientDog    @relation(fields: [dogId], references: [id], onDelete: Cascade)
+  dogId    String       @db.ObjectId
 }
 
 // -------------------------------            ---------------------------------
 model ClientDog {
-    id             String     @id @default(auto()) @map("_id") @db.ObjectId
-    created_at     DateTime   @default(now())
-    updated_at     DateTime   @updatedAt
-    name           String
-    age            Int
-    gender         String
-    img            String?
-    color          String
-    weight         Float
-    race           String
-    lets_cross     Boolean    @default(false)
-    booking        Booking[]
-    health_book    HealthBook @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
-    health_book_id String     @unique @db.ObjectId
-    owner          User       @relation(fields: [owner_id], references: [id], onDelete: Cascade)
-    owner_id       String     @db.ObjectId
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  name         String
+  age          Int
+  gender       String
+  img          String?
+  color        String
+  weight       Float
+  race         String
+  letsCross    Boolean    @default(false)
+  booking      Booking[]
+  healthBook   HealthBook @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
+  healthBookId String     @unique @db.ObjectId
+  owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId      String     @db.ObjectId
 }
 
 //------------------------------- HEALTH BOOK ---------------------------------
 model HealthBook {
-    id           String      @id @default(auto()) @map("_id") @db.ObjectId
-    created_at   DateTime    @default(now())
-    updated_at   DateTime    @updatedAt
-    vaccines     Vaccine[]
-    inquiries    Inquirie[]
-    dewormings   Deworming[]
-    observations String?
-    dog          ClientDog?
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  vaccines     Vaccine[]
+  inquiries    Inquirie[]
+  dewormings   Deworming[]
+  observations String?
+  dog          ClientDog?
 }
 
 // ------------------------------            ---------------------------------
 model Inquirie {
-    id             String      @id @default(auto()) @map("_id") @db.ObjectId
-    date           String
-    observations   String?
-    weight         Float?
-    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
-    health_book_id String      @unique @db.ObjectId
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  date         String
+  observations String?
+  weight       Float?
+  healtBook    HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
+  healthBookId String      @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
 model Deworming {
-    id             String      @id @default(auto()) @map("_id") @db.ObjectId
-    date           DateTime
-    product        String
-    dosis          String
-    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
-    health_book_id String      @unique @db.ObjectId
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  date         DateTime
+  product      String
+  dosis        String
+  healtBook    HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
+  healthBookId String      @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
 model Vaccine {
-    id             String      @id @default(auto()) @map("_id") @db.ObjectId
-    lot            String
-    date           DateTime
-    lab            String
-    healt_book     HealthBook? @relation(fields: [health_book_id], references: [id], onDelete: Cascade)
-    health_book_id String      @unique @db.ObjectId
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  lot          String
+  date         DateTime
+  lab          String
+  healtBook    HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
+  healthBookId String      @unique @db.ObjectId
 }
 
 // ------------------------------     ADOPTION       ---------------------------------
 model AdoptPublication {
-    id         String   @id @default(auto()) @map("_id") @db.ObjectId
-    created_at DateTime @default(now())
-    update_at  DateTime @updatedAt
-    info       String?
-    active     Boolean  @default(true)
-    reason     String
-    dog        Dog?
-    user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    user_id    String   @unique @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  info      String?
+  active    Boolean  @default(true)
+  reason    String
+  dog       Dog?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique @db.ObjectId
 }
 
 model Dog {
-    id             String           @id @default(auto()) @map("_id") @db.ObjectId
-    created_at     DateTime         @default(now())
-    update_at      DateTime         @updatedAt
-    name           String?
-    age            Int?
-    gender         String?
-    color          String?
-    weight         Float?
-    race           String?
-    publication    AdoptPublication @relation(fields: [publication_id], references: [id], onDelete: Cascade)
-    publication_id String           @unique @db.ObjectId
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  name          String?
+  age           Int?
+  gender        String?
+  color         String?
+  weight        Float?
+  race          String?
+  publication   AdoptPublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  publicationId String           @unique @db.ObjectId
 }
 
 // //-------------TODO--------------
