@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "lint": "next lint && prisma validate",
+    "lint": "next lint && npx prisma validate",
     "start": "next start",
     "prepare": "husky install"
   },
