@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { HealtBookCreationSchema } from "./healtBook";
 
 export const DogSchema = z.object({
     name: z.string(),
@@ -9,7 +8,7 @@ export const DogSchema = z.object({
     color: z.string(),
     weight: z.number(),
     race: z.string(),
-    healthBook: HealtBookCreationSchema
+    owner: z.string(),
 });
 
 export const DogCreationSchema = DogSchema.extend({
