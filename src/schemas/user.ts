@@ -11,7 +11,7 @@ export const UserCreationSchema = z.object({
   password: z.string().min(8),
   role: z.nativeEnum(UserRoles),
   dog: DogSchema,
-  booking: BookingSchema
+  booking: BookingSchema,
 });
 
 export type UserCreation = z.infer<typeof UserCreationSchema>;
