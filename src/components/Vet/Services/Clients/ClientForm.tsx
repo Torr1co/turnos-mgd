@@ -7,11 +7,13 @@ import Form from "~/lib/Form";
 import { api } from "~/utils/api";
 import Button from "~/lib/Button";
 
-const Home: NextPage = () => {
+const ClientForm: NextPage = () => {
   const methods = useForm<UserCreation>({
     resolver: zodResolver(UserCreationSchema),
   });
+  const hasErrors = Object.keys(methods.formState.errors).length > 0;
   const { mutate: createUser, isLoading } = api.users.create.useMutation();
+
   return (
     <div className="mx-auto">
       <Form
@@ -20,23 +22,21 @@ const Home: NextPage = () => {
           createUser(data, {
             onSuccess: () => alert("success"),
             onError: () => alert("error"),
-            // onSettled: () => alert(1),
           });
-          /* toast.promise(async () => undefined, {
-            loading: "Creando usuario",
-            success: "Usuario creado",
-            error: "Error al crear usuario",
-          }); */
         }}
       >
         <Form.Input path="name" label="Nombre" />
-        <Form.Input path="password" label="Contrase" />
+        <Form.Input path="lastname" label="Apellido" />
+        <Form.Input path="dni" label="DNI" />
         <Form.Input path="email" label="Email" />
-        <Form.Input path="role" label="role" />
-        <Button loading={isLoading}>Crear</Button>
+        <Form.Input path="role" label="Role" />
+        <Form.Input path="password" label="Contrase" />
+        <Button loading={isLoading} disabled={hasErrors}>
+          Crear
+        </Button>
       </Form>
     </div>
   );
 };
 
-export default Home;
+export default ClientForm;

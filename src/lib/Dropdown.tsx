@@ -29,7 +29,7 @@ const Dropdown = ({ children, className, label }: FC<DropdownProps>) => {
               <ChevronDownIcon
                 className="ml-2 -mr-1 h-5 w-5"
                 style={{
-                  transform: open ? "rotate(180deg)" : "",
+                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
                 }}
               />
             </div>

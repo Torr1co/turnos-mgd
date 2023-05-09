@@ -1,5 +1,10 @@
 import React from "react";
+import ClientForm from "../Vet/Services/Clients/ClientForm";
 
 export default function UnregisteredHome() {
-  return <div>UnregisteredHome</div>;
+  return (
+    <div>
+      <ClientForm />
+    </div>
+  );
 }
