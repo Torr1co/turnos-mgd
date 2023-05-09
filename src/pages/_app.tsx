@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Layout from "~/components/Layout";
+import { ModalProvider } from "~/context/ModalContex";
 
 const MyApp = ({
   Component,
@@ -15,10 +16,12 @@ const MyApp = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Toaster />
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ModalProvider>
+        <Toaster />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ModalProvider>
     </SessionProvider>
   );
 };

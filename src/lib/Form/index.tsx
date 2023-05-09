@@ -1,5 +1,5 @@
 import React, { type FormHTMLAttributes } from "react";
-import { FieldInput } from "./Input";
+import { FieldDate, FieldInput, FieldNumber } from "./Input";
 import Field, { type FieldPropsInitial } from "./Field";
 import {
   FormProvider,
@@ -36,6 +36,8 @@ const Form = <T extends FieldValues>({
 };
 
 Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
+Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
+Form.Date = FieldDate as FieldConvertion<typeof FieldInput>;
 
 type FormKey = keyof typeof Form;
 // Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;

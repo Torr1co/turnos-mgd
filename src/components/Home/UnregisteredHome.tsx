@@ -1,5 +1,5 @@
 import React from "react";
-import ClientForm from "../Vet/Services/Clients/ClientForm";
+import ClientForm from "../Vet/Clients/ClientRegister/ClientForm";
 
 export default function UnregisteredHome() {
   return (

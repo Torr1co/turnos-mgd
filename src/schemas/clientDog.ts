@@ -6,8 +6,9 @@ export const DogSchema = z.object({
   gender: z.string(),
   color: z.string(),
   weight: z.number(),
+  img: z.optional(z.string()),
+  letsCross: z.optional(z.boolean()),
   race: z.string(),
-  owner: z.string(),
 });
 
 export const DogCreationSchema = DogSchema.extend({

@@ -4,7 +4,11 @@ import { z } from "zod";
 export const BookingSchema = z.object({
   date: z.date(),
   type: z.nativeEnum(InquirieType),
-  timeZone: z.nativeEnum(TimeZone),
+  timeZone: z.nativeEnum(TimeZone, {
+    errorMap: () => {
+      return { message: "Selecciona un horario valido" };
+    },
+  }),
 });
 
 export const BookingCreationSchema = BookingSchema.extend({

@@ -1,19 +1,20 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
 import { type FC } from "~/utils/types";
 
 const KINDS = {
-  gray: "border-2 border-gray-400",
-  primary: "border-2 border-gray-400",
+  gray: "border border-gray-400",
+  primary: "border border-gray-400",
   basic: "",
 } as const;
 
 const SIZES = {
-  lg: "px-14 py-10 rounded-lg",
+  lgY: "px-10 py-14 rounded-lg",
+  lgX: "px-14 py-10 rounded-lg",
 };
 
-type BoxProps = {
+type BoxProps = HTMLAttributes<HTMLDivElement> & {
   kind?: string;
   size?: keyof typeof SIZES | string;
 };
@@ -22,7 +23,7 @@ const Box = ({
   className,
   children,
   kind = KINDS.gray,
-  size = "lg",
+  size = "lgY",
 }: FC<BoxProps>) => {
   return (
     <div
