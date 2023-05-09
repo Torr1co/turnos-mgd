@@ -49,6 +49,7 @@ export default function ClientRegister() {
   const { mutate: createUser } = api.users.create.useMutation();
   const { handleModal } = useModal();
   const CurrentComponent = steps[currentStep]?.component as React.FC;
+  console.log(methods.formState.errors);
   return (
     <Form
       className="flex flex-col gap-6"

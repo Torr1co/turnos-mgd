@@ -8,7 +8,7 @@ export default function PetForm() {
       <div className="grid grid-cols-2 gap-6">
         <Form.Input path="dog.name" label="Nombre" />
         <Form.Number path="dog.age" label="Edad estimada ()" />
-        <Form.Input path="dog.gende" label="Genero" />
+        <Form.Input path="dog.gender" label="Genero" />
         <Form.Input path="dog.img" label="Foto" />
         <Form.Input path="dog.color" label="Color" />
         <Form.Number path="dog.weight" label="Altura (cm)" />

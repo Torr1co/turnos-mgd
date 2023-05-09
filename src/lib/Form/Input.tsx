@@ -45,6 +45,9 @@ export function FieldInput({
         ...options,
         onChange,
       })}
+      id={path}
+      name={path}
+      autoComplete="off"
       {...props}
       kind={error ? "error" : undefined}
     />
