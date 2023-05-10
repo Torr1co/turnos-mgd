@@ -41,15 +41,30 @@ const steps = [
 ] as const;
 
 export default function ClientRegister() {
+  const { handleModal } = useModal();
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm<ClientCreation>({
     resolver: zodResolver(ClientCreationSchema),
+    defaultValues: {
+      booking: {
+        date: new Date(),
+      },
+    },
   });
+
   const hasErrors = Object.keys(methods.formState.errors).length > 0;
-  const { mutate: createUser } = api.users.create.useMutation();
-  const { handleModal } = useModal();
-  const CurrentComponent = steps[currentStep]?.component as React.FC;
-  console.log(methods.formState.errors);
+  const utils = api.useContext();
+
+  const { mutate: createUser } = api.users.create.useMutation({
+    onSuccess: async (newUser) => {
+      await utils.users.getAll.cancel();
+
+      const prevData = utils.users.getAll.getData();
+      utils.users.getAll.setData(undefined, (old = []) => [...old, newUser]);
+      return { prevData };
+    },
+  });
+
   return (
     <Form
       className="flex flex-col gap-6"
@@ -99,7 +114,19 @@ export default function ClientRegister() {
           )}
         </nav>
       </header>
-      <CurrentComponent />
+      {steps.map((step, index) => {
+        const Component = step.component;
+        return (
+          <div
+            key={index}
+            className={`${
+              index === currentStep ? "block" : "hidden"
+            } transition-all`}
+          >
+            <Component />
+          </div>
+        );
+      })}
     </Form>
   );
 }

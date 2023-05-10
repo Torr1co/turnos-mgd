@@ -1,5 +1,6 @@
 import React from "react";
 import Form from "~/lib/Form";
+import { GenderOptions } from "~/schemas/pet";
 
 export default function PetForm() {
   return (
@@ -7,12 +8,13 @@ export default function PetForm() {
       <div className="flex items-center justify-between"></div>
       <div className="grid grid-cols-2 gap-6">
         <Form.Input path="dog.name" label="Nombre" />
-        <Form.Number path="dog.age" label="Edad estimada ()" />
-        <Form.Input path="dog.gender" label="Genero" />
-        <Form.Input path="dog.img" label="Foto" />
-        <Form.Input path="dog.color" label="Color" />
-        <Form.Number path="dog.weight" label="Altura (cm)" />
+        <Form.Date path="dog.birth" label="Nacimiento (estimado)" />
+        <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
         <Form.Input path="dog.race" label="Raza" />
+        <Form.Number path="dog.weight" label="Peso (kg)" />
+        <Form.Number path="dog.height" label="Altura (cm)" />
+        <Form.Input path="dog.color" label="Color" />
+        {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
       </div>
     </div>
   );

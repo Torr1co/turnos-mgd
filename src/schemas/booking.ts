@@ -18,3 +18,33 @@ export const BookingCreationSchema = BookingSchema.extend({
 
 export type BookingSchema = z.infer<typeof BookingSchema>;
 export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
+
+export const InquirieOptions = [
+  {
+    value: InquirieType.VACCINE,
+    label: "Vacuna",
+  },
+  {
+    value: InquirieType.DEWORMING,
+    label: "Desparasitacion",
+  },
+  {
+    value: InquirieType.GENERAL,
+    label: "General",
+  },
+];
+
+export const TimeZoneOptions = [
+  {
+    value: TimeZone.MORNING,
+    label: "Mañana",
+  },
+  {
+    value: TimeZone.AFTERNOON,
+    label: "Tarde",
+  },
+  {
+    value: TimeZone.EVENING,
+    label: "Anochecer",
+  },
+];

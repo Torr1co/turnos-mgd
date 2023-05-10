@@ -6,6 +6,7 @@ import {
   type UseFormReturn,
   type FieldValues,
 } from "react-hook-form";
+import { FieldSelect } from "./Select";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
@@ -38,6 +39,7 @@ const Form = <T extends FieldValues>({
 Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
 Form.Date = FieldDate as FieldConvertion<typeof FieldInput>;
+Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 
 type FormKey = keyof typeof Form;
 // Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;

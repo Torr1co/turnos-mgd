@@ -1,6 +1,6 @@
 import { UserRoles } from "@prisma/client";
 import { z } from "zod";
-import { DogSchema } from "./clientDog";
+import { PetSchema } from "./pet";
 import { BookingSchema } from "./booking";
 
 export const ClientCreationSchema = z.object({
@@ -11,7 +11,7 @@ export const ClientCreationSchema = z.object({
   password: z.string().min(8),
   role: z.optional(z.nativeEnum(UserRoles)),
   telephoneNumber: z.optional(z.string()),
-  dog: DogSchema,
+  dog: PetSchema,
   booking: BookingSchema,
 });
 

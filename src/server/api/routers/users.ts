@@ -27,7 +27,7 @@ export const usersRouter = createTRPCRouter({
           },
         });
 
-        const dogCreation = await ctx.prisma.clientDog.create({
+        const dogCreation = await ctx.prisma.pet.create({
           data: {
             ...dog,
             healthBook: {
