@@ -33,7 +33,7 @@ const steps = [
   {
     title: (
       <Title as="h4" className="text-gray-500">
-        Sobre la <span className="text-primary">Reserva</span>
+        Sobre el <span className="text-primary">Turno</span>
       </Title>
     ),
     component: BookingForm,

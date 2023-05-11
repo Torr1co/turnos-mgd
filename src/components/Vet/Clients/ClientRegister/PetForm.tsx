@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import React from "react";
 import Form from "~/lib/Form";
 import { GenderOptions } from "~/schemas/pet";
@@ -8,7 +9,11 @@ export default function PetForm() {
       <div className="flex items-center justify-between"></div>
       <div className="grid grid-cols-2 gap-6">
         <Form.Input path="dog.name" label="Nombre" />
-        <Form.Date path="dog.birth" label="Nacimiento (estimado)" />
+        <Form.Date
+          path="dog.birth"
+          label="Nacimiento (estimado)"
+          max={dayjs().format("YYYY-MM-DD")}
+        />
         <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
         <Form.Input path="dog.race" label="Raza" />
         <Form.Number path="dog.weight" label="Peso (kg)" />
