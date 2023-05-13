@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 // import { exampleRouter } from "~/server/api/routers/example";
 import { usersRouter } from "~/server/api/routers/users";
-import { dogsRouter } from "./routers/dogs";
+import { petsRouter } from "./routers/pets";
 import { bookingsRouter } from "./routers/bookings";
 /**
  * This is the primary router for your server.
@@ -10,7 +10,7 @@ import { bookingsRouter } from "./routers/bookings";
  */
 export const appRouter = createTRPCRouter({
   users: usersRouter,
-  dogs: dogsRouter,
+  pets: petsRouter,
   bookings: bookingsRouter,
 });
 

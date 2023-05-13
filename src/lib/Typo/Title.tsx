@@ -1,16 +1,16 @@
 import React from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
-import { FC, Sizes } from "~/utils/types";
+import { type FC, type Sizes } from "~/utils/types";
 
 type HeadingTags = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 const sizeClassNames = {
-  xl: "text-2xl font-bold text-black",
-  lg: "text-xl font-bold text-black",
-  md: "text-lg font-bold text-black",
-  sm: "text-md",
-  xs: "text-sm",
+  xl: "text-2xl font-bold",
+  lg: "text-xl font-bold",
+  md: "text-lg font-bold",
+  sm: "text-lg font-semibold",
+  xs: "text-detail",
   xxs: "text-sm",
 } as const;
 

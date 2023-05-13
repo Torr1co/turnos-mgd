@@ -39,6 +39,7 @@ const Button = ({
         hasKey(KINDS, kind) ? KINDS[kind] : kind
       )}
       disabled={loading}
+      type="button"
       {...props}
     >
       {loading && (
