@@ -18,7 +18,7 @@ run project: `yarn run dev`
 
 run prisma: `prisma studio`
 
-update prisma: `yarn update prisma`
+update prisma: `yarn upgrade @prisma/cli @prisma/client`
 
 ## Develop commands
 
@@ -31,6 +31,7 @@ move to develop
 get last changes: `git pull`
 
 generate schemas from DB:
+
 ```
 prisma generate
 ctrl+p > Developer: Reload Window

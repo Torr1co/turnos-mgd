@@ -6,8 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "lint": "next lint",
-    "start": "next start"
+    "lint": "next lint && npx prisma validate",
+    "start": "next start",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",
@@ -23,6 +24,7 @@
     "@types/bcryptjs": "^2.4.2",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.7",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -47,6 +49,7 @@
     "autoprefixer": "^10.4.7",
     "eslint": "^8.34.0",
     "eslint-config-next": "^13.2.1",
+    "husky": "^8.0.3",
     "postcss": "^8.4.14",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.1",
