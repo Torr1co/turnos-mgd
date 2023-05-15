@@ -14,21 +14,28 @@ export const bookingsRouter = createTRPCRouter({
             data: {
                 ...booking,
                 dog:{
-                    connect:{
-                        id: dog
-                    }
+                    connect:{ id: dog }
                 },
                 user:{
-                    connect:{
-                        id: user
-                    }
+                    connect:{ id: user}
                 }
-         },
+            },
         });
     }),
 
+
+    // Returns all bookings from the current date
     getAll: publicProcedure.query(({ ctx }) => {
-        return ctx.prisma.booking.findMany();    
-    }),
+        return ctx.prisma.booking.findMany({
+            where: {
+                date: {
+                    gte: new Date()
+                }
+            }
+        }) 
+    })
+
+
+
  
 });
