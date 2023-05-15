@@ -25,7 +25,7 @@ const Input = forwardRef<Ref, InputProps>(function ForwardInput(
       className={cn(
         KINDS[kind],
         className,
-        "font-regular rounded-md border py-4 px-5 outline-none focus:ring-1"
+        "font-regular rounded-md border py-3.5 px-5 outline-none focus:ring-1"
       )}
     />
   );
@@ -35,14 +35,41 @@ export function FieldInput({
   path,
   options,
   error,
+  onChange,
   ...props
 }: Field<InputProps>) {
   const { register } = useFormContext();
   return (
     <Input
-      {...register(path, options)}
+      {...register(path, {
+        ...options,
+        onChange,
+      })}
+      id={path}
+      name={path}
+      autoComplete="off"
       {...props}
       kind={error ? "error" : undefined}
+    />
+  );
+}
+
+export function FieldNumber({ options, ...props }: Field<InputProps>) {
+  return (
+    <FieldInput
+      type="number"
+      {...props}
+      options={{ ...{ options }, valueAsNumber: true }}
+    />
+  );
+}
+
+export function FieldDate({ type, options, ...props }: Field<InputProps>) {
+  return (
+    <FieldInput
+      type="date"
+      {...props}
+      options={{ ...{ options }, valueAsDate: true }}
     />
   );
 }

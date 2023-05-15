@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import { FC } from "~/utils/types";
+import { type FC } from "~/utils/types";
 import Head from "next/head";
 
 export default function Layout({ children }: FC) {
