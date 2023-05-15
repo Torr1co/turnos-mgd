@@ -1,13 +1,13 @@
 import { UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 import { z } from "zod";
-import { UserCreationSchema } from "~/schemas/user";
+import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { bookingsRouter } from "./bookings";
 
-export const usersRouter = createTRPCRouter({
-  createUser: publicProcedure
-    .input(UserCreationSchema)
+export const clientsRouter = createTRPCRouter({
+  createClient: publicProcedure
+    .input(ClientCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { password, booking, dog,  ...userData } = input;
 
@@ -18,7 +18,7 @@ export const usersRouter = createTRPCRouter({
       );
 
       // Create the user with the hashed password
-      const user = await ctx.prisma.user.create({
+      const client = await ctx.prisma.user.create({
           data: {
             ...userData,
             role: UserRoles.CLIENT,
@@ -35,7 +35,7 @@ export const usersRouter = createTRPCRouter({
           },
           owner: {
             connect: { 
-              id: user.id,
+              id: client.id,
             }
           }
        }
@@ -46,7 +46,7 @@ export const usersRouter = createTRPCRouter({
           ...booking,
         user: {
           connect: { 
-            id: user.id 
+            id: client.id 
           }
         },
         dog: {
@@ -59,7 +59,7 @@ export const usersRouter = createTRPCRouter({
   
       // const bookingsCreation = bookingsRouter.create({ ...booking, dog: dogCreation.id, user: user.id, });
       
-      return user;
+      return client;
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {

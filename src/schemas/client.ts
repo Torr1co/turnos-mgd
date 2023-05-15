@@ -3,7 +3,7 @@ import { z } from "zod";
 import { DogSchema } from "./clientDog";
 import { BookingSchema } from "./booking";
 
-export const UserCreationSchema = z.object({
+export const ClientCreationSchema = z.object({
   name: z.string().min(3),
   dni: z.string().min(7),
   lastname: z.string().min(3),
@@ -14,4 +14,4 @@ export const UserCreationSchema = z.object({
   booking: BookingSchema
 });
 
-export type UserCreation = z.infer<typeof UserCreationSchema>;
+export type ClientCreation = z.infer<typeof ClientCreationSchema>;

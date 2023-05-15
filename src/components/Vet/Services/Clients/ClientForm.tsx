@@ -2,7 +2,7 @@ import React from "react";
 import { type NextPage } from "next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type UserCreation, UserCreationSchema } from "~/schemas/user";
+import { type UserCreation, UserCreationSchema } from "~/schemas/client";
 import Form from "~/lib/Form";
 import { api } from "~/utils/api";
 import Button from "~/lib/Button";
