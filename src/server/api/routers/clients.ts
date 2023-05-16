@@ -1,10 +1,10 @@
 import { UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
-// import nodemailer from "nodemailer";
 
 import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { bookingsRouter } from "./bookings";
+import { systemEmail } from "~/server/email";
 
 export const clientsRouter = createTRPCRouter({
   createClient: publicProcedure
@@ -46,15 +46,6 @@ export const clientsRouter = createTRPCRouter({
         user: client.id,
       });
 
-      // Send an email to the user with the password
-      // const transporter = nodemailer.createTransport({
-      //   service: "gmail",
-      //   auth: {
-      //     user: client.email,
-      //     pass: client.password,
-      //   },
-      // });
-
       return client;
     }),
 
@@ -66,5 +57,17 @@ export const clientsRouter = createTRPCRouter({
       },
       include: { dogs: true },
     });
+  }),
+
+  sendEmail: publicProcedure.mutation(async ({ ctx }) => {
+    await systemEmail(
+      {
+        name: "asdasd",
+        address: "asdasd@gmail.com",
+      },
+      "subject",
+      "text",
+      "html"
+    );
   }),
 });
