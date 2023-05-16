@@ -1,22 +1,20 @@
 import { UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
-// import { z } from "zod";
+// import nodemailer from "nodemailer";
+
 import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { bookingsRouter } from "./bookings";
-// import { bookingsRouter } from "./bookings";
 
 export const clientsRouter = createTRPCRouter({
   createClient: publicProcedure
     .input(ClientCreationSchema)
     .mutation(async ({ input, ctx }) => {
-      const { password, booking, dog, ...userData } = input;
+      const { booking, dog, ...userData } = input;
 
-      // Hash the password with the secret key
-      const hashedPassword = hashSync(
-        password + (process.env.HASH_PASSWORD ?? ""),
-        10
-      );
+      // Generate a hashed password
+      const randomString = Math.random().toString(36).substring(7);
+      const hashedPassword = hashSync(randomString, 10);
 
       // Create the user with the hashed password
       const client = await ctx.prisma.user.create({
@@ -48,6 +46,25 @@ export const clientsRouter = createTRPCRouter({
         user: client.id,
       });
 
+      // Send an email to the user with the password
+      // const transporter = nodemailer.createTransport({
+      //   service: "gmail",
+      //   auth: {
+      //     user: client.email,
+      //     pass: client.password,
+      //   },
+      // });
+
       return client;
     }),
+
+  //Returns all Clients and their dogs
+  getAll: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findMany({
+      where: {
+        role: UserRoles.CLIENT,
+      },
+      include: { dogs: true },
+    });
+  }),
 });
