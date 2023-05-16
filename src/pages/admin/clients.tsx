@@ -7,6 +7,7 @@ import Button from "~/lib/Button";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { UserRoles } from "@prisma/client";
+import Input from "~/lib/Form/Input";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -25,12 +26,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Clients = () => {
   const { handleModal } = useModal();
+  const [clientFilters, setClientFilters] = React.useState("");
 
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
         <Title>Clientes</Title>
-        <div>
+        <div className="flex gap-4">
+          <Input
+            placeholder="Buscar cliente"
+            onChange={(e) => {
+              setClientFilters(e.target.value);
+            }}
+          />
           <Button
             kind={Button.KINDS.gray}
             onClick={() => handleModal(<ClientRegister />)}
@@ -39,7 +47,7 @@ const Clients = () => {
           </Button>
         </div>
       </header>
-      <ClientList />
+      <ClientList filter={clientFilters} />
     </div>
   );
 };

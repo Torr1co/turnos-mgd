@@ -12,6 +12,7 @@ import Button from "~/lib/Button";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";
+import { InquirieType } from "@prisma/client";
 
 const steps = [
   {
@@ -48,6 +49,10 @@ export default function ClientRegister() {
     defaultValues: {
       booking: {
         date: new Date(),
+        type: InquirieType.VACCINE,
+      },
+      dog: {
+        gender: "MALE",
       },
     },
   });
