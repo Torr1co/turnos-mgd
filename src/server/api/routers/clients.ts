@@ -3,7 +3,6 @@ import { hashSync } from "bcryptjs";
 
 import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { bookingsRouter } from "./bookings";
 import { systemEmail } from "~/server/email";
 import { UpdateClientSchema } from "~/schemas/update";
 
@@ -16,7 +15,7 @@ export const clientsRouter = createTRPCRouter({
       const { booking, dog, ...userData } = input;
 
       // Generate a hashed password
-      const randomString = Math.random().toString(36).substring(7);
+      const randomString = Math.random().toString(36).replace("0.", "");
       const hashedPassword = hashSync(randomString, 10);
 
       // Create the user with the hashed password
@@ -44,19 +43,29 @@ export const clientsRouter = createTRPCRouter({
           },
         });
 
-        const bookingsCaller = bookingsRouter.createCaller(ctx);
-        await bookingsCaller.create({
-          ...booking,
-          dog: dogCreation.id,
-          user: client.id,
+        await prisma.booking.create({
+          data: {
+            ...booking,
+            dog: {
+              connect: {
+                id: dogCreation.id,
+              },
+            },
+            user: {
+              connect: {
+                id: client.id,
+              },
+            },
+          },
         });
 
         return client;
-      });
+      }, {});
+
       await systemEmail(
         userData.email,
         "Contraseña de Oh My Dog",
-        `tu nueva contraseña es ${hashedPassword}`
+        `tu nueva contraseña es ${randomString}`
       );
 
       return client;
