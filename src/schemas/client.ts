@@ -8,7 +8,7 @@ export const ClientCreationSchema = z.object({
   dni: z.string().min(8).max(8),
   lastname: z.string().min(3),
   email: z.string().email(),
-  password: z.string().min(8),
+  // password: z.string().min(8),
   role: z.optional(z.nativeEnum(UserRoles)),
   telephoneNumber: z.optional(z.string()),
   dog: PetSchema,

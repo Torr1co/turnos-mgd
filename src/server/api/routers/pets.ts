@@ -21,14 +21,10 @@ export const petsRouter = createTRPCRouter({
         data: {
           ...dogData,
           healthBook: {
-            connect: {
-              id: healthBook.id,
-            },
+            connect: { id: healthBook.id },
           },
           owner: {
-            connect: {
-              id: owner,
-            },
+            connect: { id: owner },
           },
         },
       });
