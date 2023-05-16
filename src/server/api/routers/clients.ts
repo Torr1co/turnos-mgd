@@ -10,7 +10,7 @@ import { UpdateClientSchema } from "~/schemas/update";
 import { UpdatePasswordSchema } from "~/schemas/updatePassword";
 
 export const clientsRouter = createTRPCRouter({
-  createClient: publicProcedure
+  create: publicProcedure
     .input(ClientCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { booking, dog, ...userData } = input;
@@ -20,34 +20,44 @@ export const clientsRouter = createTRPCRouter({
       const hashedPassword = hashSync(randomString, 10);
 
       // Create the user with the hashed password
-      const client = await ctx.prisma.user.create({
-        data: {
-          ...userData,
-          role: UserRoles.CLIENT,
-          password: hashedPassword,
-        },
-      });
 
-      const dogCreation = await ctx.prisma.pet.create({
-        data: {
-          ...dog,
-          healthBook: {
-            create: {},
+      const client = ctx.prisma.$transaction(async (prisma) => {
+        const client = await prisma.user.create({
+          data: {
+            ...userData,
+            role: UserRoles.CLIENT,
+            password: hashedPassword,
           },
-          owner: {
-            connect: {
-              id: client.id,
+        });
+
+        const dogCreation = await prisma.pet.create({
+          data: {
+            ...dog,
+            healthBook: {
+              create: {},
+            },
+            owner: {
+              connect: {
+                id: client.id,
+              },
             },
           },
-        },
-      });
+        });
 
-      const bookingsCaller = bookingsRouter.createCaller(ctx);
-      await bookingsCaller.create({
-        ...booking,
-        dog: dogCreation.id,
-        user: client.id,
+        const bookingsCaller = bookingsRouter.createCaller(ctx);
+        await bookingsCaller.create({
+          ...booking,
+          dog: dogCreation.id,
+          user: client.id,
+        });
+
+        return client;
       });
+      await systemEmail(
+        userData.email,
+        "Contraseña de Oh My Dog",
+        `tu nueva contraseña es ${hashedPassword}`
+      );
 
       return client;
     }),
@@ -63,7 +73,7 @@ export const clientsRouter = createTRPCRouter({
   }),
 
   //Updates a client
-  updateClient: publicProcedure
+  update: publicProcedure
     .input(UpdateClientSchema)
     .mutation(async ({ input, ctx }) => {
       const updatedClient = await ctx.prisma.user.update({
