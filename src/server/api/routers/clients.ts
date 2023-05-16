@@ -5,6 +5,9 @@ import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { bookingsRouter } from "./bookings";
 import { systemEmail } from "~/server/email";
+import { UpdateClientSchema } from "~/schemas/update";
+
+import { UpdatePasswordSchema } from "~/schemas/updatePassword";
 
 export const clientsRouter = createTRPCRouter({
   createClient: publicProcedure
@@ -59,14 +62,46 @@ export const clientsRouter = createTRPCRouter({
     });
   }),
 
-  sendEmail: publicProcedure.mutation(async ({ ctx }) => {
+  //Updates a client
+  updateClient: publicProcedure
+    .input(UpdateClientSchema)
+    .mutation(async ({ input, ctx }) => {
+      const updatedClient = await ctx.prisma.user.update({
+        where: { id: input.id },
+        data: {
+          ...input,
+        },
+      });
+
+      return updatedClient;
+    }),
+
+  //Update password
+  updatePassword: publicProcedure
+    .input(UpdatePasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      const password = input.password;
+      const hashedPassword = hashSync(password, 10);
+
+      const updatedClient = await ctx.prisma.user.update({
+        where: { id: input.id },
+        data: {
+          password: hashedPassword,
+          passwordVerified: new Date(),
+        },
+      });
+      return updatedClient;
+    }),
+
+  // Send an email to the client with the password
+  sendEmail: publicProcedure.mutation(async () => {
     await systemEmail(
       {
-        name: "asdasd",
-        address: "asdasd@gmail.com",
+        name: "test",
+        address: "test@email.com",
       },
       "subject",
-      "text",
+      "testPassword",
       "html"
     );
   }),

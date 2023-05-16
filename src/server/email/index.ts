@@ -14,7 +14,7 @@ type EmailAddress =
 // } satisfies EmailAddress;
 const SYSTEM_ADDRESS = {
   name: "Â¡OhMyDog!" as const,
-  address: "vet@gmail.com",
+  address: "test@vet.com",
 } satisfies EmailAddress;
 // const CONFIG = (
 //   dev
