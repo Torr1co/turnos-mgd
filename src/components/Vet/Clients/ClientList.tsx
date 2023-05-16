@@ -5,7 +5,7 @@ import Title from "~/lib/Typo/Title";
 import { api } from "~/utils/api";
 import { type User } from ".prisma/client";
 
-export default function ClientList() {
+export default function ClientList({ filter = "" }: { filter?: string }) {
   const { data: users = [], isLoading } = api.users.getAll.useQuery();
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
 
@@ -14,29 +14,33 @@ export default function ClientList() {
       {isLoading ? (
         <li>Cargando...</li>
       ) : (
-        users.map((user) => {
-          const isSelected = selectedUser?.id === user.id;
-          return (
-            <li key={user.id}>
-              <Box
-                size="lgX"
-                className="flex items-center justify-between bg-white"
-              >
-                <div>
-                  <Title as="h4">{user.name}</Title>
-                  <p>{user.email}</p>
-                </div>
-                <Button
-                  className="transition-colos duration-200"
-                  kind={isSelected ? Button.KINDS.primary : Button.KINDS.gray}
-                  onClick={() => setSelectedUser(isSelected ? null : user)}
+        users
+          .filter(
+            (user) => user.email.includes(filter) || user.name.includes(filter)
+          )
+          .map((user) => {
+            const isSelected = selectedUser?.id === user.id;
+            return (
+              <li key={user.id}>
+                <Box
+                  size="lgX"
+                  className="flex items-center justify-between bg-white"
                 >
-                  Ver Perros
-                </Button>
-              </Box>
-            </li>
-          );
-        })
+                  <div>
+                    <Title as="h4">{user.name}</Title>
+                    <p>{user.email}</p>
+                  </div>
+                  <Button
+                    className="transition-colos duration-200"
+                    kind={isSelected ? Button.KINDS.primary : Button.KINDS.gray}
+                    onClick={() => setSelectedUser(isSelected ? null : user)}
+                  >
+                    Ver Perros
+                  </Button>
+                </Box>
+              </li>
+            );
+          })
       )}
     </ul>
   );

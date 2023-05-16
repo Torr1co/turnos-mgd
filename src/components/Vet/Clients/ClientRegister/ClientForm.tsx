@@ -9,8 +9,26 @@ export default function ClientForm() {
     <div>
       <div className="flex items-center justify-between"></div>
       <div className="grid grid-cols-2 gap-6">
-        <Form.Input path="name" label="Nombre" />
-        <Form.Input path="lastname" label="Apellido" />
+        <Form.Input
+          path="name"
+          label="Nombre"
+          onChange={(e) => {
+            methods.setValue(
+              "name",
+              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+            );
+          }}
+        />
+        <Form.Input
+          path="lastname"
+          label="Apellido"
+          onChange={(e) => {
+            methods.setValue(
+              "lastname",
+              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+            );
+          }}
+        />
         <Form.Input
           path="dni"
           label="DNI"
@@ -20,10 +38,7 @@ export default function ClientForm() {
         />
         <Form.Input path="telephoneNumber" label="Telefono" />
         <div className="col-span-2">
-          <Form.Input path="email" label="Email" />
-        </div>
-        <div className="col-span-2">
-          <Form.Input path="password" label="Contraseña" />
+          <Form.Input path="email" label="Email" type="email" />
         </div>
       </div>
     </div>
