@@ -14,6 +14,7 @@ import { UserRoles } from "@prisma/client";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+// import { LINKS } from "~/utils/navConfig";
 
 const PasswordSchema = z
   .object({
@@ -53,6 +54,7 @@ const NewPassword: NextPage = () => {
                 },
                 {
                   onSuccess: () => {
+                    session.user.passwordVerified = new Date();
                     void router.push("/");
                   },
                   onError: () => {

@@ -5,7 +5,6 @@ import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { systemEmail } from "~/server/email";
 import { UpdateClientSchema } from "~/schemas/update";
-
 import { UpdatePasswordSchema } from "~/schemas/updatePassword";
 
 export const clientsRouter = createTRPCRouter({
