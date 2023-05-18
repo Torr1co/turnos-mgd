@@ -5,7 +5,7 @@ import { ClientCreationSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { bookingsRouter } from "./bookings";
 import { systemEmail } from "~/server/email";
-import { UpdateClientSchema } from "~/schemas/update";
+import { UpdateClientSchema } from "~/schemas/updateClient";
 
 import { UpdatePasswordSchema } from "~/schemas/updatePassword";
 
