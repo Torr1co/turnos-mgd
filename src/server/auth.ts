@@ -9,6 +9,7 @@ import CredentialProviders from "next-auth/providers/credentials";
 import { prisma } from "~/server/db";
 import { type User } from "@prisma/client";
 import { compareSync } from "bcryptjs";
+import { hasKey } from "~/utils/objUtils";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -16,7 +17,7 @@ import { compareSync } from "bcryptjs";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
+  export interface Session extends DefaultSession {
     user: Omit<User, "password"> /*  & DefaultSession["user"]; */;
   }
 }
@@ -32,8 +33,32 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      user && (token.user = user);
+    jwt: async ({ token, user, trigger, session }) => {
+      if (user as User | null) {
+        token.user = user;
+      }
+      if (trigger === "update" && session) {
+        /* if ((session as Partial<Session["user"]>).passwordVerified) {
+          (token.user as Session["user"]).passwordVerified = (
+            session as Partial<Session["user"]>
+          ).passwordVerified as Date;
+        } */
+
+        Object.entries(session as Partial<Session["user"]>).forEach(
+          ([key, value]) => {
+            if (!!value) {
+              if (
+                hasKey(
+                  token.user as Session["user"],
+                  key as keyof Session["user"]
+                )
+              ) {
+                (token.user as Record<typeof key, typeof value>)[key] = value;
+              }
+            }
+          }
+        );
+      }
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
@@ -64,7 +89,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const isPasswordValid = compareSync(
-          credentials.password + (process.env.HASH_PASSWORD ?? ""),
+          credentials.password,
           user.password
         );
 
@@ -86,9 +111,10 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = (ctx: {
+export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  return session;
 };

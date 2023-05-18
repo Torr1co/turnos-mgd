@@ -2,6 +2,7 @@ import { UserRoles } from "@prisma/client";
 
 export const LINKS = {
   home: "/",
+  me: "/me",
   services: "/services",
   clients: "/admin/clients",
   signin: "/auth/signin",
