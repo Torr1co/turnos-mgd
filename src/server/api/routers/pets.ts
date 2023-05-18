@@ -2,11 +2,7 @@ import { string } from "zod";
 import { PetCreationSchema } from "~/schemas/pet";
 import { UpdatePetSchema } from "~/schemas/updatePet";
 // import { get } from 'react-hook-form';
-import {
-  createTRPCRouter,
-  // publicProcedure,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const petsRouter = createTRPCRouter({
   create: protectedProcedure
