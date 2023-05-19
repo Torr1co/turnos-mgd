@@ -136,7 +136,7 @@ model Deworming {
 }
 
 // ------------------------------            ---------------------------------
-enum Type {
+enum VaccineType {
     A
     B
 }
@@ -146,7 +146,7 @@ model Vaccine {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    type         Type
+    type         VaccineType
     date         DateTime
     lab          String
     healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
