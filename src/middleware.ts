@@ -4,16 +4,16 @@ import {
   type NextRequest,
   NextResponse,
 } from "next/server";
-import { type User, UserRoles } from "@prisma/client";
+import { UserRoles } from "@prisma/client";
 import { LINKS } from "./utils/navConfig";
+import { type Session } from "next-auth";
 
 export async function middleware(request: NextRequest, _next: NextFetchEvent) {
-  const token = await getToken({ req: request });
-
+  const token = (await getToken({ req: request })) as Session | null;
   if (
     token &&
-    (token.user as User).role === UserRoles.CLIENT &&
-    !token.passwordVerified
+    token.user.role === UserRoles.CLIENT &&
+    !token.user.passwordVerified
   ) {
     const url = new URL(LINKS.newPassword, request.url);
     return NextResponse.redirect(url);

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PetSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1),
   birth: z.date(),
   gender: z.string(),
   color: z.string(),
@@ -9,14 +9,14 @@ export const PetSchema = z.object({
   height: z.number(),
   img: z.optional(z.string()),
   letsCross: z.optional(z.boolean()),
-  race: z.string(),
+  race: z.string().min(1),
 });
 
 export const PetCreationSchema = PetSchema.extend({
   owner: z.string(),
 });
 
-export type PetCreationSchema = z.infer<typeof PetCreationSchema>;
+export type PetCreation = z.infer<typeof PetCreationSchema>;
 export type PetSchema = z.infer<typeof PetSchema>;
 
 export const GenderOptions = [

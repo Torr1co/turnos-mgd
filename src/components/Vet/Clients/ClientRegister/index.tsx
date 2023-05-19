@@ -92,7 +92,7 @@ export default function ClientRegister() {
           <p>Hay errores en el formulario</p>
         </div>
       )}
-      <header className="flex items-center justify-between">
+      <header className="sticky top-10 flex items-center justify-between bg-white pb-4 pb-4">
         {steps[currentStep]?.title}
         <nav className="flex items-center justify-between gap-4">
           <Button

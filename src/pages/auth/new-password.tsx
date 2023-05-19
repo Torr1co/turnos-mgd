@@ -3,7 +3,6 @@ import { type NextPage, type GetServerSideProps } from "next";
 import Form from "~/lib/Form";
 import { useForm } from "react-hook-form";
 import Button from "~/lib/Button";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Title from "~/lib/Typo/Title";
 import Box from "~/lib/Box";
@@ -14,26 +13,26 @@ import { UserRoles } from "@prisma/client";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
-// import { LINKS } from "~/utils/navConfig";
-
-const PasswordSchema = z
-  .object({
-    password: z.string().min(8, "Minimo 8 caracteres"),
-    confirm: z.string(),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
-    path: ["confirm"],
-  });
-type Auth = z.infer<typeof PasswordSchema>;
+import { LINKS } from "~/utils/navConfig";
+import { type PasswordUpdate, PasswordUpdateSchema } from "~/schemas/session";
 
 const NewPassword: NextPage = () => {
-  const methods = useForm<Auth>({
-    resolver: zodResolver(PasswordSchema),
+  const methods = useForm<PasswordUpdate>({
+    resolver: zodResolver(PasswordUpdateSchema),
   });
-  const { data: session } = useSession();
-  const { mutate: update } = api.clients.updatePassword.useMutation();
+  const { data: session, update } = useSession();
   const router = useRouter();
+  const { mutate: updatePassword } = api.session.updatePassword.useMutation({
+    onSuccess: async () => {
+      await update({
+        passwordVerified: new Date(),
+      });
+      await router.push("/");
+    },
+    onError: () => {
+      toast.error("Error al cambiar la contraseña");
+    },
+  });
   return (
     <div className="relative mx-auto max-w-xl">
       <div className="absolute -bottom-24 -left-28">
@@ -47,21 +46,9 @@ const NewPassword: NextPage = () => {
           methods={methods}
           onSubmit={({ password }) => {
             if (session) {
-              update(
-                {
-                  password,
-                  id: session.user.id,
-                },
-                {
-                  onSuccess: () => {
-                    session.user.passwordVerified = new Date();
-                    void router.push("/");
-                  },
-                  onError: () => {
-                    toast.error("Error al cambiar la contraseña");
-                  },
-                }
-              );
+              updatePassword({
+                password,
+              });
             }
           }}
           className="flex flex-col gap-6"
@@ -70,14 +57,12 @@ const NewPassword: NextPage = () => {
           <Form.Input
             label="Contraseña"
             type="password"
-            className="test"
             placeholder="Escibe tu contraseña"
             path="password"
           />
           <Form.Input
             label="Confirma tu contraseña"
             type="password"
-            className="test"
             placeholder="Vuelve a escribir tu contraseña"
             path="confirm"
           />
@@ -92,19 +77,25 @@ const NewPassword: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
-  if (
-    session?.user.role !== UserRoles.CLIENT ||
-    session.user.passwordVerified
-  ) {
+  if (session?.user.role !== UserRoles.CLIENT) {
     return {
       redirect: {
         destination: "/",
-        permanent: false,
+        permanent: true,
       },
     };
   }
+  if (session.user.passwordVerified) {
+    return {
+      redirect: {
+        destination: LINKS.me,
+        permanent: true,
+      },
+    };
+  }
+
   return {
-    props: {},
+    props: { session },
   };
 };
 
