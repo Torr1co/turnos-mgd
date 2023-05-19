@@ -52,7 +52,7 @@ model User {
     lostPublications  LostPublication[]
     donations         Donation[]
     servicesIds       String[]           @db.ObjectId
-    servicesHired     Service[]         @relation(fields: [servicesIds], references: [id])
+    servicesHired     Service[]          @relation(fields: [servicesIds], references: [id])
 }
 
 // ------------------------------    RESERVATIONS       ----------------------------
@@ -77,16 +77,18 @@ model Pet {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name   String
-    birth  DateTime
-    gender String
-    img    String?
-    color  String
-    height Float
-    weight Float
-    race   String
+    name         String
+    birth        DateTime
+    gender       String
+    img          String?
+    color        String
+    height       Float
+    weight       Float
+    race         String
+    castrated    Boolean
+    letsCross    Boolean  @default(false)
+    observations String
 
-    letsCross    Boolean    @default(false)
     booking      Booking[]
     healthBook   HealthBook @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
     healthBookId String     @unique @db.ObjectId
@@ -135,12 +137,17 @@ model Deworming {
 }
 
 // ------------------------------            ---------------------------------
+enum VaccineType {
+    A
+    B
+}
+
 model Vaccine {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    lot          String
+    type         VaccineType
     date         DateTime
     lab          String
     healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
@@ -173,33 +180,33 @@ model Dog {
     height        Float?
     weight        Float?
     race          String?
+    castrated     Boolean?
     publication   AdoptPublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
     publicationId String           @unique @db.ObjectId
 }
 
 // ------------------------------     SERVICES       ---------------------------------
 
-
-enum ServiceTypes{
+enum ServiceTypes {
     DOGWATCHER
     DOGWALKER
 }
 
-
 model Service {
-    id           String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    id           String       @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
     name         String
     email        String
     availability Boolean
     zone         String
     hour         String
     photo        String?
-    type ServiceTypes
-    clientsIds   String[] @db.ObjectId
-    clients      User[]   @relation(fields: [clientsIds], references: [id])
+    type         ServiceTypes
+    clientsIds   String[]     @db.ObjectId
+    clients      User[]       @relation(fields: [clientsIds], references: [id])
 }
+
 // ------------------------------     LOST PUBLICATIONS       ---------------------------------
 model LostPublication {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -207,34 +214,33 @@ model LostPublication {
     updatedAt DateTime @updatedAt
     email     String
     lastSeen  DateTime
-    message String
-    photo String?
+    message   String
+    photo     String?
 
     active Boolean @default(true)
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @db.ObjectId
+    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String  @unique @db.ObjectId
 }
+
 // ------------------------------     DONATION CAMPAIGN       ---------------------------------
-model DonationCampaign{
-    id       String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    reason String
-    desc String
-    amountGoal Int 
-    currentAmount Int @default(0)
-    donations Donation[]
+model DonationCampaign {
+    id            String     @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt     DateTime   @default(now())
+    updatedAt     DateTime   @updatedAt
+    reason        String
+    desc          String
+    amountGoal    Int
+    currentAmount Int        @default(0)
+    donations     Donation[]
 }
 
 model Donation {
-    id       String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    amount Int
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String  @db.ObjectId
-    campaign DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-    campaignId String  @db.ObjectId
+    id         String           @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt  DateTime         @default(now())
+    updatedAt  DateTime         @updatedAt
+    amount     Int
+    user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId     String           @db.ObjectId
+    campaign   DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+    campaignId String           @db.ObjectId
 }
-
-

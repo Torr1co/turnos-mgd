@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Form from "~/lib/Form";
 import Title from "~/lib/Typo/Title";
-import { ClientCreationSchema, type ClientCreation } from "~/schemas/user";
+import { ClientCreationSchema, type ClientCreation } from "~/schemas/client";
 import { api } from "~/utils/api";
 import ClientForm from "./ClientForm";
 import BookingForm from "./BookingForm";
@@ -60,12 +60,15 @@ export default function ClientRegister() {
   const hasErrors = Object.keys(methods.formState.errors).length > 0;
   const utils = api.useContext();
 
-  const { mutate: createUser } = api.users.create.useMutation({
+  const { mutate: createUser } = api.clients.create.useMutation({
     onSuccess: async (newUser) => {
-      await utils.users.getAll.cancel();
-
-      const prevData = utils.users.getAll.getData();
-      utils.users.getAll.setData(undefined, (old = []) => [...old, newUser]);
+      await utils.clients.getAll.cancel();
+      const userWithDogs = { ...newUser, dogs: [] };
+      const prevData = utils.clients.getAll.getData();
+      utils.clients.getAll.setData(undefined, (old = []) => [
+        ...old,
+        userWithDogs,
+      ]);
       return { prevData };
     },
   });
@@ -89,7 +92,7 @@ export default function ClientRegister() {
           <p>Hay errores en el formulario</p>
         </div>
       )}
-      <header className="flex items-center justify-between">
+      <header className="sticky top-10 flex items-center justify-between bg-white pb-4 pb-4">
         {steps[currentStep]?.title}
         <nav className="flex items-center justify-between gap-4">
           <Button

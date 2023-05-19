@@ -1,7 +1,7 @@
 import React from "react";
 import Form from "~/lib/Form";
 import { useFormContext } from "react-hook-form";
-import { type ClientCreation } from "~/schemas/user";
+import { type ClientCreation } from "~/schemas/client";
 
 export default function ClientForm() {
   const methods = useFormContext<ClientCreation>();

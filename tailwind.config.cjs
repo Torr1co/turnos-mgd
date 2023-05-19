@@ -1,3 +1,4 @@
+// @ts-nocheck
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
@@ -77,7 +78,41 @@ const config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities(
+        {
+          ".truncate": {
+            overflow: "hidden",
+            display: "-webkit-box",
+            "-webkit-line-clamp": "1",
+            "-webkit-box-orient": "vertical",
+          },
+        },
+        ["responsive", "hover"]
+      );
+
+      const lineClampUtilities = {
+        // Usage: truncate-[3]
+        ...Array.from(Array(10).keys()).reduce((acc, val) => {
+          const lineClamp = val + 1;
+          const className = `.truncate-${lineClamp}`;
+
+          return {
+            ...acc,
+            [className]: {
+              overflow: "hidden",
+              display: "-webkit-box",
+              "-webkit-line-clamp": String(lineClamp),
+              "-webkit-box-orient": "vertical",
+            },
+          };
+        }, {}),
+      };
+
+      addUtilities(lineClampUtilities, ["responsive", "hover"]);
+    },
+  ],
 };
 
 module.exports = config;

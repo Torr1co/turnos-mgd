@@ -3,7 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "~/lib/Button";
 import { signOut, useSession } from "next-auth/react";
-import Navbar, { navConfig } from "./Navbar";
+import Navbar from "./Navbar";
+import NAV_CONFIG, { LINKS } from "~/utils/navConfig";
+import { UserIcon } from "~/lib/icons";
+import Tooltip from "~/lib/Tooltip";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -19,9 +22,21 @@ export default function Header() {
       </Link>
       <Navbar />
       {session ? (
-        <Button onClick={() => void signOut()}>Cerrar sesion</Button>
+        <div className="flex gap-4">
+          <div className="group cursor-pointer">
+            <Tooltip content={session.user.name} className="capitalize">
+              <Link
+                href={LINKS.me}
+                className="relative top-0 transition-all duration-200 group-hover:-top-1"
+              >
+                <UserIcon width={52} height={52} />
+              </Link>
+            </Tooltip>
+          </div>
+          <Button onClick={() => void signOut()}>Cerrar sesion</Button>
+        </div>
       ) : (
-        <Link href={navConfig.signin.href}>
+        <Link href={NAV_CONFIG.signin.href}>
           <Button>Iniciar Sesion</Button>
         </Link>
       )}
