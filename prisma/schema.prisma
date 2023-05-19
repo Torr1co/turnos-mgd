@@ -61,13 +61,14 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    date     DateTime
-    type     InquirieType
-    timeZone TimeZone
-    user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId   String       @db.ObjectId
-    dog      Pet          @relation(fields: [dogId], references: [id], onDelete: Cascade)
-    dogId    String       @db.ObjectId
+    completed Boolean @default(false)
+    date      DateTime
+    type      InquirieType
+    timeZone  TimeZone
+    user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String       @db.ObjectId
+    dog       Pet          @relation(fields: [dogId], references: [id], onDelete: Cascade)
+    dogId     String       @db.ObjectId
 }
 
 // -------------------------------            ---------------------------------
