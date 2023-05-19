@@ -3,6 +3,7 @@ import { useModal } from "~/context/ModalContex";
 import Portal from "./Portal";
 import { cn } from "~/utils/styles";
 import Box from "./Box";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 const Modal = ({
   children,
@@ -39,7 +40,7 @@ const Modal = ({
   return open ? (
     <Portal>
       <div
-        className="animate-fadein fixed inset-0 z-50 m-0 flex h-screen w-screen flex-col items-center justify-center transition duration-300"
+        className="fixed inset-0 z-50 m-0 flex h-screen w-screen animate-fadein flex-col items-center justify-center transition duration-300"
         id="modal-content"
         ref={ref}
         onTransitionEnd={(e) => {
@@ -68,10 +69,22 @@ const Modal = ({
           <Box
             className={cn(
               className,
-              "max-h-[90vh] min-w-[40rem] overflow-auto bg-white stroke-0 shadow-lg"
+              "relative max-h-[90vh] min-w-[40rem] overflow-auto bg-white stroke-0 shadow-lg"
             )}
+            size="px-10 pb-14 rounded-lg"
             style={style}
           >
+            <div className="sticky top-0 z-30 -mx-10 h-10 bg-white">
+              <button
+                className="absolute top-1.5 right-1.5 ml-auto grid h-10 w-10 items-center rounded-full bg-gray-300 p-1"
+                onClick={() => {
+                  handleModal();
+                }}
+              >
+                <XMarkIcon className="text-gray-600" />
+              </button>
+            </div>
+
             {children}
           </Box>
         </div>

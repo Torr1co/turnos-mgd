@@ -21,6 +21,9 @@ export default function Field({ label, Component, ...props }: FieldProps) {
     | Record<string, string>
     | undefined;
 
+  if (props.path === "dog.race") {
+    console.log(formState.errors);
+  }
   return (
     <div
       className={cn(

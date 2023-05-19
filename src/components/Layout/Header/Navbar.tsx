@@ -15,7 +15,7 @@ export default function Navbar() {
     <nav>
       <ul className="flex items-center gap-5 font-medium">
         <NavLink link={NAV_CONFIG.home} />
-        <NavLink link={NAV_CONFIG.services} />
+        {/* <NavLink link={NAV_CONFIG.services} /> */}
         <NavLink link={NAV_CONFIG.admin} />
         <NavLink link={NAV_CONFIG.dogAssistance} />
       </ul>

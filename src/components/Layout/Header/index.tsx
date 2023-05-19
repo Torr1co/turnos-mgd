@@ -23,11 +23,16 @@ export default function Header() {
       <Navbar />
       {session ? (
         <div className="flex gap-4">
-          <Tooltip content={session.user.name} className="capitalize">
-            <Link href={LINKS.me} className="cursor-pointer">
-              <UserIcon width={52} height={52} />
-            </Link>
-          </Tooltip>
+          <div className="group cursor-pointer">
+            <Tooltip content={session.user.name} className="capitalize">
+              <Link
+                href={LINKS.me}
+                className="relative top-0 transition-all duration-200 group-hover:-top-1"
+              >
+                <UserIcon width={52} height={52} />
+              </Link>
+            </Tooltip>
+          </div>
           <Button onClick={() => void signOut()}>Cerrar sesion</Button>
         </div>
       ) : (

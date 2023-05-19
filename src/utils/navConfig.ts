@@ -16,17 +16,17 @@ export const LINKS = {
 
 const NAV_CONFIG = {
   home: { label: "Inicio", href: LINKS.home },
-  services: {
+  /*   services: {
     label: "Servicios",
     href: LINKS.services,
     roles: [UserRoles.CLIENT, null],
-  },
+  }, */
   admin: {
     label: "Administracion",
     href: "/admin",
     roles: [UserRoles.VET],
     children: {
-      services: { label: "Servicios", href: LINKS.services },
+      // services: { label: "Servicios", href: LINKS.services },
       clients: { label: "Clientes", href: LINKS.clients },
     },
   },
@@ -38,7 +38,7 @@ const NAV_CONFIG = {
         label: "Adopciones",
         href: LINKS.adoptions,
       },
-      crossBreeds: {
+      /*       crossBreeds: {
         label: "Cruza",
         href: LINKS.crossBreeds,
         roles: ["Client"],
@@ -50,7 +50,7 @@ const NAV_CONFIG = {
       lostDogs: {
         label: "Busqueda de perros",
         href: LINKS.lostDogs,
-      },
+      }, */
     },
   },
   signin: { label: "Iniciar sesion", href: "/auth/signin" },
