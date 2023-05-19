@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DogSchema } from "./dog";
 
-export const AdoptCreationSchema = z.object({
+export const AdoptPublicationSchema = z.object({
   // id: z.string(),
   email: z.string().email(),
   reason: z.string(),
@@ -9,4 +9,4 @@ export const AdoptCreationSchema = z.object({
   user: z.string(),
 });
 
-export type AdoptCreationSchema = z.infer<typeof AdoptCreationSchema>;
+export type AdoptPublicationSchema = z.infer<typeof AdoptPublicationSchema>;
