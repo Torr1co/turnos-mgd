@@ -27,11 +27,6 @@ export const clientsRouter = createTRPCRouter({
           },
         });
 
-        console.log(
-          "WWWWWWWAKLJSDKLASJDIO AJIOWSEJ KASNDJKLASH DULJAHS DJKLH AS",
-          client
-        );
-
         const dogCreation = await prisma.pet.create({
           data: {
             ...dog,
