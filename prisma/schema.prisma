@@ -86,6 +86,7 @@ model Pet {
     race   String
 
     letsCross    Boolean    @default(false)
+
     booking      Booking[]
     healthBook   HealthBook @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
     healthBookId String     @unique @db.ObjectId
@@ -119,6 +120,7 @@ model Inquirie {
     healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
     healthBookId String      @unique @db.ObjectId
 }
+
 
 // ------------------------------            ---------------------------------
 model Deworming {

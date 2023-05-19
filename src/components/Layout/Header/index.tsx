@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "~/lib/Button";
 import { signOut, useSession } from "next-auth/react";
-import Navbar, { navConfig } from "./Navbar";
+import Navbar from "./Navbar";
+import NAV_CONFIG from "~/utils/navConfig";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -21,7 +22,7 @@ export default function Header() {
       {session ? (
         <Button onClick={() => void signOut()}>Cerrar sesion</Button>
       ) : (
-        <Link href={navConfig.signin.href}>
+        <Link href={NAV_CONFIG.signin.href}>
           <Button>Iniciar Sesion</Button>
         </Link>
       )}

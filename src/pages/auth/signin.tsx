@@ -12,6 +12,7 @@ import { Blob, Blob2 } from "~/lib/icons";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { getServerAuthSession } from "~/server/auth";
+// import { useSession } from "next-auth/react";
 
 const AuthSchema = z.object({
   email: z.string().email("Email invalido"),
@@ -26,6 +27,7 @@ const SignIn: NextPage = () => {
     resolver: zodResolver(AuthSchema),
   });
   const router = useRouter();
+  // const { data: session } = useSession();
   return (
     <div className="relative mx-auto max-w-xl">
       <div className="absolute -bottom-24 -left-28">

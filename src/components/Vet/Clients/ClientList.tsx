@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import { type User } from ".prisma/client";
 
 export default function ClientList({ filter = "" }: { filter?: string }) {
-  const { data: users = [], isLoading } = api.users.getAll.useQuery();
+  const { data: users = [], isLoading } = api.clients.getAll.useQuery();
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
 
   return (

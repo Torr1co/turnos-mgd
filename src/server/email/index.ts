@@ -13,7 +13,7 @@ type EmailAddress =
 //   address: process.env.SENDGRID_SENDER!,
 // } satisfies EmailAddress;
 const SYSTEM_ADDRESS = {
-  name: "Â¡OhMyDog!" as const,
+  name: "¡OhMyDog!" as const,
   address: "test@vet.com",
 } satisfies EmailAddress;
 // const CONFIG = (
@@ -43,10 +43,10 @@ const CONFIG = {
     pass: "secret.1",
   },
 };
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
 const transporter = createTransport(CONFIG);
 
-transporter.verify(function (error, success) {
+transporter.verify(function (error) {
   if (error) {
     console.error(error);
   } else {
@@ -60,7 +60,7 @@ export async function systemEmail(
   to: EmailAddress,
   subject: string,
   text: string,
-  html: string
+  html?: string
 ) {
   const result = await transporter.sendMail({
     from: SYSTEM_ADDRESS,
