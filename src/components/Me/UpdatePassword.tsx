@@ -32,13 +32,13 @@ export default function UpdatePassword() {
         path="prevPassword"
         label="Contraseña anterior"
         type="password"
-        placeholder="Escibe tu contraseña"
+        placeholder="Escribe tu contraseña"
       />
       <div></div>
       <Form.Input
         label="Nueva contraseña"
         type="password"
-        placeholder="Escibe tu nueva contraseña"
+        placeholder="Escribe tu nueva contraseña"
         path="password"
       />
       <Form.Input

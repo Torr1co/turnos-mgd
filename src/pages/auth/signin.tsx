@@ -71,7 +71,7 @@ const SignIn: NextPage = () => {
             label="Contraseña"
             type="password"
             className="test"
-            placeholder="Escibe tu contraseña"
+            placeholder="Escribe tu contraseña"
             path="password"
           />
           <div>
