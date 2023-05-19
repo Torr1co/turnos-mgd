@@ -2,14 +2,16 @@ import { z } from "zod";
 
 export const PetSchema = z.object({
   name: z.string().min(1),
-  birth: z.date(),
+  birth: z.date().max(new Date()),
   gender: z.string(),
   color: z.string(),
   weight: z.number(),
   height: z.number(),
   img: z.optional(z.string()),
-  letsCross: z.optional(z.boolean()),
   race: z.string().min(1),
+  castrated: z.optional(z.boolean()).default(false),
+  letsCross: z.optional(z.boolean()).default(false),
+  observations: z.optional(z.string()).default(""),
 });
 
 export const PetCreationSchema = PetSchema.extend({

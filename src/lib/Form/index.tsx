@@ -1,5 +1,6 @@
 import React, { type FormHTMLAttributes } from "react";
 import { FieldDate, FieldInput, FieldNumber } from "./Input";
+import { FieldTextArea } from "./TextArea";
 import Field, { type FieldPropsInitial } from "./Field";
 import {
   FormProvider,
@@ -7,6 +8,7 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { FieldSelect } from "./Select";
+import FieldToggle from "./Toggle";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
@@ -40,6 +42,7 @@ Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
 Form.Date = FieldDate as FieldConvertion<typeof FieldInput>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
+Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
 
 type FormKey = keyof typeof Form;
 // Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
@@ -47,7 +50,6 @@ type FormKey = keyof typeof Form;
 (Object.keys(Form) as FormKey[]).forEach((key) => {
   if (typeof Form[key] === "function") {
     const KeyComponent = Form[key];
-
     function FormField(props: Parameters<typeof KeyComponent>[0]) {
       return <Field Component={KeyComponent} {...props} />;
     }
@@ -55,5 +57,7 @@ type FormKey = keyof typeof Form;
     Form[key] = FormField;
   }
 });
+
+Form.Toggle = FieldToggle;
 
 export default Form;

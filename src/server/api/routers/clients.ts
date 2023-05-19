@@ -27,6 +27,11 @@ export const clientsRouter = createTRPCRouter({
           },
         });
 
+        console.log(
+          "WWWWWWWAKLJSDKLASJDIO AJIOWSEJ KASNDJKLASH DULJAHS DJKLH AS",
+          client
+        );
+
         const dogCreation = await prisma.pet.create({
           data: {
             ...dog,
@@ -57,14 +62,18 @@ export const clientsRouter = createTRPCRouter({
           },
         });
 
+        try {
+          await systemEmail(
+            userData.email,
+            "Contraseña de Oh My Dog",
+            `tu nueva contraseña es ${randomString}`
+          );
+        } catch (_err) {
+          throw new Error("No se pudo enviar el mensaje al email");
+        }
+
         return client;
       }, {});
-
-      await systemEmail(
-        userData.email,
-        "Contraseña de Oh My Dog",
-        `tu nueva contraseña es ${randomString}`
-      );
 
       return client;
     }),

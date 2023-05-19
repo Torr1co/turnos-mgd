@@ -3,9 +3,9 @@ import { Toaster } from "react-hot-toast";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
-import "~/styles/globals.css";
 import Layout from "~/components/Layout";
 import { ModalProvider } from "~/context/ModalContex";
+import "~/styles/globals.css";
 
 const MyApp = ({
   Component,

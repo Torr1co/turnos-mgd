@@ -29,13 +29,6 @@ const ModalContext = createContext<ModalContextProps>({
   closeModal: () => null,
 });
 
-const hideModal = () => {
-  const content = document.getElementById("modal-content");
-  if (content) {
-    content.style.opacity = "0";
-  }
-};
-
 export const DEFAULT_CONFIG: ModalConfig = {
   className: "",
   message: "",
@@ -51,6 +44,16 @@ const ModalProvider = ({ children }: { children: ReactNode }) => {
   const closeModal = () => {
     setOpen(false);
     setModalConfig(DEFAULT_CONFIG);
+  };
+
+  const hideModal = () => {
+    const content = document.getElementById("modal-content");
+    if (content) {
+      content.style.opacity = "0";
+    }
+    setTimeout(() => {
+      closeModal();
+    }, 300);
   };
 
   const handleModal = (
