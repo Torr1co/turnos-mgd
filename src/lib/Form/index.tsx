@@ -1,5 +1,5 @@
 import React, { type FormHTMLAttributes } from "react";
-import { FieldDate, FieldInput, FieldNumber } from "./Input";
+import { FieldInput, FieldNumber } from "./Input";
 import { FieldTextArea } from "./TextArea";
 import Field, { type FieldPropsInitial } from "./Field";
 import {
@@ -9,6 +9,7 @@ import {
 } from "react-hook-form";
 import { FieldSelect } from "./Select";
 import FieldToggle from "./Toggle";
+import { FieldDatePicker } from "./DatePicker";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
@@ -40,7 +41,7 @@ const Form = <T extends FieldValues>({
 
 Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
-Form.Date = FieldDate as FieldConvertion<typeof FieldInput>;
+Form.Date = FieldDatePicker as FieldConvertion<typeof FieldDatePicker>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
 

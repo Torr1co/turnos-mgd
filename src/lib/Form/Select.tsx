@@ -22,7 +22,7 @@ export default function Select({
 }: SelectProps) {
   return (
     <Listbox value={value} onChange={onChange}>
-      <Listbox.Button className="font-regular rounded-md border border-gray-400 py-3.5 px-5 outline-none focus:ring-1">
+      <Listbox.Button className="font-regular rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1">
         {({ open }) => {
           return (
             <div className="flex items-center justify-between">

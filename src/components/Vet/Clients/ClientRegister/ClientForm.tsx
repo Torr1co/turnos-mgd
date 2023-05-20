@@ -51,7 +51,9 @@ export default function ClientForm() {
         <Form.Date
           path="birth"
           label="Nacimiento"
-          max={dayjs().format("YYYY-MM-DD")}
+          disabledDate={(current) => {
+            return current.isAfter(dayjs().subtract(7, 'y'), "d");
+          }}
         />
       </div>
     </div>

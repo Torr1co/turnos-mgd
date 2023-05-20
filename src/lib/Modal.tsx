@@ -40,7 +40,7 @@ const Modal = ({
   return open ? (
     <Portal>
       <div
-        className="fixed inset-0 z-50 m-0 flex h-screen w-screen animate-fadein flex-col items-center justify-center transition duration-300"
+        className="fixed inset-0 z-50 m-0 flex h-screen w-screen animate-fadein flex-col items-center justify-center font-custom transition duration-300"
         id="modal-content"
         ref={ref}
         onTransitionEnd={(e) => {
@@ -69,7 +69,7 @@ const Modal = ({
           <Box
             className={cn(
               className,
-              "relative max-h-[90vh] min-w-[40rem] overflow-auto bg-white stroke-0 shadow-lg"
+              "relative max-h-[90vh] min-w-[44rem] overflow-auto bg-white stroke-0 text-sm shadow-lg"
             )}
             size="px-10 pb-14 rounded-lg"
             style={style}

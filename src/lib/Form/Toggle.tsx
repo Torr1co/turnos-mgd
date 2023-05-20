@@ -13,7 +13,7 @@ export default function FieldToggle({
       name={path}
       render={({ field }) => (
         <div className="flex items-center gap-4">
-          <label className="text-md font-semibold text-gray-600" htmlFor={path}>
+          <label className="text-base font-medium text-gray-600" htmlFor={path}>
             {label}
           </label>
           <Switch

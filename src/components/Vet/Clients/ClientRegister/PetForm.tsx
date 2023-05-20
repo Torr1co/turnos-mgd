@@ -23,7 +23,9 @@ export default function PetForm() {
         <Form.Date
           path="dog.birth"
           label="Nacimiento (estimado)"
-          max={dayjs().format("YYYY-MM-DD")}
+          disabledDate={(current) => {
+            return current.isAfter(dayjs(), "d");
+          }}
         />
         <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
         <Form.Input
