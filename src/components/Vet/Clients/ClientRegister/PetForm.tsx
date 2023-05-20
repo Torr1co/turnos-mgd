@@ -36,18 +36,44 @@ export default function PetForm() {
             );
           }}
         />
-        <Form.Number path="dog.weight" label="Peso (kg)" />
-        <Form.Number path="dog.height" label="Altura (cm)" />
+        <Form.Number
+          path="dog.weight"
+          label="Peso (kg)"
+          onChange={(e) => {
+            methods.setValue(
+              "dog.weight",
+              +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            );
+          }}
+        />
+        <Form.Number
+          path="dog.height"
+          label="Altura (cm)"
+          min={0}
+          onChange={(e) => {
+            methods.setValue(
+              "dog.height",
+              +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            );
+          }}
+        />
         <Form.Input
           path="dog.color"
           label="Color"
           onChange={(e) => {
             methods.setValue(
-              "dog.name",
+              "dog.color",
               e.target.value.replace(/[^a-zA-Z\s]/g, "")
             );
           }}
         />
+
+        <div className="col-span-2">
+          <Form.TextArea path="dog.observations" label="Observaciones" />
+        </div>
+        <div className="col-span-2">
+          <Form.Toggle path="dog.castrated" label="Se encuentra castrado?" />
+        </div>
         {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
       </div>
     </div>

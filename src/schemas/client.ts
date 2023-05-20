@@ -14,9 +14,9 @@ export const ClientCreationSchema = z.object({
     .min(3)
     .regex(/^[a-zA-Z]+$/),
   email: z.string().email(),
-  // password: z.string().min(8),
   role: z.optional(z.nativeEnum(UserRoles)),
-  telephoneNumber: z.optional(z.string().regex(/^\+{0,1}[0-9]+$/)),
+  telephoneNumber: z.optional(z.string().max(15)),
+  birth: z.date().max(new Date()),
   dog: PetSchema,
   booking: BookingSchema,
 });

@@ -76,7 +76,7 @@ const Modal = ({
           >
             <div className="sticky top-0 z-30 -mx-10 h-10 bg-white">
               <button
-                className="absolute top-1.5 right-1.5 ml-auto grid h-10 w-10 items-center rounded-full bg-gray-300 p-1"
+                className="absolute top-1.5 right-1.5 ml-auto grid h-8 w-8 items-center rounded-full bg-gray-300 p-1"
                 onClick={() => {
                   handleModal();
                 }}
@@ -84,8 +84,7 @@ const Modal = ({
                 <XMarkIcon className="text-gray-600" />
               </button>
             </div>
-
-            {children}
+            <div className="relative">{children}</div>
           </Box>
         </div>
       </div>
