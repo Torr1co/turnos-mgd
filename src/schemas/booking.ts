@@ -2,7 +2,10 @@ import { InquirieType, TimeZone } from "@prisma/client";
 import { z } from "zod";
 
 export const BookingSchema = z.object({
-  date: z.date(),
+  date: z.date(({
+    required_error : "Requerido",
+    invalid_type_error : "Requerido"
+  })),
   type: z.nativeEnum(InquirieType),
   timeZone: z.nativeEnum(TimeZone, {
     errorMap: () => {
