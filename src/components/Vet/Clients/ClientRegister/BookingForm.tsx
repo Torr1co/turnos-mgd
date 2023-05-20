@@ -9,7 +9,9 @@ export default function BookingForm() {
       <Form.Date
         path="booking.date"
         label="Fecha"
-        min={dayjs().format("YYYY-MM-DD")}
+        disabledDate={(current) => {
+          return current.isBefore(dayjs(), "d") || current.day() === 6;
+        }}
       />
       <Form.Select path="booking.type" label="Tipo" values={InquirieOptions} />
       <Form.Select

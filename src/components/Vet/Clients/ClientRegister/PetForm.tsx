@@ -16,14 +16,16 @@ export default function PetForm() {
           onChange={(e) => {
             methods.setValue(
               "dog.name",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
         <Form.Date
           path="dog.birth"
           label="Nacimiento (estimado)"
-          max={dayjs().format("YYYY-MM-DD")}
+          disabledDate={(current) => {
+            return current.isAfter(dayjs(), "d");
+          }}
         />
         <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
         <Form.Input
@@ -32,22 +34,48 @@ export default function PetForm() {
           onChange={(e) => {
             methods.setValue(
               "dog.race",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
-        <Form.Number path="dog.weight" label="Peso (kg)" />
-        <Form.Number path="dog.height" label="Altura (cm)" />
+        <Form.Number
+          path="dog.weight"
+          label="Peso (kg)"
+          onChange={(e) => {
+            methods.setValue(
+              "dog.weight",
+              +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            );
+          }}
+        />
+        <Form.Number
+          path="dog.height"
+          label="Altura (cm)"
+          min={0}
+          onChange={(e) => {
+            methods.setValue(
+              "dog.height",
+              +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            );
+          }}
+        />
         <Form.Input
           path="dog.color"
           label="Color"
           onChange={(e) => {
             methods.setValue(
-              "dog.name",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              "dog.color",
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
+
+        <div className="col-span-2">
+          <Form.TextArea path="dog.observations" label="Observaciones" />
+        </div>
+        <div className="col-span-2">
+          <Form.Toggle path="dog.castrated" label="Se encuentra castrado?" />
+        </div>
         {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
       </div>
     </div>

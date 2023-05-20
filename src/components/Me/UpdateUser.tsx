@@ -27,26 +27,27 @@ export default function UpdateUser() {
     <Form
       className="grid grid-cols-2 gap-6"
       methods={methods}
-      onSubmit={({ telephoneNumber, name }) => {
-        mutate(
-          {
-            name,
-            telephoneNumber: telephoneNumber
-              ? parseInt(telephoneNumber)
-              : undefined,
+      onSubmit={(data) => {
+        mutate(data, {
+          onSuccess: () => {
+            toast.success("Cuenta actualizada");
           },
-          {
-            onSuccess: () => {
-              toast.success("Cuenta actualizada");
-            },
-            onError: () => {
-              toast.error("Error al actualizar la cuenta");
-            },
-          }
-        );
+          onError: () => {
+            toast.error("Error al actualizar la cuenta");
+          },
+        });
       }}
     >
-      <Form.Number path="telephoneNumber" label="Telefono" />
+      <Form.Input
+        path="telephoneNumber"
+        label="Telefono"
+        onChange={(e) => {
+          methods.setValue(
+            "telephoneNumber",
+            e.target.value.replace(/[^\d\s]/g, "")
+          );
+        }}
+      />
       <Form.Input path="name" label="Nombre" />
       <div>
         <Button type="submit" loading={isLoading}>
