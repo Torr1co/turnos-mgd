@@ -35,6 +35,7 @@ export const sessionRouter = createTRPCRouter({
         },
         data: {
           password: hashedPassword,
+          passwordVerified: new Date(),
         },
       });
     }),

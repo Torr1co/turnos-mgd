@@ -16,7 +16,7 @@ export default function PetForm() {
           onChange={(e) => {
             methods.setValue(
               "dog.name",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -34,7 +34,7 @@ export default function PetForm() {
           onChange={(e) => {
             methods.setValue(
               "dog.race",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -65,7 +65,7 @@ export default function PetForm() {
           onChange={(e) => {
             methods.setValue(
               "dog.color",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />

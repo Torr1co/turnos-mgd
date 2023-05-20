@@ -48,10 +48,11 @@ export const petsRouter = createTRPCRouter({
         healthBook: true,
       },
     });
+
     if (!pet) throw new Error("Mascota no encontrada");
     if (
       ctx.session.user.role === UserRoles.CLIENT &&
-      ctx.session.user.id !== input
+      ctx.session.user.id !== pet.owner.id
     )
       throw new Error("No autorizado");
 
