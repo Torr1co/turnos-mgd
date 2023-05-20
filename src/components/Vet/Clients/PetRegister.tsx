@@ -41,7 +41,7 @@ export default function PetRegister({ ownerId }: { ownerId: string }) {
         });
       }}
     >
-      <header className="sticky top-10 flex items-center justify-between bg-white pb-4">
+      <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         <Title as="h4" className="text-gray-500">
           Sobre la <span className="text-primary">Mascota</span>
         </Title>

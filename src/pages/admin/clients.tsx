@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Clients = () => {
   const { handleModal } = useModal();
-  const [clientFilters, setClientFilters] = React.useState("");
+  const [filter, setfilter] = React.useState("");
 
   return (
     <div>
@@ -36,7 +36,7 @@ const Clients = () => {
           <Input
             placeholder="Buscar cliente"
             onChange={(e) => {
-              setClientFilters(e.target.value);
+              setfilter(e.target.value);
             }}
           />
           <Button
@@ -47,7 +47,12 @@ const Clients = () => {
           </Button>
         </div>
       </header>
-      <ClientList filter={clientFilters} />
+      <ClientList
+        filterFn={(user) =>
+          user.email.toLowerCase().includes(filter.toLowerCase()) ||
+          user.name.toLowerCase().includes(filter.toLowerCase())
+        }
+      />
     </div>
   );
 };

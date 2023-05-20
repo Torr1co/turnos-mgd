@@ -21,9 +21,6 @@ export default function Field({ label, Component, ...props }: FieldProps) {
     | Record<string, string>
     | undefined;
 
-  if (props.path === "dog.race") {
-    console.log(formState.errors);
-  }
   return (
     <div
       className={cn(
@@ -33,10 +30,11 @@ export default function Field({ label, Component, ...props }: FieldProps) {
     >
       {label && (
         <label
-          className="text-md font-semibold text-gray-600"
+          className="text-base font-medium text-gray-600"
           htmlFor={props.path}
         >
           {label}
+          {props.options?.required && <span className="text-red-400">*</span>}
         </label>
       )}
       <Component {...props} error={error} />
