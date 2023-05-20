@@ -6,7 +6,9 @@ import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import { ModalProvider } from "~/context/ModalContex";
 import "~/styles/globals.css";
+import dayjs from "dayjs";
 
+dayjs.locale("es");
 const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },

@@ -3,11 +3,21 @@ import React from "react";
 import { type Field } from "./Field";
 import { Controller } from "react-hook-form";
 import dayjs from "dayjs";
+import { RangePickerProps } from "antd/es/date-picker";
 
 const CustomDatePicker = (props: DatePickerProps) => {
   return (
     <DatePicker
       placeholder="seleccionar fecha"
+      className="font-regular rounded-md border py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1"
+      {...props}
+    />
+  );
+};
+
+const CustomRangePicker = (props: RangePickerProps) => {
+  return (
+    <DatePicker.RangePicker
       className="font-regular rounded-md border py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1"
       {...props}
     />
@@ -40,4 +50,7 @@ export const FieldDatePicker = ({
     />
   );
 };
-export default CustomDatePicker;
+export default Object.assign(CustomDatePicker, {
+  ...DatePicker,
+  RangePicker: CustomRangePicker,
+});

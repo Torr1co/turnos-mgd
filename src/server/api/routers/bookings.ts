@@ -48,6 +48,10 @@ export const bookingsRouter = createTRPCRouter({
           gte: new Date(),
         },
       },
+      include: {
+        dog: true,
+        user: true,
+      },
     });
   }),
 });
