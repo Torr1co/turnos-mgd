@@ -16,7 +16,7 @@ export default function ClientForm() {
           onChange={(e) => {
             methods.setValue(
               "name",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -26,7 +26,7 @@ export default function ClientForm() {
           onChange={(e) => {
             methods.setValue(
               "lastname",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -52,7 +52,7 @@ export default function ClientForm() {
           path="birth"
           label="Nacimiento"
           disabledDate={(current) => {
-            return current.isAfter(dayjs().subtract(7, 'y'), "d");
+            return current.isAfter(dayjs().subtract(7, "y"), "d");
           }}
         />
       </div>

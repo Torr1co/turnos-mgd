@@ -2,11 +2,11 @@ import { z } from "zod";
 
 export const PetSchema = z.object({
   name: z.string().min(1),
-  birth: z.date().max(new Date()),
+  birth: z.date(),
   gender: z.string(),
   color: z.string(),
-  weight: z.number(),
-  height: z.number(),
+  weight: z.number().max(150),
+  height: z.number().max(150),
   img: z.optional(z.string()),
   race: z.string().min(1),
   castrated: z.optional(z.boolean()).default(false),

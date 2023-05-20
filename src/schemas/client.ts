@@ -16,7 +16,7 @@ export const ClientCreationSchema = z.object({
   email: z.string().email(),
   role: z.optional(z.nativeEnum(UserRoles)),
   telephoneNumber: z.optional(z.string().max(15)),
-  birth: z.date().max(new Date()),
+  birth: z.date(),
   dog: PetSchema,
   booking: BookingSchema,
 });
