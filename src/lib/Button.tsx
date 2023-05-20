@@ -26,6 +26,7 @@ const Button = ({
   size = "md",
   kind = "primary",
   loading = false,
+  disabled,
   className,
   children,
   ...props
@@ -38,7 +39,7 @@ const Button = ({
         hasKey(SIZES, size) ? SIZES[size] : size,
         hasKey(KINDS, kind) ? KINDS[kind] : kind
       )}
-      disabled={loading}
+      disabled={disabled ?? loading}
       type="button"
       {...props}
     >

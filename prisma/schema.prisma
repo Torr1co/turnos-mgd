@@ -35,7 +35,7 @@ model User {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
+    birth        DateTime?
     email             String             @unique
     dni               String             @unique
     name              String
@@ -85,7 +85,7 @@ model Pet {
     height       Float
     weight       Float
     race         String
-    castrated    Boolean
+    castrated    Boolean 
     letsCross    Boolean  @default(false)
     observations String
 

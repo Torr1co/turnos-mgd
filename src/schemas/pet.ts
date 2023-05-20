@@ -5,11 +5,13 @@ export const PetSchema = z.object({
   birth: z.date(),
   gender: z.string(),
   color: z.string(),
-  weight: z.number(),
-  height: z.number(),
+  weight: z.number().max(150),
+  height: z.number().max(150),
   img: z.optional(z.string()),
-  letsCross: z.optional(z.boolean()),
   race: z.string().min(1),
+  castrated: z.optional(z.boolean()).default(false),
+  letsCross: z.optional(z.boolean()).default(false),
+  observations: z.optional(z.string()).default(""),
 });
 
 export const PetCreationSchema = PetSchema.extend({

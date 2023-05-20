@@ -1,4 +1,5 @@
-import { string } from "zod";
+import { UserRoles } from ".prisma/client";
+import { z } from "zod";
 import { PetCreationSchema } from "~/schemas/pet";
 import { UpdatePetSchema } from "~/schemas/updatePet";
 // import { get } from 'react-hook-form';
@@ -49,7 +50,7 @@ export const petsRouter = createTRPCRouter({
     }),
 
   //Returns all pets of an owner (need the owner id)
-  getAll: protectedProcedure.input(string()).query(async ({ input, ctx }) => {
+  getAll: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
     return ctx.prisma.pet.findMany({
       where: {
         owner: {
@@ -57,5 +58,26 @@ export const petsRouter = createTRPCRouter({
         },
       },
     });
+  }),
+
+  get: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const pet = await ctx.prisma.pet.findFirst({
+      where: {
+        id: input,
+      },
+      include: {
+        owner: true,
+        healthBook: true,
+      },
+    });
+
+    if (!pet) throw new Error("Mascota no encontrada");
+    if (
+      ctx.session.user.role === UserRoles.CLIENT &&
+      ctx.session.user.id !== pet.owner.id
+    )
+      throw new Error("No autorizado");
+
+    return pet;
   }),
 });

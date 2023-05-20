@@ -2,6 +2,7 @@ import React from "react";
 import Form from "~/lib/Form";
 import { useFormContext } from "react-hook-form";
 import { type ClientCreation } from "~/schemas/client";
+import dayjs from "dayjs";
 
 export default function ClientForm() {
   const methods = useFormContext<ClientCreation>();
@@ -15,7 +16,7 @@ export default function ClientForm() {
           onChange={(e) => {
             methods.setValue(
               "name",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -25,7 +26,7 @@ export default function ClientForm() {
           onChange={(e) => {
             methods.setValue(
               "lastname",
-              e.target.value.replace(/[^a-zA-Z\s]/g, "")
+              e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
         />
@@ -36,10 +37,24 @@ export default function ClientForm() {
             methods.setValue("dni", e.target.value.replace(/[^0-9]/g, ""));
           }}
         />
-        <Form.Input path="telephoneNumber" label="Telefono" />
-        <div className="col-span-2">
-          <Form.Input path="email" label="Email" type="email" />
-        </div>
+        <Form.Input
+          path="telephoneNumber"
+          label="Telefono"
+          onChange={(e) => {
+            methods.setValue(
+              "telephoneNumber",
+              e.target.value.replace(/[^\d\s]/g, "")
+            );
+          }}
+        />
+        <Form.Input path="email" label="Email" type="email" />
+        <Form.Date
+          path="birth"
+          label="Nacimiento"
+          disabledDate={(current) => {
+            return current.isAfter(dayjs().subtract(7, "y"), "d");
+          }}
+        />
       </div>
     </div>
   );

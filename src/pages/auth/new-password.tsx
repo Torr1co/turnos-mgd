@@ -57,7 +57,7 @@ const NewPassword: NextPage = () => {
           <Form.Input
             label="Contraseña"
             type="password"
-            placeholder="Escibe tu contraseña"
+            placeholder="Escribe tu contraseña"
             path="password"
           />
           <Form.Input

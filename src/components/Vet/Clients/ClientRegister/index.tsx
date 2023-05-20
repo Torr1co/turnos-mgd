@@ -12,7 +12,7 @@ import Button from "~/lib/Button";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";
-import { InquirieType } from "@prisma/client";
+import { InquirieType, TimeZone } from "@prisma/client";
 
 const steps = [
   {
@@ -48,8 +48,9 @@ export default function ClientRegister() {
     resolver: zodResolver(ClientCreationSchema),
     defaultValues: {
       booking: {
-        date: new Date(),
+        // date: new Date(),
         type: InquirieType.VACCINE,
+        timeZone: TimeZone.MORNING,
       },
       dog: {
         gender: "MALE",
@@ -60,7 +61,7 @@ export default function ClientRegister() {
   const hasErrors = Object.keys(methods.formState.errors).length > 0;
   const utils = api.useContext();
 
-  const { mutate: createUser } = api.clients.create.useMutation({
+  const { mutate: createUser, isLoading } = api.clients.create.useMutation({
     onSuccess: async (newUser) => {
       await utils.clients.getAll.cancel();
       const userWithDogs = { ...newUser, dogs: [] };
@@ -92,7 +93,7 @@ export default function ClientRegister() {
           <p>Hay errores en el formulario</p>
         </div>
       )}
-      <header className="sticky top-10 flex items-center justify-between bg-white pb-4 pb-4">
+      <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         {steps[currentStep]?.title}
         <nav className="flex items-center justify-between gap-4">
           <Button
@@ -104,7 +105,12 @@ export default function ClientRegister() {
             <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
           </Button>
           {currentStep === steps.length - 1 ? (
-            <Button type="submit" size="sm" disabled={hasErrors}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={hasErrors}
+              loading={isLoading}
+            >
               Registrar Cliente
             </Button>
           ) : (
