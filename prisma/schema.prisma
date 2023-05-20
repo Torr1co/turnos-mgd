@@ -61,7 +61,7 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    completed Boolean @default(false)
+    completed Boolean? @default(false)
     date      DateTime
     type      InquirieType
     timeZone  TimeZone
