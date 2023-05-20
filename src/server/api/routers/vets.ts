@@ -6,7 +6,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { bookingsRouter } from "./bookings";
 
 export const vetsRouter = createTRPCRouter({
-  createVet: publicProcedure
+  create: publicProcedure
     .input(VetCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { password, ...userData } = input;
