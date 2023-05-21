@@ -1,8 +1,19 @@
 import { z } from "zod";
 
 export const SessionUpdateSchema = z.object({
-  telephoneNumber: z.string().max(15,"Maximo 15 digitos"),
-  name: z.optional(z.string().min(3,"Minimo 3 caracteres")),
+  telephoneNumber: z.string().max(15, "Maximo 15 digitos"),
+  name: z.optional(
+    z
+      .string()
+      .min(3, "Mas de 3 caracteres")
+      .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras")
+  ),
+  lastname: z.optional(
+    z
+      .string()
+      .min(3, "Mas de 3 caracteres")
+      .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras")
+  ),
 });
 
 export const SessionUpdatePasswordSchema = z.object({

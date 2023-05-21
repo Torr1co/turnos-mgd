@@ -30,7 +30,7 @@ export default function UpdatePassword() {
     >
       <Form.Input
         path="prevPassword"
-        label="Contraseña anterior"
+        label="Contraseña actual"
         type="password"
         placeholder="Escribe tu contraseña"
       />
