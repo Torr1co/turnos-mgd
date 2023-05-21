@@ -32,10 +32,10 @@ enum TimeZone {
 
 //-----------------------------   USER     ---------------------------------
 model User {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    birth        DateTime?
+    id                String             @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt         DateTime           @default(now())
+    updatedAt         DateTime           @updatedAt
+    birth             DateTime?
     email             String             @unique
     dni               String             @unique
     name              String
@@ -61,7 +61,7 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    completed Boolean? @default(false)
+    completed Boolean?     @default(false)
     date      DateTime
     type      InquirieType
     timeZone  TimeZone
@@ -73,10 +73,9 @@ model Booking {
 
 // -------------------------------            ---------------------------------
 model Pet {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
     name         String
     birth        DateTime
     gender       String
@@ -85,7 +84,7 @@ model Pet {
     height       Float
     weight       Float
     race         String
-    castrated    Boolean 
+    castrated    Boolean
     letsCross    Boolean  @default(false)
     observations String
 
@@ -94,6 +93,8 @@ model Pet {
     healthBookId String     @unique @db.ObjectId
     owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId      String     @db.ObjectId
+
+    @@unique([name, ownerId])
 }
 
 //------------------------------- HEALTH BOOK ---------------------------------
