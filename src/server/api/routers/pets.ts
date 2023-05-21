@@ -1,11 +1,9 @@
 import { UserRoles } from ".prisma/client";
 import { z } from "zod";
 import { PetCreationSchema } from "~/schemas/pet";
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { UpdatePetSchema } from "~/schemas/updatePet";
+// import { get } from 'react-hook-form';
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const petsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -34,8 +32,32 @@ export const petsRouter = createTRPCRouter({
       return dog;
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.pet.findMany();
+  //Update pet
+  update: protectedProcedure
+    .input(UpdatePetSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { id, ...data } = input;
+      const pet = await ctx.prisma.pet.update({
+        where: {
+          id: id,
+        },
+        data: {
+          ...data,
+        },
+      });
+
+      return pet;
+    }),
+
+  //Returns all pets of an owner (need the owner id)
+  getAll: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    return ctx.prisma.pet.findMany({
+      where: {
+        owner: {
+          id: input,
+        },
+      },
+    });
   }),
 
   get: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
