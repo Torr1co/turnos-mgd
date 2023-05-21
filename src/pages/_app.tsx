@@ -7,6 +7,7 @@ import Layout from "~/components/Layout";
 import { ModalProvider } from "~/context/ModalContex";
 import "~/styles/globals.css";
 import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 dayjs.locale("es");
 const MyApp = ({

@@ -1,12 +1,10 @@
 import React from "react";
 import { PetItem } from "~/components/Vet/Clients/PetList";
 import Box from "~/lib/Box";
-import { api } from "~/utils/api";
 import Link from "next/link";
+import { type Pet } from ".prisma/client";
 
-export default function PetList() {
-  const { data: pets = [] } = api.pets.getAll.useQuery();
-
+export default function PetList({ pets }: { pets: Pet[] }) {
   return (
     <ul className=" mt-8 grid grid-cols-3 gap-8">
       {pets.length > 0 ? (

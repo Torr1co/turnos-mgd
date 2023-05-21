@@ -13,7 +13,7 @@ export const BookingSchema = z.object({
 
 export const BookingCreationSchema = BookingSchema.extend({
   dog: z.string(),
-  user: z.string(),
+  user: z.optional(z.string()),
 });
 
 export const BookingUpdateSchema = z.object({

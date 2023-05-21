@@ -7,6 +7,7 @@ import {
 
 import { BookingCreationSchema, BookingUpdateSchema } from "~/schemas/booking";
 import dayjs from "dayjs";
+import { UserRoles } from "~/schemas";
 
 export const bookingsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -34,6 +35,11 @@ export const bookingsRouter = createTRPCRouter({
       // Check if the bookings are already taken
       if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
 
+      if (ctx.session.user.role === UserRoles.VET && !user)
+        throw new Error(
+          "No puedes crear una cita para un usuario que no existe!"
+        );
+
       return ctx.prisma.booking.create({
         data: {
           ...booking,
@@ -41,7 +47,12 @@ export const bookingsRouter = createTRPCRouter({
             connect: { id: dog },
           },
           user: {
-            connect: { id: user },
+            connect: {
+              id:
+                ctx.session.user.role === UserRoles.VET
+                  ? user
+                  : ctx.session.user.id,
+            },
           },
         },
       });
