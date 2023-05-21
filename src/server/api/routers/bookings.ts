@@ -16,7 +16,7 @@ export const bookingsRouter = createTRPCRouter({
       const { dog, user, ...booking } = input;
 
       // Check if the date is in the past or a Sunday
-      if (booking.date < new Date())
+      if (dayjs(booking.date).isBefore(dayjs(), "day"))
         throw new Error("No puedes reservar en el pasado!");
       if (booking.date.getDay() === 0)
         throw new Error("No abrimos los domingos!");
@@ -39,6 +39,28 @@ export const bookingsRouter = createTRPCRouter({
         throw new Error(
           "No puedes crear una cita para un usuario que no existe!"
         );
+
+      //Check if the dog is in conditions to get the vaccine
+      const dogData = await ctx.prisma.pet.findUnique({
+        where: {
+          id: dog,
+        },
+      });
+      // if (booking.type === "VACCINEB") {
+      //   //Check if the dog is older than 4 months
+      //   if (dayjs(dogData?.birth).isAfter(dayjs().subtract(4, "month"))) {
+      //     throw new Error("El perro es menor de 4 meses!");
+      //   }
+      //   //Check if the dog has the last vaccine at least 1 year ago
+      //   if (dayjs(dogData?.healthBook).isAfter(dayjs().subtract(1, "year"))) {
+
+      //   }
+      // }
+      if (booking.type === "VACCINEA") {
+        if (dayjs(dogData?.birth).isAfter(dayjs().subtract(4, "month"))) {
+          throw new Error("El perro es menor de 4 meses!");
+        }
+      }
 
       return ctx.prisma.booking.create({
         data: {
