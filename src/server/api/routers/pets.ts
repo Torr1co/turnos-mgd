@@ -1,5 +1,5 @@
 import { UserRoles } from ".prisma/client";
-import { string, z } from "zod";
+import { z } from "zod";
 import { PetCreationSchema } from "~/schemas/pet";
 import { UpdatePetSchema } from "~/schemas/updatePet";
 // import { get } from 'react-hook-form';
@@ -50,7 +50,7 @@ export const petsRouter = createTRPCRouter({
     }),
 
   //Returns all pets of an owner (need the owner id)
-  getAll: protectedProcedure.input(string()).query(async ({ input, ctx }) => {
+  getAll: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
     return ctx.prisma.pet.findMany({
       where: {
         owner: {

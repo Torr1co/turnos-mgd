@@ -62,15 +62,8 @@ export default function ClientRegister() {
   const utils = api.useContext();
 
   const { mutate: createUser, isLoading } = api.clients.create.useMutation({
-    onSuccess: async (newUser) => {
-      await utils.clients.getAll.cancel();
-      const userWithDogs = { ...newUser, dogs: [] };
-      const prevData = utils.clients.getAll.getData();
-      utils.clients.getAll.setData(undefined, (old = []) => [
-        ...old,
-        userWithDogs,
-      ]);
-      return { prevData };
+    onSuccess: async () => {
+      await utils.clients.getAll.invalidate();
     },
   });
 
@@ -84,7 +77,9 @@ export default function ClientRegister() {
             toast.success("Cliente registrado");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (err) => {
+            toast.error(err.message);
+          },
         });
       }}
     >

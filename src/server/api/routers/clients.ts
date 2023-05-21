@@ -1,4 +1,4 @@
-import { UserRoles } from "@prisma/client";
+import { Prisma, UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 
 import { ClientCreationSchema } from "~/schemas/client";
@@ -18,59 +18,70 @@ export const clientsRouter = createTRPCRouter({
 
       // Create the user with the hashed password
 
-      const client = ctx.prisma.$transaction(async (prisma) => {
-        const client = await prisma.user.create({
-          data: {
-            ...userData,
-            role: UserRoles.CLIENT,
-            password: hashedPassword,
-          },
-        });
-
-        const dogCreation = await prisma.pet.create({
-          data: {
-            ...dog,
-            healthBook: {
-              create: {},
+      try {
+        const client = await ctx.prisma.$transaction(async (prisma) => {
+          const client = await prisma.user.create({
+            data: {
+              ...userData,
+              role: UserRoles.CLIENT,
+              password: hashedPassword,
             },
-            owner: {
-              connect: {
-                id: client.id,
+          });
+
+          const dogCreation = await prisma.pet.create({
+            data: {
+              ...dog,
+              healthBook: {
+                create: {},
+              },
+              owner: {
+                connect: {
+                  id: client.id,
+                },
               },
             },
-          },
-        });
+          });
 
-        await prisma.booking.create({
-          data: {
-            ...booking,
-            dog: {
-              connect: {
-                id: dogCreation.id,
+          await prisma.booking.create({
+            data: {
+              ...booking,
+              dog: {
+                connect: {
+                  id: dogCreation.id,
+                },
+              },
+              user: {
+                connect: {
+                  id: client.id,
+                },
               },
             },
-            user: {
-              connect: {
-                id: client.id,
-              },
-            },
-          },
-        });
+          });
 
-        try {
           await systemEmail(
             userData.email,
             "Contraseña de Oh My Dog",
             `tu nueva contraseña es ${randomString}`
           );
-        } catch (_err) {
-          throw new Error("No se pudo enviar el mensaje al email");
-        }
 
+          return client;
+        }, {});
         return client;
-      }, {});
-
-      return client;
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.meta?.target
+        ) {
+          const target = error.meta.target as string;
+          if (target.includes("email")) {
+            throw new Error("El email ya existe");
+          }
+          if (target.includes("dni")) {
+            throw new Error("El DNI ya existe");
+          }
+        }
+        throw new Error("No se pudo crear el cliente");
+      }
     }),
 
   //Returns all Clients and their dogs
