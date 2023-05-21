@@ -17,6 +17,12 @@
 }
 
 @layer utilities {
+  .scale-95 {
+    transform: scale(0.95);
+  }
+  .scale-100 {
+    transform: scale(1);
+  }
   .no-ring {
     @apply ring-0 ring-transparent ring-offset-0 ring-offset-transparent;
   }
