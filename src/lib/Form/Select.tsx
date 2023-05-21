@@ -1,4 +1,4 @@
-import { Listbox } from "@headlessui/react";
+import { Listbox, Transition } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { Controller } from "react-hook-form";
@@ -47,17 +47,26 @@ export default function Select({
         }}
       </Listbox.Button>
       <div className="relative">
-        <Listbox.Options className="absolute w-max min-w-[16rem] divide-y divide-gray-100 rounded-md border bg-white py-2 text-gray-600 shadow-xl">
-          {values.map((option, i) => (
-            <Listbox.Option
-              key={i}
-              value={option.value}
-              className="cursor-pointer py-2 px-5 hover:bg-gray-100"
-            >
-              {option.label}
-            </Listbox.Option>
-          ))}
-        </Listbox.Options>
+        <Transition
+          enter="transition ease-out duration-200"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Listbox.Options className="absolute w-max min-w-[16rem] divide-y divide-gray-100 rounded-md border bg-white py-2 text-gray-600 shadow-xl">
+            {values.map((option, i) => (
+              <Listbox.Option
+                key={i}
+                value={option.value}
+                className="cursor-pointer py-2 px-5 hover:bg-gray-100"
+              >
+                {option.label}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
+        </Transition>
       </div>
     </Listbox>
   );
@@ -71,7 +80,9 @@ export function FieldSelect({ path, ...props }: FieldSelectProps) {
   return (
     <Controller
       name={path}
-      render={({ field }) => <Select {...props} {...field} />}
+      render={({ field: { ref, ...field } }) => (
+        <Select {...props} {...field} />
+      )}
     />
   );
 }
