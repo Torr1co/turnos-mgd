@@ -2,34 +2,44 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { AdoptCreationSchema } from "~/schemas/adoptPublication";
+import { AdoptUpdateSchema } from "~/schemas/adoptPublication";
 import toast from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";
 import Form from "~/lib/Form";
 import { useModal } from "~/context/ModalContex";
 import AdoptPublicationCreationForm from "./AdoptPublicationCreationForm";
-import { useSession } from "next-auth/react";
+import { type AdoptPublication, type Dog } from "@prisma/client";
 
-export default function AdoptPublicationCreation() {
+export default function Adopt({
+  adoption,
+}: {
+  adoption: AdoptPublication & { dog: Dog };
+}) {
   const { handleModal } = useModal();
-  const { data: session } = useSession();
   const utils = api.useContext();
   const { mutate: createPublication, isLoading } =
-    api.adoptPublications.create.useMutation({
+    api.adoptPublications.update.useMutation({
       onSuccess: async () => {
         await utils.adoptPublications.getAll.invalidate();
       },
     });
-  const methods = useForm<AdoptCreationSchema>({
-    resolver: zodResolver(AdoptCreationSchema),
+  const methods = useForm<AdoptUpdateSchema>({
+    resolver: zodResolver(AdoptUpdateSchema),
     defaultValues: {
+      id: adoption.id,
+      email: adoption.email,
+      reason: adoption.reason,
+      info: adoption.info ? adoption.info : undefined,
       dog: {
-        gender: "MALE",
-        height: 0,
-        weight: 0,
+        name: adoption.dog.name ? adoption.dog.name : undefined,
+        birth: adoption.dog.birth ? adoption.dog.birth : undefined,
+        race: adoption.dog.race ? adoption.dog.race : undefined,
+        gender: adoption.dog.gender ? adoption.dog.gender : undefined,
+        height: adoption.dog.height ? adoption.dog.height : undefined,
+        weight: adoption.dog.weight ? adoption.dog.weight : undefined,
+        color: adoption.dog.color ? adoption.dog.color : undefined,
       },
-      email: session?.user.email,
     },
   });
 

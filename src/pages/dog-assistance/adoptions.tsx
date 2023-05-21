@@ -8,6 +8,7 @@ import AdoptList from "~/components/AdoptPublications.tsx/AdoptList";
 import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPublicationCreation";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
+// import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -18,9 +19,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Adoptions = () => {
   const { handleModal } = useModal();
-  const [mine, setMine] = useState(true);
   const { data: adoptions = [] } = api.adoptPublications.getAll.useQuery();
   const { data: session } = useSession();
+  const [mine, setMine] = useState(!!session);
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
@@ -32,9 +33,20 @@ const Adoptions = () => {
               kind={mine ? Button.KINDS.primary : Button.KINDS.gray}
               onClick={() => setMine((prev) => !prev)}
             >
-              Mis publicaciones
+              {mine ? "Mis" : "Otras"} publicaciones
             </Button>
           )}
+          {/*   <Switch
+            className={`${
+              mine ? "bg-primary" : "bg-gray-200"
+            } relative inline-flex h-6 w-11 items-center rounded-full`}
+          >
+            <span
+              className={`${
+                mine ? "translate-x-6" : "translate-x-1"
+              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+            />
+          </Switch> */}
           {session && (
             <Button
               kind={Button.KINDS.gray}
@@ -46,7 +58,14 @@ const Adoptions = () => {
           )}
         </div>
       </header>
-      <AdoptList adoptions={adoptions} />
+      <AdoptList
+        mine={mine}
+        adoptions={adoptions.filter((adoption) =>
+          mine
+            ? adoption.userId === session?.user.id
+            : adoption.userId !== session?.user.id
+        )}
+      />
     </div>
   );
 };

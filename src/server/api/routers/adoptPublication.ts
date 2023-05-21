@@ -1,10 +1,17 @@
-import { string, z } from "zod";
-import { AdoptPublicationSchema } from "~/schemas/adoptPublication";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { string } from "zod";
+import {
+  AdoptCreationSchema,
+  AdoptUpdateSchema,
+} from "~/schemas/adoptPublication";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const adoptPublicationRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(AdoptPublicationSchema)
+    .input(AdoptCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { dog } = input;
       const adoptPublication = await ctx.prisma.adoptPublication.create({
@@ -27,24 +34,20 @@ export const adoptPublicationRouter = createTRPCRouter({
 
   //Update reason and telephone number
   update: protectedProcedure
-    .input(
-      z.object({
-        id: string(),
-        telephoneNumber: string(),
-        reason: string(),
-      })
-    )
+    .input(AdoptUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      const { id, reason, telephoneNumber } = input;
+      const { id, ...rest } = input;
+      const { dog, ...adoption } = rest;
+
       const adoptPublication = await ctx.prisma.adoptPublication.update({
         where: {
           id,
         },
         data: {
-          reason,
-          user: {
+          ...adoption,
+          dog: {
             update: {
-              telephoneNumber,
+              ...dog,
             },
           },
         },
@@ -53,10 +56,13 @@ export const adoptPublicationRouter = createTRPCRouter({
     }),
 
   //Returns all the adopt publications that are active and not mine
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const adoptPublications = await ctx.prisma.adoptPublication.findMany({
       where: {
         active: true,
+      },
+      include: {
+        dog: true,
       },
     });
     return adoptPublications;

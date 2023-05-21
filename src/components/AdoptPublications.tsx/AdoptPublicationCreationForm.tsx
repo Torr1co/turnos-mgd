@@ -2,11 +2,11 @@ import dayjs from "dayjs";
 import React from "react";
 import Form from "~/lib/Form";
 import { useFormContext } from "react-hook-form";
-import { type AdoptPublication } from "~/schemas/adoptPublication";
+import { type AdoptCreationSchema } from "~/schemas/adoptPublication";
 import { GenderOptions } from "~/schemas/pet";
 
 export default function AdoptPublicationCreationForm() {
-  const methods = useFormContext<AdoptPublication>();
+  const methods = useFormContext<AdoptCreationSchema>();
   return (
     <div className="grid grid-cols-2 gap-6">
       <div className="col-span-2 flex flex-col gap-6">

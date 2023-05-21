@@ -164,7 +164,8 @@ model AdoptPublication {
     info      String?
     active    Boolean  @default(true)
     reason    String
-    dog       Dog?
+    dog       Dog     @relation(fields: [dogId], references: [id], onDelete: Cascade)
+    dogId     String  @unique @db.ObjectId
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String   @unique @db.ObjectId
 }
@@ -182,8 +183,7 @@ model Dog {
     weight        Float?
     race          String?
     castrated     Boolean?
-    publication   AdoptPublication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
-    publicationId String           @unique @db.ObjectId
+    adoption      AdoptPublication?
 }
 
 // ------------------------------     SERVICES       ---------------------------------
