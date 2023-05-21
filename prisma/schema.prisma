@@ -64,6 +64,7 @@ model Booking {
     completed Boolean?     @default(false)
     date      DateTime
     type      InquirieType
+    vaccine   VaccineType?
     timeZone  TimeZone
     user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String       @db.ObjectId
