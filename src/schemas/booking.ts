@@ -2,7 +2,10 @@ import { InquirieType, TimeZone } from "@prisma/client";
 import { z } from "zod";
 
 export const BookingSchema = z.object({
-  date: z.date(),
+  date: z.date(({
+    required_error : "Requerido",
+    invalid_type_error : "Requerido"
+  })),
   type: z.nativeEnum(InquirieType),
   timeZone: z.nativeEnum(TimeZone, {
     errorMap: () => {
@@ -13,11 +16,22 @@ export const BookingSchema = z.object({
 
 export const BookingCreationSchema = BookingSchema.extend({
   dog: z.string(),
-  user: z.string(),
+  user: z.optional(z.string()),
 });
 
-export type BookingSchema = z.infer<typeof BookingSchema>;
-export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
+export const BookingUpdateSchema = z.object({
+  booking: BookingCreationSchema.omit({
+    user: true,
+    dog: true,
+  }).extend({
+    id: z.string(),
+  }),
+  dog: z.string(),
+});
+
+export type Booking = z.infer<typeof BookingSchema>;
+export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
+export type BookingCreation = z.infer<typeof BookingCreationSchema>;
 
 export const InquirieOptions = [
   {
