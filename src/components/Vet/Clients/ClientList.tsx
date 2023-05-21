@@ -27,59 +27,65 @@ export default function ClientList({
   const filteredUsers = filterFn ? users.filter(filterFn) : users;
   return (
     <ul className="flex flex-col gap-6">
-      {filteredUsers.map((user) => {
-        const isSelected = selectedUser?.id === user.id;
-        return (
-          <li key={user.id}>
-            <Box size="lgX" className="flex flex-col bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Title
-                    as="h3"
-                    className={cn(
-                      isSelected && "text-primary",
-                      "capitalize transition-colors duration-300"
-                    )}
-                  >
-                    {user.name}
-                  </Title>
-                  <Text>{user.email}</Text>
+      {filteredUsers.length === 0 ? (
+        <div>No se encontraron clientes</div>
+      ) : (
+        filteredUsers.map((user) => {
+          const isSelected = selectedUser?.id === user.id;
+          return (
+            <li key={user.id}>
+              <Box size="lgX" className="flex flex-col bg-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Title
+                      as="h3"
+                      className={cn(
+                        isSelected && "text-primary",
+                        "capitalize transition-colors duration-300"
+                      )}
+                    >
+                      {user.name}
+                    </Title>
+                    <Text>{user.email}</Text>
+                  </div>
+                  <div className="flex gap-4">
+                    <Button
+                      className="transition-colos duration-200"
+                      kind={Button.KINDS.gray}
+                      onClick={() =>
+                        handleModal(<PetRegister ownerId={user.id} />)
+                      }
+                    >
+                      Registrar Perro
+                    </Button>
+                    <Button
+                      className="transition-colos duration-200"
+                      kind={
+                        isSelected ? Button.KINDS.primary : Button.KINDS.gray
+                      }
+                      onClick={() => setSelectedUser(isSelected ? null : user)}
+                    >
+                      Ver Perros
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-4">
-                  <Button
-                    className="transition-colos duration-200"
-                    kind={Button.KINDS.gray}
-                    onClick={() =>
-                      handleModal(<PetRegister ownerId={user.id} />)
-                    }
-                  >
-                    Registrar Perro
-                  </Button>
-                  <Button
-                    className="transition-colos duration-200"
-                    kind={isSelected ? Button.KINDS.primary : Button.KINDS.gray}
-                    onClick={() => setSelectedUser(isSelected ? null : user)}
-                  >
-                    Ver Perros
-                  </Button>
-                </div>
-              </div>
-              <Transition
-                show={isSelected}
-                className="overflow-hidden"
-                enter=" transition transition-all duration-700 ease-out"
-                enterFrom="max-h-[0]"
-                enterTo="max-h-72"
-                leave="transition transition-all duration-500 ease-out"
-                leaveFrom="max-h-72"
-                leaveTo="max-h-0"
-              >
-                <PetList pets={user.dogs} />
-              </Transition>
-            </Box>
-          </li>
-        );
-      })}
+                <Transition
+                  show={isSelected}
+                  className="overflow-hidden"
+                  enter=" transition transition-all duration-700 ease-out"
+                  enterFrom="max-h-[0]"
+                  enterTo="max-h-72"
+                  leave="transition transition-all duration-500 ease-out"
+                  leaveFrom="max-h-72"
+                  leaveTo="max-h-0"
+                >
+                  <PetList pets={user.dogs} />
+                </Transition>
+              </Box>
+            </li>
+          );
+        })
+      )}
     </ul>
   );
 }

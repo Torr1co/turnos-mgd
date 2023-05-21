@@ -63,6 +63,7 @@ const SignIn: NextPage = () => {
           <Title>Bienvenido de vuelta!</Title>
           <Form.Input
             label="Email"
+            type="email"
             className="bg"
             path="email"
             placeholder="usuario@email.com"
