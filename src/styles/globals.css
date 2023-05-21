@@ -4,6 +4,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (max-width: 1250px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 @layer utilities {
   .no-ring {
     @apply ring-0 ring-transparent ring-offset-0 ring-offset-transparent;
