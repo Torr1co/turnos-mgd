@@ -6,7 +6,7 @@ export const adoptPublicationRouter = createTRPCRouter({
   create: protectedProcedure
     .input(AdoptPublicationSchema)
     .mutation(async ({ input, ctx }) => {
-      const { dog, user } = input;
+      const { dog } = input;
       const adoptPublication = await ctx.prisma.adoptPublication.create({
         data: {
           ...input,
@@ -17,7 +17,7 @@ export const adoptPublicationRouter = createTRPCRouter({
           },
           user: {
             connect: {
-              id: user,
+              id: ctx.session.user.id,
             },
           },
         },
@@ -53,14 +53,10 @@ export const adoptPublicationRouter = createTRPCRouter({
     }),
 
   //Returns all the adopt publications that are active and not mine
-  getAll: protectedProcedure.input(string()).query(async ({ ctx, input }) => {
-    const id = input;
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const adoptPublications = await ctx.prisma.adoptPublication.findMany({
       where: {
         active: true,
-        id: {
-          not: id,
-        },
       },
     });
     return adoptPublications;
