@@ -50,15 +50,27 @@ export const petsRouter = createTRPCRouter({
     }),
 
   //Returns all pets of an owner (need the owner id)
-  getAll: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
-    return ctx.prisma.pet.findMany({
-      where: {
-        owner: {
-          id: input,
+  getAll: protectedProcedure
+    .input(z.optional(z.string()))
+    .query(async ({ input, ctx }) => {
+      if (ctx.session.user.role === UserRoles.CLIENT && !input) {
+        return ctx.prisma.pet.findMany({
+          where: {
+            owner: {
+              id: ctx.session.user.id,
+            },
+          },
+        });
+      }
+
+      return ctx.prisma.pet.findMany({
+        where: {
+          owner: {
+            id: input,
+          },
         },
-      },
-    });
-  }),
+      });
+    }),
 
   get: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
     const pet = await ctx.prisma.pet.findFirst({

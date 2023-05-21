@@ -2,8 +2,8 @@ import React from "react";
 import { UserRoles } from "@prisma/client";
 import { type GetServerSideProps, type NextPage } from "next";
 import { useSession } from "next-auth/react";
-import ClientHome from "~/components/Home/ClientHome";
 import UnregisteredHome from "~/components/Home/UnregisteredHome";
+import ClientHome from "~/components/Home/ClientHome";
 import VetHome from "~/components/Home/VetHome";
 import { getServerAuthSession } from "~/server/auth";
 

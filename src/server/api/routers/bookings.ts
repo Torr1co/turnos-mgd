@@ -1,11 +1,12 @@
 import {
+  clientProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { BookingCreationSchema } from "~/schemas/booking";
-// import { UpdateBookingSchema } from "~/schemas/updateBooking";
+import { BookingCreationSchema, BookingUpdateSchema } from "~/schemas/booking";
+import dayjs from "dayjs";
 
 export const bookingsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -57,44 +58,55 @@ export const bookingsRouter = createTRPCRouter({
           equals: false,
         },
       },
+      include: {
+        dog: true,
+        user: true,
+      },
     });
   }),
 
   // //Update a booking
-  // update: protectedProcedure
-  //   .input(UpdateBookingSchema)
-  //   .mutation(async ({ input, ctx }) => {
-  //     const { id, ...booking } = input;
+  update: clientProcedure
+    .input(BookingUpdateSchema)
+    .mutation(async ({ input, ctx }) => {
+      const {
+        dog,
+        booking: { id, ...booking },
+      } = input;
+      if (dayjs(booking.date).isBefore(dayjs(), "day"))
+        throw new Error("No puedes reservar en el pasado!");
 
-  //     // Check if the date is in the past or a Sunday
-  //     if (booking.booking.date < new Date())
-  //       throw new Error("No puedes reservar en el pasado!");
-  //     if (booking.booking.date.getDay() === 0)
-  //       throw new Error("No abrimos los domingos!");
+      if (booking.date.getDay() === 0)
+        throw new Error("No abrimos los domingos!");
 
-  //     const dayBookings = await ctx.prisma.booking.findMany({
-  //       where: {
-  //         date: {
-  //           equals: booking.booking.date,
-  //         },
-  //         timeZone: {
-  //           equals: booking.booking.timeZone,
-  //         },
-  //       },
-  //     });
+      // TODO: here should check if the dog has specific inquiry type and another checks
 
-  //     // Check if the bookings are already taken
-  //     if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
+      const dayBookings = await ctx.prisma.booking.findMany({
+        where: {
+          date: {
+            equals: booking.date,
+          },
+          timeZone: {
+            equals: booking.timeZone,
+          },
+        },
+      });
 
-  //     return ctx.prisma.booking.update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         ...booking.booking,
-  //       },
-  //     });
-  //   }),
+      // Check if the bookings are already taken
+      if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
+
+      return ctx.prisma.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          ...booking,
+          dog: {
+            connect: { id: dog },
+          },
+        },
+      });
+    }),
 
   //Returns today's bookings
   getToday: publicProcedure.query(({ ctx }) => {

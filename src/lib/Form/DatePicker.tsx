@@ -3,7 +3,7 @@ import React from "react";
 import { type Field } from "./Field";
 import { Controller } from "react-hook-form";
 import dayjs from "dayjs";
-import { RangePickerProps } from "antd/es/date-picker";
+import { type RangePickerProps } from "antd/es/date-picker";
 
 const CustomDatePicker = (props: DatePickerProps) => {
   return (

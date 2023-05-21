@@ -1,7 +1,7 @@
 import React from "react";
 import CustomDatePicker from "~/lib/Form/DatePicker";
 import Title from "~/lib/Typo/Title";
-import BookingList from "./BookingList";
+// import BookingList from "./ClientHome/BookingList";
 
 export default function VetHome() {
   return (
@@ -18,7 +18,7 @@ export default function VetHome() {
           <CustomDatePicker.RangePicker />
         </div>
       </header>
-      <BookingList />
+      {/* <BookingList /> */}
       {/* <ClientList
         filterFn={(user) =>
           user.email.toLowerCase().includes(filter.toLowerCase()) ||

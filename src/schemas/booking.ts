@@ -16,8 +16,19 @@ export const BookingCreationSchema = BookingSchema.extend({
   user: z.string(),
 });
 
-export type BookingSchema = z.infer<typeof BookingSchema>;
-export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
+export const BookingUpdateSchema = z.object({
+  booking: BookingCreationSchema.omit({
+    user: true,
+    dog: true,
+  }).extend({
+    id: z.string(),
+  }),
+  dog: z.string(),
+});
+
+export type Booking = z.infer<typeof BookingSchema>;
+export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
+export type BookingCreation = z.infer<typeof BookingCreationSchema>;
 
 export const InquirieOptions = [
   {
