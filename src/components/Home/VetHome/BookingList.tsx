@@ -9,6 +9,7 @@ import { BookingIcon } from "~/lib/icons";
 import dayjs from "dayjs";
 import Tooltip from "~/lib/Tooltip";
 import { InquirieOptions } from "~/schemas/booking";
+import { InquirieType } from "~/schemas";
 
 export default function VetBookingList({
   bookings,
@@ -48,6 +49,9 @@ export default function VetBookingList({
                           (type) => type.value === booking.type
                         )?.label
                       }
+                      {booking.type === InquirieType.VACCINE && (
+                        <span>({booking.vaccine})</span>
+                      )}
                     </Title>
                     <Text>
                       Dueño:{" "}

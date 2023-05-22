@@ -6,7 +6,7 @@ export default function Tooltip({ className, ...props }: TippyProps) {
   return (
     <Tippy
       className={cn(
-        "animate-fadein rounded-md bg-white py-2 px-4 shadow-lg",
+        "rounded-md bg-white py-2 px-4 shadow-lg transition-all duration-300",
         className
       )}
       delay={[100, 300]}

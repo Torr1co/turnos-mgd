@@ -31,7 +31,13 @@ export default function MyBookings() {
                   start: start?.toDate(),
                   end: end?.toDate(),
                 }));
+                return;
               }
+              setFilters((prev) => ({
+                ...prev,
+                start: undefined,
+                end: undefined,
+              }));
             }}
           />
           <Button

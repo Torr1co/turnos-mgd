@@ -43,6 +43,17 @@ export type Booking = z.infer<typeof BookingSchema>;
 export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
 export type BookingCreation = z.infer<typeof BookingCreationSchema>;
 
+export const VaccineOptions = [
+  {
+    value: VaccineType.A,
+    label: "Tipo A",
+  },
+  {
+    value: VaccineType.B,
+    label: "Tipo B",
+  },
+] as const;
+
 export const InquirieOptions = [
   {
     value: InquirieType.VACCINE,
