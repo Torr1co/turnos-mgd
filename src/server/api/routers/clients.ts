@@ -1,10 +1,9 @@
 import { Prisma, UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 
-import { ClientCreationSchema } from "~/schemas/client";
+import { ClientCreationSchema, UpdateClientSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { systemEmail } from "~/server/email";
-import { UpdateClientSchema } from "~/schemas/updateClient";
 
 export const clientsRouter = createTRPCRouter({
   create: publicProcedure

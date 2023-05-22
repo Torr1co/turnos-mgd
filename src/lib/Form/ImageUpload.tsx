@@ -44,15 +44,15 @@ const ImageUploader = ({
             uploadImage(file, (url) => {
               onChange?.(url);
               setFileName(file.name);
+              setUploading(false);
             });
             setFileName;
           } catch (err) {
             if (err instanceof Error) {
               toast.error(err.message);
             }
+            setUploading(false);
           }
-
-          setUploading(false);
         }}
       />
       <div

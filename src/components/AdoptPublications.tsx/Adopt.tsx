@@ -8,8 +8,9 @@ import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";
 import Form from "~/lib/Form";
 import { useModal } from "~/context/ModalContex";
-import AdoptPublicationCreationForm from "./AdoptPublicationCreationForm";
 import { type AdoptPublication, type Dog } from "@prisma/client";
+import AdoptForm from "./AdoptForm";
+import { AdoptItem } from "./AdoptList";
 
 export default function Adopt({
   adoption,
@@ -26,21 +27,6 @@ export default function Adopt({
     });
   const methods = useForm<AdoptUpdateSchema>({
     resolver: zodResolver(AdoptUpdateSchema),
-    defaultValues: {
-      id: adoption.id,
-      email: adoption.email,
-      reason: adoption.reason,
-      info: adoption.info ? adoption.info : undefined,
-      dog: {
-        name: adoption.dog.name ? adoption.dog.name : undefined,
-        birth: adoption.dog.birth ? adoption.dog.birth : undefined,
-        race: adoption.dog.race ? adoption.dog.race : undefined,
-        gender: adoption.dog.gender ? adoption.dog.gender : undefined,
-        height: adoption.dog.height ? adoption.dog.height : undefined,
-        weight: adoption.dog.weight ? adoption.dog.weight : undefined,
-        color: adoption.dog.color ? adoption.dog.color : undefined,
-      },
-    },
   });
 
   return (
@@ -59,15 +45,22 @@ export default function Adopt({
     >
       <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         <Title as="h4" className="text-gray-500">
-          Publicacion de <span className="text-primary">Adopcion</span>
+          Adopta una <span className="text-primary">Mascota</span>
         </Title>
         <div className="pl-auto">
           <Button type="submit" loading={isLoading} size="sm">
-            Publicar
+            Adoptar
           </Button>
         </div>
       </header>
-      <AdoptPublicationCreationForm />
+      <div className="flex gap-12">
+        <div className="max-w-sm">
+          <AdoptItem adoption={adoption} />
+        </div>
+        <div className="">
+          <AdoptForm />
+        </div>
+      </div>
     </Form>
   );
 }

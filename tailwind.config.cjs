@@ -35,6 +35,7 @@ const config = {
         lg: "1.5rem",
         md: "1.25rem",
         base: "1.125rem",
+        sm: "1rem",
         DEFAULT: "1.125rem",
       },
       borderRadius: {

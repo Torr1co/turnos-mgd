@@ -2,27 +2,35 @@ import { Listbox, Transition } from "@headlessui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { Controller } from "react-hook-form";
+import { cn } from "~/utils/styles";
 import { type FC } from "~/utils/types";
 
-type SelectOption = {
-  value: string | number;
+type SelectOption<T> = {
+  value: T;
   label: string;
 };
 
-interface SelectProps extends FC {
-  values: SelectOption[];
-  value: SelectOption["value"];
-  onChange: (value: SelectOption["value"]) => void;
+interface SelectProps<T> extends FC {
+  values: SelectOption<T>[];
+  value: SelectOption<T>["value"];
+  onChange: (value: SelectOption<T>["value"]) => void;
+  kind?: string;
 }
-export default function Select({
+export default function Select<T extends string | number | undefined | null>({
   values,
   children,
   value,
   onChange,
-}: SelectProps) {
+  kind,
+}: SelectProps<T>) {
   return (
     <Listbox value={value} onChange={onChange}>
-      <Listbox.Button className="font-regular rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1">
+      <Listbox.Button
+        className={cn(
+          "font-regular h-full w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1",
+          kind
+        )}
+      >
         {({ open }) => {
           return (
             <div className="flex items-center justify-between">
@@ -72,11 +80,12 @@ export default function Select({
   );
 }
 
-interface FieldSelectProps extends Omit<SelectProps, "value" | "onChange"> {
+interface FieldSelectProps<T>
+  extends Omit<SelectProps<T>, "value" | "onChange"> {
   path: string;
 }
 
-export function FieldSelect({ path, ...props }: FieldSelectProps) {
+export function FieldSelect<T>({ path, ...props }: FieldSelectProps<T>) {
   return (
     <Controller
       name={path}

@@ -68,7 +68,7 @@ export default function PetForm() {
         }}
       />
 
-      <Form.ImageUploader path="dog.image" label="Imagen" />
+      <Form.ImageUploader path="dog.img" label="Imagen" />
 
       <div className="col-span-2">
         <Form.TextArea path="dog.observations" label="Observaciones" />
