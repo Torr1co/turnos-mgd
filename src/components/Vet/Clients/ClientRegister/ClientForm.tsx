@@ -52,7 +52,7 @@ export default function ClientForm() {
           path="birth"
           label="Nacimiento"
           disabledDate={(current) => {
-            return current.isAfter(dayjs().subtract(7, "y"), "d");
+            return current.isAfter(dayjs().subtract(18, "y"), "d");
           }}
         />
       </div>

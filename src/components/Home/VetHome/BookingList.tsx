@@ -22,7 +22,7 @@ export default function VetBookingList({
 }) {
   const [visible, setVisible] = useState("");
   return (
-    <ul className="flex flex-col gap-6">
+    <ul className="grid grid-cols-2 gap-6">
       {bookings.length === 0 ? (
         <div>No se encontraron turnos</div>
       ) : (

@@ -1,12 +1,12 @@
 import React from "react";
-import MyPets from "./MyPets";
-import MyBookings from "./MyBookings";
+import ClientPets from "./ClientPets";
+import ClientBookings from "./ClientBookings";
 
 export default function ClientHome() {
   return (
     <div className="flex flex-col gap-20">
-      <MyBookings />
-      <MyPets />
+      <ClientPets />
+      <ClientBookings />
     </div>
   );
 }

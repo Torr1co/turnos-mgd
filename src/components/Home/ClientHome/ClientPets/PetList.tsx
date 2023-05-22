@@ -13,7 +13,7 @@ export default function PetList({ pets }: { pets: Pet[] }) {
             <Link href={"/pets/" + pet.id}>
               <Box
                 size="p-10 rounded-lg"
-                className="transition-colors duration-300 group-hover:border-primary"
+                className="bg-white transition-colors duration-300 group-hover:border-primary"
               >
                 <PetItem pet={pet} />
               </Box>

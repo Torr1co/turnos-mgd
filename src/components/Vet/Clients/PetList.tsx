@@ -4,13 +4,25 @@ import { PetIcon } from "~/lib/icons";
 import Title from "~/lib/Typo/Title";
 import Link from "next/link";
 import Text from "~/lib/Typo/Text";
+import Image from "next/image";
 
 export function PetItem({ pet }: { pet: Pet }) {
   return (
     <div className="items group flex gap-10">
-      <div>
-        <PetIcon width="76" height="76" />
-      </div>
+      {pet.img ? (
+        <div className="relative h-[76px] w-[76px]">
+          <Image
+            src={pet.img}
+            alt="pet photo"
+            fill={true}
+            className="rounded-full object-cover"
+          />
+        </div>
+      ) : (
+        <div>
+          <PetIcon width="76" height="76" />
+        </div>
+      )}
       <div>
         <Title
           as="h4"

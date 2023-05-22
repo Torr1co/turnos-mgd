@@ -19,7 +19,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Adoptions = () => {
   const { handleModal } = useModal();
-  const { data: adoptions = [] } = api.adoptPublications.getAll.useQuery();
+  const { data: adoptions = [], isLoading } =
+    api.adoptPublications.getAll.useQuery();
   const { data: session } = useSession();
   const [mine, setMine] = useState(!!session);
   return (
@@ -58,14 +59,18 @@ const Adoptions = () => {
           )}
         </div>
       </header>
-      <AdoptList
-        mine={mine}
-        adoptions={adoptions.filter((adoption) =>
-          mine
-            ? adoption.userId === session?.user.id
-            : adoption.userId !== session?.user.id
-        )}
-      />
+      {isLoading ? (
+        <div>Cargando...</div>
+      ) : (
+        <AdoptList
+          mine={mine}
+          adoptions={adoptions.filter((adoption) =>
+            mine
+              ? adoption.userId === session?.user.id
+              : adoption.userId !== session?.user.id
+          )}
+        />
+      )}
     </div>
   );
 };
