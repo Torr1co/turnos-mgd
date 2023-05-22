@@ -84,7 +84,7 @@ export default function AdoptPublicationCreationForm() {
       />
 
       <div className="col-span-2">
-        <Form.TextArea path="info" label="Informacion del perro" />
+        <Form.TextArea path="info" label="Descripcion del perro" />
       </div>
       <div className="col-span-2">
         <Form.TextArea path="reason" label="Razon de la publicacion" />

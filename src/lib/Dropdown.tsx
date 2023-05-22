@@ -45,7 +45,7 @@ const Dropdown = ({ children, className, label }: FC<DropdownProps>) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 mt-2 w-max divide-y divide-gray-100 rounded-md bg-white px-10 py-8 font-medium text-gray-500 shadow-lg">
+        <Menu.Items className="absolute right-0 mt-4 w-max divide-y divide-gray-100 rounded-md bg-white px-10 py-8 font-medium text-gray-500 shadow-lg">
           {children}
         </Menu.Items>
       </Transition>
