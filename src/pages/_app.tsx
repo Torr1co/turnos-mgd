@@ -8,8 +8,11 @@ import { ModalProvider } from "~/context/ModalContex";
 import "~/styles/globals.css";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
+import relative from "dayjs/plugin/relativeTime";
 
+dayjs.extend(relative);
 dayjs.locale("es");
+
 const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },

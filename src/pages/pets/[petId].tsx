@@ -6,9 +6,18 @@ import { getServerAuthSession } from "~/server/auth";
 // import Input from "~/lib/Form/Input";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import dayjs from "dayjs";
 import Box from "~/lib/Box";
-import { GenderOptions } from "~/schemas/pet";
+import { PetUpdateSchema } from "~/schemas/pet";
+import { useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Form from "~/lib/Form";
+import { toast } from "react-hot-toast";
+import { UserRoles } from ".prisma/client";
+import PetInformation from "~/components/Vet/Clients/PetInformation";
+import PetForm from "~/components/Vet/Clients/ClientRegister/PetForm";
+import Button from "~/lib/Button";
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (typeof ctx.params?.petId !== "string") {
     return {
@@ -33,49 +42,67 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const PetPage = (props: { petId: string }) => {
+const PetPage = ({ petId }: { petId: string }) => {
   const router = useRouter();
-  const { data: pet } = api.pets.get.useQuery(props.petId, {
+  const { data: session } = useSession();
+  const methods = useForm<PetUpdateSchema>({
+    resolver: zodResolver(PetUpdateSchema),
+    defaultValues: {
+      petId,
+    },
+  });
+  const { data: pet } = api.pets.get.useQuery(petId, {
+    onSuccess: (data) => {
+      const { owner, healthBook, img, id, ...dog } = data;
+      console.log(dog);
+      methods.reset({ petId: id, dog });
+    },
     onError: () => {
       void router.push("/404");
     },
   });
-
-  if (!pet) return <></>;
-
+  const utils = api.useContext();
+  const { mutate: updatePet, isLoading } = api.pets.update.useMutation({
+    onSuccess: async () => {
+      await utils.pets.get.invalidate();
+    },
+  });
+  if (!pet || !session) return <></>;
+  const isVet = session.user.role === UserRoles.VET;
   return (
-    <div>
+    <Form
+      methods={methods}
+      onSubmit={(data) => {
+        updatePet(data, {
+          onSuccess: () => {
+            toast.success("Se actualizo correctamente");
+          },
+          onError: () => {
+            toast.error("Ocurrio un error");
+          },
+        });
+      }}
+    >
       <header className="mb-14 flex items-center justify-between">
         <Title>
-          Datos de <span className="capitalize">{pet.name}</span>
+          Datos del <span className="capitalize">Perro</span>
         </Title>
       </header>
       <Box className=" bg-white">
-        <dl className="grid grid-cols-2 gap-6">
-          <dt>Fecha de Nacimiento:</dt>
-          <dd>{dayjs(pet.birth).format("DD/MM/YYYY")}</dd>
-
-          <dt>Genero:</dt>
-          <dd>
-            {GenderOptions.find((gender) => gender.value === pet.gender)?.label}
-          </dd>
-
-          <dt>Raza:</dt>
-          <dd>{pet.race}</dd>
-          <dt>Peso (en kg):</dt>
-          <dd>{pet.weight}</dd>
-          <dt>Altura (en cm):</dt>
-          <dd>{pet.height}</dd>
-          <dt>Color:</dt>
-          <dd>{pet.color}</dd>
-          <dt>Se encuentra castrado?:</dt>
-          <dd>{pet.castrated ? "Si" : "No"}</dd>
-          <dt>Observaciones:</dt>
-          <dd>{pet.observations}</dd>
-        </dl>
-        {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
+        {isVet ? (
+          <div>
+            <PetForm />
+            <Button type="submit" loading={isLoading} className="mt-6">
+              Actualizar
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <PetInformation pet={pet} />
+          </div>
+        )}
       </Box>
-    </div>
+    </Form>
   );
 };
 

@@ -1,13 +1,32 @@
-import { optional, z } from "zod";
+import { z } from "zod";
 
-export const DogSchema = z.object({
-  name: optional(z.string()),
-  age: z.date(),
-  gender: optional(z.string()),
-  color: optional(z.string()),
-  height: optional(z.number()),
-  weight: optional(z.number()),
-  race: optional(z.string()),
-});
+export const DogSchema = z
+  .object({
+    name: z.string().max(20, "Maximo 20 caracteres"),
+    birth: z.date({
+      required_error: "Requerido",
+      invalid_type_error: "Requerido",
+    }),
+    gender: z.string(),
+    color: z.string(),
+    weight: z.optional(
+      z
+        .number({
+          invalid_type_error: "Requerido",
+        })
+        .max(150, "No puede pesar mas de 150")
+    ),
+    height: z.optional(
+      z
+        .number({
+          invalid_type_error: "Requerido",
+        })
+        .max(200, "No puede medir mas de 200")
+    ),
+    img: z.optional(z.string()),
+    race: z.string(),
+    castrated: z.optional(z.boolean()).default(false),
+  })
+  .partial();
 
-export type DogSchema = z.infer<typeof DogSchema>;
+export type Dog = z.infer<typeof DogSchema>;
