@@ -2,7 +2,7 @@ import React from "react";
 import Form from "~/lib/Form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PetCreationSchema, type PetCreation } from "~/schemas/pet";
+import { PetCreationSchema, type PetCreationSchema } from "~/schemas/pet";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
@@ -11,7 +11,7 @@ import Button from "~/lib/Button";
 import { z } from "zod";
 
 export default function PetRegister({ ownerId }: { ownerId: string }) {
-  const methods = useForm<{ dog: PetCreation }>({
+  const methods = useForm<{ dog: PetCreationSchema }>({
     resolver: zodResolver(z.object({ dog: PetCreationSchema })),
     defaultValues: {
       dog: {

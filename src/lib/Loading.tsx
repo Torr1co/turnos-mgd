@@ -1,6 +1,5 @@
 import React from "react";
 import { cn } from "~/utils/styles";
-import { type FC } from "~/utils/types";
 
 const SIZES = {
   xs: "w-1 h-1",
@@ -15,28 +14,33 @@ const Sizes = Object.fromEntries(Object.keys(SIZES).map((s) => [s, s])) as {
   [key in Size]: key;
 };
 
-const Dot = ({ className, size }: FC<{ size: Size }>) => (
+interface LoadingProps {
+  className?: string;
+  kind?: string;
+  size?: Size;
+}
+
+const Dot = ({
+  className,
+  kind = "bg-white",
+  size,
+}: LoadingProps & { size: Size }) => (
   <i
     className={cn(
-      "mx-px inline-block animate-blink rounded-full bg-white",
+      "mx-px inline-block animate-blink rounded-full ",
+      kind,
       className,
       SIZES[size]
     )}
   />
 );
 
-const Loading = ({
-  className = "",
-  size = "md",
-}: {
-  className?: string;
-  size?: Size;
-}) => (
+const Loading = ({ className = "", kind = "", size = "md" }: LoadingProps) => (
   <div className={cn(className, "inline-flex h-full w-full items-center")}>
     <span className="absolute inset-0 flex h-full w-full select-none items-center justify-center">
-      <Dot className={"animation-delay-0 dela"} size={size} />
-      <Dot className={"animation-delay-200"} size={size} />
-      <Dot className={"animation-delay-400"} size={size} />
+      <Dot className={"animation-delay-0 dela"} kind={kind} size={size} />
+      <Dot className={"animation-delay-200"} kind={kind} size={size} />
+      <Dot className={"animation-delay-400"} kind={kind} size={size} />
     </span>
   </div>
 );

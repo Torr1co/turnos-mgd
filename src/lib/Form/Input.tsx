@@ -10,7 +10,7 @@ const KINDS = {
 } as const;
 
 type Ref = HTMLInputElement;
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   kind?: keyof typeof KINDS;
 }

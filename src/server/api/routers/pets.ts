@@ -1,7 +1,6 @@
 import { Prisma, UserRoles } from ".prisma/client";
 import { z } from "zod";
-import { PetCreationSchema } from "~/schemas/pet";
-import { UpdatePetSchema } from "~/schemas/updatePet";
+import { PetCreationSchema, PetUpdateSchema } from "~/schemas/pet";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -46,16 +45,14 @@ export const petsRouter = createTRPCRouter({
 
   //Update pet
   update: protectedProcedure
-    .input(UpdatePetSchema)
+    .input(PetUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      const { id, ...data } = input;
+      const { petId, dog } = input;
       const pet = await ctx.prisma.pet.update({
         where: {
-          id: id,
+          id: petId,
         },
-        data: {
-          ...data,
-        },
+        data: dog,
       });
 
       return pet;
