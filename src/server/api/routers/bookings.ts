@@ -22,25 +22,6 @@ export const bookingsRouter = createTRPCRouter({
       if (booking.date.getDay() === 0)
         throw new Error("No abrimos los domingos!");
 
-      const dayBookings = await ctx.prisma.booking.findMany({
-        where: {
-          date: {
-            equals: booking.date,
-          },
-          timeZone: {
-            equals: booking.timeZone,
-          },
-        },
-      });
-
-      // Check if the bookings are already taken
-      if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
-
-      if (ctx.session.user.role === UserRoles.VET && !user)
-        throw new Error(
-          "No puedes crear una cita para un usuario que no existe!"
-        );
-
       //TODO: Move this to another file
       //Check if the dog is in conditions to get the vaccine
       if (booking.type === "VACCINE") {
@@ -89,6 +70,26 @@ export const bookingsRouter = createTRPCRouter({
         }
       }
 
+      //TODO: Move this to another file
+      const dayBookings = await ctx.prisma.booking.findMany({
+        where: {
+          date: {
+            equals: booking.date,
+          },
+          timeZone: {
+            equals: booking.timeZone,
+          },
+        },
+      });
+
+      // Check if the bookings are already taken
+      if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
+
+      if (ctx.session.user.role === UserRoles.VET && !user)
+        throw new Error(
+          "No puedes crear una cita para un usuario que no existe!"
+        );
+
       return ctx.prisma.booking.create({
         data: {
           ...booking,
@@ -133,9 +134,9 @@ export const bookingsRouter = createTRPCRouter({
         dog,
         booking: { id, ...booking },
       } = input;
+
       if (dayjs(booking.date).isBefore(dayjs(), "day"))
         throw new Error("No puedes reservar en el pasado!");
-
       if (booking.date.getDay() === 0)
         throw new Error("No abrimos los domingos!");
 
