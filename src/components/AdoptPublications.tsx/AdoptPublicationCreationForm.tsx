@@ -1,13 +1,23 @@
 import dayjs from "dayjs";
 import React from "react";
 import Form from "~/lib/Form";
-import { GenderOptions, type PetCreationSchema } from "~/schemas/pet";
 import { useFormContext } from "react-hook-form";
+import { type AdoptCreationSchema } from "~/schemas/adoptPublication";
+import { GenderOptions } from "~/schemas/pet";
 
-export default function PetForm() {
-  const methods = useFormContext<{ dog: PetCreationSchema }>();
+export default function AdoptPublicationCreationForm() {
+  const methods = useFormContext<AdoptCreationSchema>();
   return (
     <div className="grid grid-cols-2 gap-6">
+      <div className="col-span-2 flex flex-col gap-6">
+        <Form.Input
+          path="email"
+          type="email"
+          label="Email de contacto"
+          required
+        />
+        <hr />
+      </div>
       <Form.Input
         path="dog.name"
         label="Nombre"
@@ -25,7 +35,6 @@ export default function PetForm() {
           return current.isAfter(dayjs(), "d");
         }}
       />
-      <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
       <Form.Input
         path="dog.race"
         label="Raza"
@@ -36,13 +45,17 @@ export default function PetForm() {
           );
         }}
       />
+      <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
+
       <Form.Number
         path="dog.weight"
         label="Peso (kg)"
         onChange={(e) => {
           methods.setValue(
             "dog.weight",
-            +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            e.target.value !== ""
+              ? +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+              : undefined
           );
         }}
       />
@@ -53,7 +66,9 @@ export default function PetForm() {
         onChange={(e) => {
           methods.setValue(
             "dog.height",
-            +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+            e.target.value !== ""
+              ? +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+              : undefined
           );
         }}
       />
@@ -68,13 +83,11 @@ export default function PetForm() {
         }}
       />
 
-      <Form.ImageUploader path="dog.image" label="Imagen" />
-
       <div className="col-span-2">
-        <Form.TextArea path="dog.observations" label="Observaciones" />
+        <Form.TextArea path="info" label="Informacion del perro" />
       </div>
       <div className="col-span-2">
-        <Form.Toggle path="dog.castrated" label="Se encuentra castrado?" />
+        <Form.TextArea path="reason" label="Razon de la publicacion" />
       </div>
       {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
     </div>

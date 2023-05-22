@@ -1,7 +1,6 @@
-import { UserRoles } from ".prisma/client";
+import { Prisma, UserRoles } from ".prisma/client";
 import { z } from "zod";
-import { PetCreationSchema } from "~/schemas/pet";
-import { UpdatePetSchema } from "~/schemas/updatePet";
+import { PetCreationSchema, PetUpdateSchema } from "~/schemas/pet";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -13,37 +12,47 @@ export const petsRouter = createTRPCRouter({
 
       const healthBook = await ctx.prisma.healthBook.create({
         data: {
-          //Acá tenemos que crear el healthBook
+          // ...dogData.healthBook,
         },
       });
 
-      const dog = await ctx.prisma.pet.create({
-        data: {
-          ...dogData,
-          healthBook: {
-            connect: { id: healthBook.id },
+      try {
+        const dog = await ctx.prisma.pet.create({
+          data: {
+            ...dogData,
+            healthBook: {
+              connect: { id: healthBook.id },
+            },
+            owner: {
+              connect: { id: owner },
+            },
           },
-          owner: {
-            connect: { id: owner },
-          },
-        },
-      });
-
-      return dog;
+        });
+        return dog;
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.meta?.target
+        ) {
+          const target = error.meta.target as string;
+          if (target.includes("name")) {
+            throw new Error("Ya existe un perro con ese nombre");
+          }
+        }
+        throw new Error("No se pudo crear el perro");
+      }
     }),
 
   //Update pet
   update: protectedProcedure
-    .input(UpdatePetSchema)
+    .input(PetUpdateSchema)
     .mutation(async ({ input, ctx }) => {
-      const { id, ...data } = input;
+      const { petId, dog } = input;
       const pet = await ctx.prisma.pet.update({
         where: {
-          id: id,
+          id: petId,
         },
-        data: {
-          ...data,
-        },
+        data: dog,
       });
 
       return pet;

@@ -1,7 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
+import Title from "~/lib/Typo/Title";
+import { useModal } from "~/context/ModalContex";
+import Button from "~/lib/Button";
+import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
+import AdoptList from "~/components/AdoptPublications.tsx/AdoptList";
+import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPublicationCreation";
+import { type GetServerSideProps } from "next";
+import { getServerAuthSession } from "~/server/auth";
+// import { Switch } from "@headlessui/react";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+  return {
+    props: { session },
+  };
+};
 
 const Adoptions = () => {
-  return <div>adoptions</div>;
+  const { handleModal } = useModal();
+  const { data: adoptions = [] } = api.adoptPublications.getAll.useQuery();
+  const { data: session } = useSession();
+  const [mine, setMine] = useState(!!session);
+  return (
+    <div>
+      <header className="mb-14 flex items-center justify-between">
+        <Title>Perros de adopcion</Title>
+        <div className="flex gap-4">
+          {session && (
+            <Button
+              className="transition-colors duration-300"
+              kind={mine ? Button.KINDS.primary : Button.KINDS.gray}
+              onClick={() => setMine((prev) => !prev)}
+            >
+              {mine ? "Mis" : "Otras"} publicaciones
+            </Button>
+          )}
+          {/*   <Switch
+            className={`${
+              mine ? "bg-primary" : "bg-gray-200"
+            } relative inline-flex h-6 w-11 items-center rounded-full`}
+          >
+            <span
+              className={`${
+                mine ? "translate-x-6" : "translate-x-1"
+              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+            />
+          </Switch> */}
+          {session && (
+            <Button
+              kind={Button.KINDS.gray}
+              className="transition-colors duration-300"
+              onClick={() => handleModal(<AdoptPublicationCreation />)}
+            >
+              Crear publicacion
+            </Button>
+          )}
+        </div>
+      </header>
+      <AdoptList
+        mine={mine}
+        adoptions={adoptions.filter((adoption) =>
+          mine
+            ? adoption.userId === session?.user.id
+            : adoption.userId !== session?.user.id
+        )}
+      />
+    </div>
+  );
 };
 
 export default Adoptions;

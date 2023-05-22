@@ -10,6 +10,7 @@ import {
 import { FieldSelect } from "./Select";
 import FieldToggle from "./Toggle";
 import { FieldDatePicker } from "./DatePicker";
+import { FieldImage } from "./ImageUpload";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
@@ -44,6 +45,7 @@ Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
 Form.Date = FieldDatePicker as FieldConvertion<typeof FieldDatePicker>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
+Form.ImageUploader = FieldImage as FieldConvertion<typeof FieldImage>;
 
 type FormKey = keyof typeof Form;
 // Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
