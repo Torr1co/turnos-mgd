@@ -1,74 +1,25 @@
-import { createTransport } from "nodemailer";
-// import type SMTPConnection from "nodemailer/lib/smtp-connection";
+import sgMail from "@sendgrid/mail";
 
-type EmailAddress =
-  | {
-      name: string;
-      address: string;
-    }
-  | string;
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-// const SYSTEM_ADDRESS = {
-//   name: "Â¡OhMyDog!" as const,
-//   address: process.env.SENDGRID_SENDER!,
-// } satisfies EmailAddress;
-const SYSTEM_ADDRESS = {
-  name: "¡OhMyDog!" as const,
-  address: "test@vet.com",
-} satisfies EmailAddress;
-// const CONFIG = (
-//   dev
-//     ? ({
-//         host: "localhost",
-//         port: 1025,
-//         auth: {
-//           user: "project.1",
-//           pass: "secret.1",
-//         },
-//       } as const)
-//     : ({
-//         host: "smtp.sendgrid.net",
-//         port: 587,
-//         auth: {
-//           user: process.env.SENDGRID_USERNAME!,
-//           pass: process.env.SENDGRID_PASSWORD!,
-//         },
-//       } as const)
-// ) satisfies SMTPConnection.Options;
-const CONFIG = {
-  host: "localhost",
-  port: 1025,
-  auth: {
-    user: "project.1",
-    pass: "secret.1",
-  },
-};
-
-const transporter = createTransport(CONFIG);
-
-transporter.verify(function (error) {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log(
-      `SMTP server is ready to take system messages at ${CONFIG.host}:${CONFIG.port}`
-    );
-  }
-});
-
-export async function systemEmail(
-  to: EmailAddress,
-  subject: string,
-  text: string,
-  html?: string
-) {
-  const result = await transporter.sendMail({
-    from: SYSTEM_ADDRESS,
-    to: to,
+const sendEmail = (to: string, from: string, subject: string, text: string) => {
+  const msg = {
+    to,
+    from,
     subject,
     text,
-    html,
-  });
+  };
+  return sgMail.send(msg);
+};
 
-  return result;
-}
+export default sendEmail;
+
+// sgMail
+//   .send(msg)
+//   .then((response) => {
+//     console.log(response[0].statusCode);
+//     console.log(response[0].headers);
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
