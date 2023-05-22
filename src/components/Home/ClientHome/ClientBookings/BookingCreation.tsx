@@ -29,7 +29,7 @@ export default function BookingCreation() {
     defaultValues: {
       booking: {
         timeZone: TimeZone.MORNING,
-        type: InquirieType.VACCINE,
+        type: InquirieType.GENERAL,
         date: new Date(),
       },
     },

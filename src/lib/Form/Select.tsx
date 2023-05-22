@@ -11,7 +11,7 @@ type SelectOption<T> = {
 };
 
 interface SelectProps<T> extends FC {
-  values: SelectOption<T>[];
+  values: SelectOption<T>[] | readonly SelectOption<T>[];
   value: SelectOption<T>["value"];
   onChange: (value: SelectOption<T>["value"]) => void;
   kind?: string;
@@ -82,15 +82,26 @@ export default function Select<T extends string | number | undefined | null>({
 
 interface FieldSelectProps<T>
   extends Omit<SelectProps<T>, "value" | "onChange"> {
+  onChange?: (value: SelectOption<T>["value"]) => void;
   path: string;
 }
 
-export function FieldSelect<T>({ path, ...props }: FieldSelectProps<T>) {
+export function FieldSelect<T extends string | number | undefined | null>({
+  path,
+  ...props
+}: FieldSelectProps<T>) {
   return (
     <Controller
       name={path}
       render={({ field: { ref, ...field } }) => (
-        <Select {...props} {...field} />
+        <Select
+          {...props}
+          {...field}
+          onChange={(value: T) => {
+            field.onChange(value);
+            props.onChange?.(value);
+          }}
+        />
       )}
     />
   );

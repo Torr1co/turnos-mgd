@@ -1,9 +1,18 @@
 import React from "react";
 import Form from "~/lib/Form";
-import { InquirieOptions, TimeZoneOptions } from "~/schemas/booking";
+import {
+  type BookingCreation,
+  InquirieOptions,
+  TimeZoneOptions,
+  VaccineOptions,
+} from "~/schemas/booking";
 import dayjs from "dayjs";
+import { useFormContext } from "react-hook-form";
+import { InquirieType } from "@prisma/client";
 
 export default function BookingForm() {
+  const methods = useFormContext<{ booking: BookingCreation }>();
+  console.log(methods.watch());
   return (
     <div className="grid gap-6">
       <Form.Date
@@ -13,7 +22,25 @@ export default function BookingForm() {
           return current.isBefore(dayjs(), "d") || current.day() === 0;
         }}
       />
-      <Form.Select path="booking.type" label="Tipo" values={InquirieOptions} />
+      <Form.Select
+        path="booking.type"
+        label="Tipo"
+        values={InquirieOptions}
+        onChange={() => {
+          if (methods.watch("booking.type") === InquirieType.VACCINE) {
+            methods.setValue("booking.vaccine", VaccineOptions[0].value);
+            return;
+          }
+          methods.setValue("booking.vaccine", undefined);
+        }}
+      />
+      {methods.watch("booking.type") === InquirieType.VACCINE && (
+        <Form.Select
+          path="booking.vaccine"
+          label="Tipo de vacuna"
+          values={VaccineOptions}
+        />
+      )}
       <Form.Select
         path="booking.timeZone"
         label="Zona horaria"

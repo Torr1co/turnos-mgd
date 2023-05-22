@@ -118,6 +118,10 @@ export const bookingsRouter = createTRPCRouter({
         completed: {
           equals: false,
         },
+        userId:
+          ctx.session?.user.role === UserRoles.VET
+            ? undefined
+            : ctx.session?.user.id,
       },
       include: {
         dog: true,

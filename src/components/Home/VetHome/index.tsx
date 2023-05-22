@@ -41,6 +41,7 @@ export default function VetHome() {
                   start: start?.toDate(),
                   end: end?.toDate(),
                 }));
+                return;
               }
               setFilters((prev) => ({
                 ...prev,

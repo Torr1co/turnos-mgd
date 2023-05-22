@@ -51,7 +51,7 @@ export default function ClientRegister() {
       birth: dayjs().subtract(18, "y").toDate(),
       booking: {
         // date: new Date(),
-        type: InquirieType.VACCINE,
+        type: InquirieType.GENERAL,
         timeZone: TimeZone.MORNING,
       },
       dog: {
