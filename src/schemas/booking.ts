@@ -22,7 +22,10 @@ export const BookingSchema = z.object({
 });
 
 export const BookingCreationSchema = BookingSchema.extend({
-  dog: z.string(),
+  dog: z.string({
+    required_error: "Requerido",
+    invalid_type_error: "Requerido",
+  }),
   user: z.optional(z.string()),
 });
 

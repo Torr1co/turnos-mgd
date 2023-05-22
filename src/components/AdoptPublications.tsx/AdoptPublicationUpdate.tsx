@@ -59,7 +59,7 @@ export default function AdoptPublicationUpdate({
     >
       <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         <Title as="h4" className="text-gray-500">
-          Actualizar publicacion de
+          Actualizar publicacion de 
           <span className="text-primary">Adopcion</span>
         </Title>
         <div className="pl-auto">
