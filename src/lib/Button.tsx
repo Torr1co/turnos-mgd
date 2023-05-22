@@ -1,4 +1,4 @@
-import React, { type ButtonHTMLAttributes } from "react";
+import React, { forwardRef, type ButtonHTMLAttributes } from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
 import { type FC } from "~/utils/types";
@@ -22,36 +22,42 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-const Button = ({
-  size = "md",
-  kind = "primary",
-  loading = false,
-  disabled,
-  className,
-  children,
-  ...props
-}: FC<ButtonProps>) => {
-  return (
-    <button
-      className={cn(
-        className,
-        "relative rounded-md ",
-        hasKey(SIZES, size) ? SIZES[size] : size,
-        hasKey(KINDS, kind) ? KINDS[kind] : kind
-      )}
-      disabled={disabled ?? loading}
-      type="button"
-      {...props}
-    >
-      {loading && (
-        <Loading
-          className="absolute inset-0"
-          size={hasKey(SIZES, size) ? size : "md"}
-        />
-      )}
-      {children}
-    </button>
-  );
-};
+const Button = forwardRef<HTMLButtonElement, FC<ButtonProps>>(
+  function ForwardButton(
+    {
+      size = "md",
+      kind = "primary",
+      loading = false,
+      disabled,
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          className,
+          "relative rounded-md ",
+          hasKey(SIZES, size) ? SIZES[size] : size,
+          hasKey(KINDS, kind) ? KINDS[kind] : kind
+        )}
+        disabled={disabled ?? loading}
+        type="button"
+        {...props}
+      >
+        {loading && (
+          <Loading
+            className="absolute inset-0"
+            size={hasKey(SIZES, size) ? size : "md"}
+          />
+        )}
+        {children}
+      </button>
+    );
+  }
+);
 
 export default Object.assign(Button, { SIZES, KINDS });

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "~/context/ModalContex";
 import Box from "~/lib/Box";
 import Button from "~/lib/Button";
 import { PetIcon } from "~/lib/icons";
+import Tooltip from "~/lib/Tooltip";
 import Text from "~/lib/Typo/Text";
 import Title from "~/lib/Typo/Title";
 import { type AdoptWithDog } from "~/schemas/adoptPublication";
@@ -69,6 +70,7 @@ export default function AdoptList({
   mine?: boolean;
 }) {
   const { handleModal } = useModal();
+  const [visible, setVisible] = useState("");
   return adoptions.length === 0 ? (
     <div>No se encontraron publicaciones de adopcion</div>
   ) : (
@@ -78,18 +80,46 @@ export default function AdoptList({
           <li key={adoption.id} className="h-full">
             <Box className="flex h-full flex-col gap-8 bg-white">
               <AdoptItem adoption={adoption} />
-              <div className="mt-auto">
+              <div className="mt-auto flex gap-4">
                 {mine ? (
-                  <Button
-                    kind={Button.KINDS.gray}
-                    onClick={() =>
-                      handleModal(
-                        <AdoptPublicationUpdate adoption={adoption} />
-                      )
-                    }
-                  >
-                    Editar
-                  </Button>
+                  <>
+                    <Button
+                      kind={Button.KINDS.gray}
+                      onClick={() =>
+                        handleModal(
+                          <AdoptPublicationUpdate adoption={adoption} />
+                        )
+                      }
+                    >
+                      Editar
+                    </Button>
+                    <Tooltip
+                      visible={visible === adoption.id}
+                      onClickOutside={() => setVisible("")}
+                      interactive={true}
+                      content={
+                        <div className="flex flex-col">
+                          Estas seguro?
+                          <div className="flex gap-2">
+                            <button
+                              className="hover:text-primary"
+                              onClick={() => setVisible("")}
+                            >
+                              No
+                            </button>
+                            <button className="hover:text-primary">Si</button>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Button
+                        kind={Button.KINDS.gray}
+                        onClick={() => setVisible(adoption.id)}
+                      >
+                        Confirmar Adopcion
+                      </Button>
+                    </Tooltip>
+                  </>
                 ) : (
                   <Button
                     kind={Button.KINDS.gray}

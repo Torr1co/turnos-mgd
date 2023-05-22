@@ -21,7 +21,7 @@ export default function ClientBookingList({
   filterFn?: (booking: Booking) => boolean;
 }) {
   const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState("");
   const { handleModal } = useModal();
   if (isLoading) return <div>Cargando...</div>;
   const filteredBookings = filterFn ? bookings.filter(filterFn) : bookings;
@@ -61,8 +61,8 @@ export default function ClientBookingList({
                   Editar
                 </Button>
                 <Tooltip
-                  visible={visible}
-                  onClickOutside={() => setVisible(false)}
+                  visible={visible === booking.id}
+                  onClickOutside={() => setVisible("")}
                   interactive={true}
                   content={
                     <div className="flex flex-col">
@@ -70,7 +70,7 @@ export default function ClientBookingList({
                       <div className="flex gap-2">
                         <button
                           className="hover:text-primary"
-                          onClick={() => setVisible(false)}
+                          onClick={() => setVisible("")}
                         >
                           No
                         </button>
@@ -80,7 +80,7 @@ export default function ClientBookingList({
                   }
                 >
                   <button
-                    onClick={() => setVisible(true)}
+                    onClick={() => setVisible(booking.id)}
                     type="button"
                     className=" grid h-12 w-12 items-center rounded-full bg-gray-300 p-2"
                   >
