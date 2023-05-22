@@ -132,7 +132,7 @@ export const bookingsRouter = createTRPCRouter({
     });
   }),
 
-  // //Update a booking
+  // Update a booking
   update: clientProcedure
     .input(BookingUpdateSchema)
     .mutation(async ({ input, ctx }) => {
