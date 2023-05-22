@@ -6,10 +6,17 @@ import { PetIcon } from "~/lib/icons";
 import Text from "~/lib/Typo/Text";
 import Title from "~/lib/Typo/Title";
 import { type AdoptWithDog } from "~/schemas/adoptPublication";
+import { cn } from "~/utils/styles";
 import Adopt from "./Adopt";
 import AdoptPublicationUpdate from "./AdoptPublicationUpdate";
 
-export function AdoptItem({ adoption }: { adoption: AdoptWithDog }) {
+export function AdoptItem({
+  adoption,
+  truncate = true,
+}: {
+  adoption: AdoptWithDog;
+  truncate?: boolean;
+}) {
   return (
     <div className="flex h-full flex-col gap-8 bg-white">
       <div className="items group flex justify-between">
@@ -30,11 +37,23 @@ export function AdoptItem({ adoption }: { adoption: AdoptWithDog }) {
           </Title>
         )}
         {adoption.info && (
-          <Text className="text-gray-500 transition-colors duration-200 truncate-3 group-hover:text-primary">
+          <Text
+            className={cn(
+              truncate && "truncate-3",
+              "text-gray-500 transition-colors duration-200 group-hover:text-primary"
+            )}
+          >
+            {" "}
             {adoption.info}
           </Text>
         )}
-        <Text className="text-gray-500 transition-colors duration-200 truncate-2 group-hover:text-primary">
+        <Text
+          className={cn(
+            truncate && "truncate-2",
+            "text-gray-500 transition-colors duration-200 group-hover:text-primary"
+          )}
+        >
+          {" "}
           {adoption.reason}
         </Text>
       </div>

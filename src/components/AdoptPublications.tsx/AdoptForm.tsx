@@ -27,26 +27,19 @@ export default function AdoptForm() {
         }}
       />
 
+      <Form.Input path="sender" label="Email" type="email" />
+      <Form.Input
+        path="telephone"
+        label="Telefono"
+        onChange={(e) => {
+          methods.setValue(
+            "telephone",
+            e.target.value.replace(/[^0-9\s]/g, "")
+          );
+        }}
+      />
       <div className="col-span-2">
-        <Form.Input
-          path="email"
-          label="Email"
-          onChange={(e) => {
-            methods.setValue("email", e.target.value.replace(/[^0-9\s]/g, ""));
-          }}
-        />
-      </div>
-      <div className="col-span-2">
-        <Form.Input
-          path="telephone"
-          label="Telefono"
-          onChange={(e) => {
-            methods.setValue(
-              "telephone",
-              e.target.value.replace(/[^0-9\s]/g, "")
-            );
-          }}
-        />
+        <Form.TextArea path="message" label="Mensaje" />
       </div>
     </div>
   );

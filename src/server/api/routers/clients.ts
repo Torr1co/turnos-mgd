@@ -3,7 +3,9 @@ import { hashSync } from "bcryptjs";
 
 import { ClientCreationSchema, UpdateClientSchema } from "~/schemas/client";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { systemEmail } from "~/server/email";
+// import { systemEmail } from "~/server/email";
+import sendEmail from "~/server/email";
+// import { send } from "process";
 
 export const clientsRouter = createTRPCRouter({
   create: publicProcedure
@@ -57,10 +59,11 @@ export const clientsRouter = createTRPCRouter({
             },
           });
 
-          await systemEmail(
-            userData.email,
-            "Contraseña de Oh My Dog",
-            `tu nueva contraseña es ${randomString}`
+          await sendEmail(
+            client.email,
+            "v.ohmydog@gmail.com",
+            "Bienvenido a Oh My Dog",
+            `Hola ${client.name}! Gracias por registrarte en Oh My Dog. Tu contraseña es ${randomString}`
           );
 
           return client;
