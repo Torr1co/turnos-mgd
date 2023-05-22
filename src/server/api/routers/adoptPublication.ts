@@ -137,4 +137,20 @@ export const adoptPublicationRouter = createTRPCRouter({
       });
       return adoptPublication;
     }),
+
+  //Cancel an adopt publication
+  cancel: protectedProcedure
+    .input(string()) //Adopt publication id
+    .mutation(async ({ ctx, input }) => {
+      const id = input;
+      const adoptPublication = await ctx.prisma.adoptPublication.update({
+        where: {
+          id,
+        },
+        data: {
+          active: false,
+        },
+      });
+      return adoptPublication;
+    }),
 });
