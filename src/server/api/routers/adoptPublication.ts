@@ -63,8 +63,8 @@ export const adoptPublicationRouter = createTRPCRouter({
 
     await sendEmail(
       receipt,
-      sender,
-      `${name} quiere adoptar tu perro, contactalo!`,
+      "v.ohmydog@gmail.com",
+      `${name} quiere adoptar tu perro, contactalo a su mail ${sender}!`,
       message
     );
     return;
