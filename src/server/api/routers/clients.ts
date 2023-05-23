@@ -47,17 +47,19 @@ export const clientsRouter = createTRPCRouter({
             },
           });
           //Booking checks
-          const dayBookings = await ctx.prisma.booking.findMany({
+          const dayBookings = await ctx.prisma.booking.count({
             where: {
               date: {
-                equals: booking.date,
+                gt: dayjs(booking.date).startOf("day").toDate(),
+                lt: dayjs(booking.date).endOf("day").toDate(),
               },
               timeZone: {
                 equals: booking.timeZone,
               },
             },
           });
-          if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
+          // Check if the bookings are already taken
+          if (dayBookings >= 5) throw new Error("Horario ocupado!");
 
           if (booking.type === "VACCINE") {
             const dogData = await ctx.prisma.pet.findUnique({

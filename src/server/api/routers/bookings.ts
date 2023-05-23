@@ -131,16 +131,19 @@ export const bookingsRouter = createTRPCRouter({
       }
       // Check if the bookings are already taken
 
-      const dayBookingsCount = await ctx.prisma.booking.count({
+      const dayBookings = await ctx.prisma.booking.count({
         where: {
-          date: dayjs(booking.date).format("YYYY-MM-DD"),
+          date: {
+            gt: dayjs(booking.date).startOf("day").toDate(),
+            lt: dayjs(booking.date).endOf("day").toDate(),
+          },
           timeZone: {
             equals: booking.timeZone,
           },
         },
       });
-
-      if (dayBookingsCount >= 20) throw new Error("Horario ocupado!");
+      // Check if the bookings are already taken
+      if (dayBookings >= 5) throw new Error("Horario ocupado!");
 
       return ctx.prisma.booking.create({
         data: {
@@ -312,16 +315,19 @@ export const bookingsRouter = createTRPCRouter({
       }
       //Check the amount of bookings in the same DAY at the same timeZone (max 20)
 
-      const dayBookingsCount = await ctx.prisma.booking.count({
+      const dayBookings = await ctx.prisma.booking.count({
         where: {
-          date: dayjs(booking.date).format("YYYY-MM-DD"),
+          date: {
+            gt: dayjs(booking.date).startOf("day").toDate(),
+            lt: dayjs(booking.date).endOf("day").toDate(),
+          },
           timeZone: {
             equals: booking.timeZone,
           },
         },
       });
-
-      if (dayBookingsCount >= 20) throw new Error("Horario ocupado!");
+      // Check if the bookings are already taken
+      if (dayBookings >= 5) throw new Error("Horario ocupado!");
 
       return ctx.prisma.booking.update({
         where: {
