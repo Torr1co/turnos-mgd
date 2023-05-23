@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Form from "~/lib/Form";
 import Title from "~/lib/Typo/Title";
-import { ClientCreationSchema, type ClientCreation } from "~/schemas/client";
+import {
+  ClientCreationSchema,
+  type ClientCreation,
+} from "~/schemas/clientSchema";
 import { api } from "~/utils/api";
 import ClientForm from "./ClientForm";
 import BookingForm from "./BookingForm";

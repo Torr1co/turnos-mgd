@@ -1,25 +1,48 @@
 import sgMail from "@sendgrid/mail";
+import { systemEmail } from "./nodeMailer";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
-const sendEmail = (to: string, from: string, subject: string, text: string) => {
-  const msg = {
-    to,
-    from,
-    subject,
-    text,
-  };
-  return sgMail.send(msg);
+type EmailAddress =
+  | {
+      name: string;
+      address: string;
+      email: string;
+    }
+  | string;
+
+const DEFAULT_EMAIL = "v.ohmydog@gmail.com";
+
+export const SYSTEM_ADDRESS: EmailAddress = {
+  name: "¡OhMyDog!" as const,
+  address: DEFAULT_EMAIL,
+  email: DEFAULT_EMAIL,
+};
+
+export type SendEmail = {
+  to: string;
+  from?: string | EmailAddress;
+  subject: string;
+  text: string;
+};
+const sendEmail = ({ from: fromMsg = DEFAULT_EMAIL, ...msg }: SendEmail) => {
+  const from =
+    typeof fromMsg === "string"
+      ? { ...SYSTEM_ADDRESS, address: fromMsg, email: fromMsg }
+      : fromMsg;
+  return process.env.NODE_ENV === "production"
+    ? sgMail.send({ from, ...msg })
+    : systemEmail({ from, ...msg });
 };
 
 export default sendEmail;
 
-// sgMail
-//   .send(msg)
-//   .then((response) => {
-//     console.log(response[0].statusCode);
-//     console.log(response[0].headers);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
+// const sendEmail = (to: string, from: string, subject: string, text: string) => {
+//   const msg = {
+//     to,
+//     from,
+//     subject,
+//     text,
+//   };
+//   return sgMail.send(msg);
+// };

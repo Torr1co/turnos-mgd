@@ -7,7 +7,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import Box from "~/lib/Box";
-import { PetUpdateSchema } from "~/schemas/pet";
+import { PetUpdateSchema } from "~/schemas/petSchema";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

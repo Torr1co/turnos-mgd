@@ -1,10 +1,10 @@
 import { type AdoptPublication, type Dog } from "@prisma/client";
 import { z } from "zod";
-import { DogSchema } from "./dog";
+import { DogSchema } from "./dogSchema";
 
 export const AdoptCreationSchema = z.object({
   email: z.string().email(),
-  reason: z.string().min(16),
+  reason: z.string().trim().min(16),
   info: z.optional(z.string()),
   dog: DogSchema.partial(),
 });

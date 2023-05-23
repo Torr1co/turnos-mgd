@@ -2,8 +2,8 @@ import dayjs from "dayjs";
 import React from "react";
 import Form from "~/lib/Form";
 import { useFormContext } from "react-hook-form";
-import { type AdoptCreationSchema } from "~/schemas/adoptPublication";
-import { GenderOptions } from "~/schemas/pet";
+import { type AdoptCreationSchema } from "~/schemas/adoptionSchema";
+import { GenderOptions } from "~/schemas/petSchema";
 
 export default function AdoptPublicationCreationForm() {
   const methods = useFormContext<AdoptCreationSchema>();

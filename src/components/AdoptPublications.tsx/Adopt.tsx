@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { AdoptSchema } from "~/schemas/adoptPublication";
+import { AdoptSchema } from "~/schemas/adoptionSchema";
 import toast from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";
@@ -13,7 +13,7 @@ import AdoptForm from "./AdoptForm";
 import { AdoptItem } from "./AdoptList";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
-import { GenderOptions } from "~/schemas/pet";
+import { GenderOptions } from "~/schemas/petSchema";
 
 export default function Adopt({
   adoption,

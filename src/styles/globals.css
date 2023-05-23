@@ -16,6 +16,10 @@
   }
 }
 
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 @layer utilities {
   .scale-95 {
     transform: scale(0.95);

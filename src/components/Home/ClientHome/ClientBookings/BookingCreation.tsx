@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { BookingCreationSchema as CreationSchema } from "~/schemas/booking";
+import { BookingCreationSchema as CreationSchema } from "~/schemas/bookingSchema";
 import { toast } from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";

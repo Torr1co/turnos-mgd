@@ -1,5 +1,5 @@
 import React, { type FormHTMLAttributes } from "react";
-import { FieldInput, FieldNumber } from "./Input";
+import { FieldInput, FieldNumber, FieldPassword } from "./Input";
 import { FieldTextArea } from "./TextArea";
 import Field, { type FieldPropsInitial } from "./Field";
 import {
@@ -8,7 +8,7 @@ import {
   type FieldValues,
 } from "react-hook-form";
 import { FieldSelect } from "./Select";
-import FieldToggle from "./Toggle";
+import { FieldToggle } from "./Toggle";
 import { FieldDatePicker } from "./DatePicker";
 import { FieldImage } from "./ImageUpload";
 
@@ -46,6 +46,7 @@ Form.Date = FieldDatePicker as FieldConvertion<typeof FieldDatePicker>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
 Form.ImageUploader = FieldImage as FieldConvertion<typeof FieldImage>;
+Form.Password = FieldPassword as FieldConvertion<typeof FieldPassword>;
 
 type FormKey = keyof typeof Form;
 // Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;

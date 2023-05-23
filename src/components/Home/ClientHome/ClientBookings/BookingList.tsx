@@ -10,7 +10,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { BookingIcon } from "~/lib/icons";
 import dayjs from "dayjs";
 import Tooltip from "~/lib/Tooltip";
-import { InquirieOptions } from "~/schemas/booking";
+import { InquirieOptions } from "~/schemas/bookingSchema";
 import Button from "~/lib/Button";
 import BookingUpdate from "./BookingUpdate";
 import { useModal } from "~/context/ModalContex";
