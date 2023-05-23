@@ -4,7 +4,7 @@ import { DogSchema } from "./dogSchema";
 
 export const AdoptCreationSchema = z.object({
   email: z.string().email("Ingrese un mail valido"),
-  reason: z.string().trim().min(10,"Minimo 10 caracteres"),
+  reason: z.string().trim().min(10, "Minimo 10 caracteres"),
   info: z.optional(z.string()),
   dog: DogSchema.partial(),
 });

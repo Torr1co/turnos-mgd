@@ -1,5 +1,6 @@
 import { Prisma, UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
+import dayjs from "dayjs";
 
 import {
   ClientCreationSchema,
@@ -45,7 +46,35 @@ export const clientsRouter = createTRPCRouter({
               },
             },
           });
+          //Booking checks
+          const dayBookings = await ctx.prisma.booking.findMany({
+            where: {
+              date: {
+                equals: booking.date,
+              },
+              timeZone: {
+                equals: booking.timeZone,
+              },
+            },
+          });
+          if (dayBookings.length >= 20) throw new Error("Horario ocupado!");
 
+          if (booking.type === "VACCINE") {
+            const dogData = await ctx.prisma.pet.findUnique({
+              where: {
+                id: dogCreation.id,
+              },
+            });
+            if (booking.vaccine === "B") {
+              if (
+                dayjs(dogData?.birth).isBefore(dayjs().subtract(4, "month"))
+              ) {
+                throw new Error(
+                  "No se puede aplicar una antirrabica a un perro menor de 4 meses!"
+                );
+              }
+            }
+          }
           await prisma.booking.create({
             data: {
               ...booking,
