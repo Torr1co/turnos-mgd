@@ -2,7 +2,7 @@ import React from "react";
 import Form from "~/lib/Form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PetCreationSchema, type PetCreationSchema } from "~/schemas/pet";
+import { PetCreationSchema, type PetCreationSchema } from "~/schemas/petSchema";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import Title from "~/lib/Typo/Title";

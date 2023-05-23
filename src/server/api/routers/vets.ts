@@ -1,7 +1,7 @@
 import { UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 // import { z } from "zod";
-import { VetCreationSchema } from "~/schemas/vet";
+import { VetCreationSchema } from "~/schemas/vetSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { bookingsRouter } from "./bookings";
 

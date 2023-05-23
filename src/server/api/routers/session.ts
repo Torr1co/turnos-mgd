@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
   SessionUpdatePasswordSchema,
   SessionUpdateSchema,
-} from "~/schemas/session";
+} from "~/schemas/sessionSchema";
 import { compareSync } from "bcryptjs";
 export const sessionRouter = createTRPCRouter({
   updatePassword: protectedProcedure

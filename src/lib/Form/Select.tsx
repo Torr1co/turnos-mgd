@@ -27,7 +27,7 @@ export default function Select<T extends string | number | undefined | null>({
     <Listbox value={value} onChange={onChange}>
       <Listbox.Button
         className={cn(
-          "font-regular h-full w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1",
+          "font-regular w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1",
           kind
         )}
       >

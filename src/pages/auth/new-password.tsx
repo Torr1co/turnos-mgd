@@ -14,7 +14,10 @@ import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { LINKS } from "~/utils/navConfig";
-import { type PasswordUpdate, PasswordUpdateSchema } from "~/schemas/session";
+import {
+  type PasswordUpdate,
+  PasswordUpdateSchema,
+} from "~/schemas/sessionSchema";
 
 const NewPassword: NextPage = () => {
   const methods = useForm<PasswordUpdate>({
@@ -54,15 +57,13 @@ const NewPassword: NextPage = () => {
           className="flex flex-col gap-6"
         >
           <Title>Crea tu contraseña</Title>
-          <Form.Input
+          <Form.Password
             label="Contraseña"
-            type="password"
             placeholder="Escribe tu contraseña"
             path="password"
           />
-          <Form.Input
+          <Form.Password
             label="Confirma tu contraseña"
-            type="password"
             placeholder="Vuelve a escribir tu contraseña"
             path="confirm"
           />

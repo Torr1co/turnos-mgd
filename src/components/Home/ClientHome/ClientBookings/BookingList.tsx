@@ -10,7 +10,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { BookingIcon } from "~/lib/icons";
 import dayjs from "dayjs";
 import Tooltip from "~/lib/Tooltip";
-import { InquirieOptions } from "~/schemas/booking";
+import { InquirieOptions } from "~/schemas/bookingSchema";
 import Button from "~/lib/Button";
 import BookingUpdate from "./BookingUpdate";
 import { useModal } from "~/context/ModalContex";
@@ -27,71 +27,77 @@ export default function ClientBookingList({
   const filteredBookings = filterFn ? bookings.filter(filterFn) : bookings;
   return (
     <ul className="flex flex-col gap-6">
-      {filteredBookings.map((booking) => {
-        return (
-          <li key={booking.id}>
-            <Box
-              size="lgX"
-              className="flex items-center justify-between bg-white"
-            >
-              <div className="items group flex gap-10">
-                <BookingIcon />
-                <div>
-                  <Title
-                    as="h3"
-                    className={cn("capitalize transition-colors duration-300")}
-                  >
-                    {booking.dog.name} -{" "}
-                    {
-                      InquirieOptions.find(
-                        (type) => type.value === booking.type
-                      )?.label
-                    }
-                  </Title>
-                  <Text>{dayjs(booking.date).format("MMMM D, YYYY ")}</Text>
+      {filteredBookings.length === 0 ? (
+        <div>No se encontraron turnos</div>
+      ) : (
+        filteredBookings.map((booking) => {
+          return (
+            <li key={booking.id}>
+              <Box
+                size="lgX"
+                className="flex items-center justify-between bg-white"
+              >
+                <div className="items group flex gap-10">
+                  <BookingIcon />
+                  <div>
+                    <Title
+                      as="h3"
+                      className={cn(
+                        "capitalize transition-colors duration-300"
+                      )}
+                    >
+                      {booking.dog.name} -{" "}
+                      {
+                        InquirieOptions.find(
+                          (type) => type.value === booking.type
+                        )?.label
+                      }
+                    </Title>
+                    <Text>{dayjs(booking.date).format("MMMM D, YYYY ")}</Text>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-4">
-                <Button
-                  kind={Button.KINDS.gray}
-                  onClick={() => {
-                    handleModal(<BookingUpdate booking={booking} />);
-                  }}
-                >
-                  Editar
-                </Button>
-                <Tooltip
-                  visible={visible === booking.id}
-                  onClickOutside={() => setVisible("")}
-                  interactive={true}
-                  content={
-                    <div className="flex flex-col">
-                      Estas seguro?
-                      <div className="flex gap-2">
-                        <button
-                          className="hover:text-primary"
-                          onClick={() => setVisible("")}
-                        >
-                          No
-                        </button>
-                        <button className="hover:text-primary">Si</button>
-                      </div>
-                    </div>
-                  }
-                >
-                  <button
-                    onClick={() => setVisible(booking.id)}
-                    type="button"
-                    className=" grid h-12 w-12 items-center rounded-full bg-gray-300 p-2"
+                <div className="flex gap-4">
+                  <Button
+                    kind={Button.KINDS.gray}
+                    onClick={() => {
+                      handleModal(<BookingUpdate booking={booking} />);
+                    }}
                   >
-                    <XMarkIcon className="text-gray-600" />
-                  </button>
-                </Tooltip>
-              </div>
-            </Box>
-          </li>
-        );
-      })}
+                    Editar
+                  </Button>
+                  <Tooltip
+                    visible={visible === booking.id}
+                    onClickOutside={() => setVisible("")}
+                    interactive={true}
+                    content={
+                      <div className="flex flex-col">
+                        Estas seguro?
+                        <div className="flex gap-2">
+                          <button
+                            className="hover:text-primary"
+                            onClick={() => setVisible("")}
+                          >
+                            No
+                          </button>
+                          <button className="hover:text-primary">Si</button>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <button
+                      onClick={() => setVisible(booking.id)}
+                      type="button"
+                      className=" grid h-12 w-12 items-center rounded-full bg-gray-300 p-2"
+                    >
+                      <XMarkIcon className="text-gray-600" />
+                    </button>
+                  </Tooltip>
+                </div>
+              </Box>
+            </li>
+          );
+        })
+      )}
     </ul>
   );
 }
