@@ -45,7 +45,7 @@ export default function BookingCreation() {
             toast.success("Turno creado con exito!");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (err) => toast.error(err.message),
         });
       }}
     >
@@ -67,6 +67,7 @@ export default function BookingCreation() {
           value: dog.id,
           label: dog.name,
         }))}
+        required
       />
     </Form>
   );

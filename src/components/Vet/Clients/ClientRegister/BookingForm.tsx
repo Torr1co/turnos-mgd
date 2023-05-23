@@ -12,7 +12,6 @@ import { InquirieType } from "@prisma/client";
 
 export default function BookingForm() {
   const methods = useFormContext<{ booking: BookingCreation }>();
-  console.log(methods.watch());
   return (
     <div className="grid gap-6">
       <Form.Date
