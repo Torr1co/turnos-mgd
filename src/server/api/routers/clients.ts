@@ -32,20 +32,6 @@ export const clientsRouter = createTRPCRouter({
               password: hashedPassword,
             },
           });
-
-          const dogCreation = await prisma.pet.create({
-            data: {
-              ...dog,
-              healthBook: {
-                create: {},
-              },
-              owner: {
-                connect: {
-                  id: client.id,
-                },
-              },
-            },
-          });
           //Booking checks
           const dayBookings = await ctx.prisma.booking.count({
             where: {
@@ -64,7 +50,7 @@ export const clientsRouter = createTRPCRouter({
           if (booking.type === "VACCINE") {
             const dogData = await ctx.prisma.pet.findUnique({
               where: {
-                id: dogCreation.id,
+                id: dog.id,
               },
             });
             if (booking.vaccine === "B") {
@@ -77,6 +63,20 @@ export const clientsRouter = createTRPCRouter({
               }
             }
           }
+
+          const dogCreation = await prisma.pet.create({
+            data: {
+              ...dog,
+              healthBook: {
+                create: {},
+              },
+              owner: {
+                connect: {
+                  id: client.id,
+                },
+              },
+            },
+          });
           await prisma.booking.create({
             data: {
               ...booking,
