@@ -21,7 +21,7 @@ export function AdoptItem({
   truncate?: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col gap-8 bg-white">
+    <div className="flex  flex-col gap-8 bg-white">
       <div className="items group flex justify-between">
         <div>
           <PetIcon width="100" height="100" />
@@ -86,13 +86,13 @@ export default function AdoptList({
   return adoptions.length === 0 ? (
     <div>No se encontraron publicaciones de adopcion</div>
   ) : (
-    <ul className="grid grid-cols-2 gap-12">
+    <ul className="grid  gap-12 md:grid-cols-2">
       {adoptions.map((adoption) => {
         return (
           <li key={adoption.id} className="h-full">
             <Box className="flex h-full flex-col gap-8 bg-white">
               <AdoptItem adoption={adoption} />
-              <div className="mt-auto flex gap-4">
+              <div className="mt-auto grid gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
                 {mine ? (
                   <>
                     <Button

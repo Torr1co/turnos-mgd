@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from "react";
+import React, { type HTMLAttributes } from "react";
 import { hasKey } from "~/utils/objUtils";
 import { cn } from "~/utils/styles";
 import { type FC } from "~/utils/types";
@@ -10,8 +10,8 @@ const KINDS = {
 } as const;
 
 const SIZES = {
-  lgY: "px-10 py-14 rounded-lg",
-  lgX: "px-14 py-10 rounded-lg",
+  lgY: "px-6 py-8  md:px-10 md:py-14 rounded-lg",
+  lgX: "py-6 px-8 md:px-14 md:py-10 rounded-lg",
 };
 
 type BoxProps = HTMLAttributes<HTMLDivElement> & {

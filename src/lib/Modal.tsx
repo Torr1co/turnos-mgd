@@ -69,7 +69,7 @@ const Modal = ({
           <Box
             className={cn(
               className,
-              "relative max-h-[90vh] min-w-[44rem] overflow-auto bg-white stroke-0 text-sm shadow-lg"
+              "relative max-h-[90vh] min-w-[100vw] overflow-auto bg-white stroke-0 text-sm shadow-lg sm:min-w-[44rem]"
             )}
             size="px-10 pb-14 rounded-lg"
             style={style}
