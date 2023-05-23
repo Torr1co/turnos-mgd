@@ -32,7 +32,7 @@ export default function VetHome() {
     <div>
       <header className="mb-14 flex items-center justify-between">
         <Title>Turnos Reservados</Title>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center gap-4 sm:flex-row">
           <CustomDatePicker.RangePicker
             onChange={(props) => {
               if (props) {

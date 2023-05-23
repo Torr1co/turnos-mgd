@@ -52,20 +52,18 @@ export default function Adopt({
         });
       }}
     >
-      <section>
-        <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
-          <Title as="h4" className="text-gray-500">
-            Formulario de <span className="text-primary">Adopcion</span>
-          </Title>
-          <div className="pl-auto">
-            <Button type="submit" loading={isLoading} size="sm">
-              Adoptar
-            </Button>
-          </div>
-        </header>
-        <div>
-          <AdoptForm />
+      <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
+        <Title as="h4" className="text-gray-500">
+          Formulario de <span className="text-primary">Adopcion</span>
+        </Title>
+        <div className="pl-auto">
+          <Button type="submit" loading={isLoading} size="sm">
+            Adoptar
+          </Button>
         </div>
+      </header>
+      <section>
+        <AdoptForm />
       </section>
       <hr />
       <section className="flex flex-col gap-12">

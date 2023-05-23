@@ -5,7 +5,7 @@ import { useFormContext } from "react-hook-form";
 export default function AdoptForm() {
   const methods = useFormContext();
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid gap-6 md:grid-cols-2">
       <Form.Input
         path="name"
         label="Nombre"
@@ -38,7 +38,7 @@ export default function AdoptForm() {
           );
         }}
       />
-      <div className="col-span-2">
+      <div className="md:col-span-2">
         <Form.TextArea path="message" label="Mensaje" />
       </div>
     </div>

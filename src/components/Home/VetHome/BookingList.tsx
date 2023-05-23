@@ -31,7 +31,7 @@ export default function VetBookingList({
     },
   });
   return (
-    <ul className="grid grid-cols-2 gap-6">
+    <ul className="grid gap-6 md:grid-cols-2">
       {bookings.length === 0 ? (
         <div>No se encontraron turnos</div>
       ) : (

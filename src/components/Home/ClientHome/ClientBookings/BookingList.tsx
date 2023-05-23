@@ -14,6 +14,7 @@ import { InquirieOptions } from "~/schemas/bookingSchema";
 import Button from "~/lib/Button";
 import BookingUpdate from "./BookingUpdate";
 import { useModal } from "~/context/ModalContex";
+import { toast } from "react-hot-toast";
 
 export default function ClientBookingList({
   filterFn,
@@ -23,6 +24,12 @@ export default function ClientBookingList({
   const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
   const [visible, setVisible] = useState("");
   const { handleModal } = useModal();
+  const utils = api.useContext();
+  const { mutate: cancelBooking } = api.bookings.cancel.useMutation({
+    onSuccess: async () => {
+      await utils.bookings.getAll.invalidate();
+    },
+  });
   if (isLoading) return <div>Cargando...</div>;
   const filteredBookings = filterFn ? bookings.filter(filterFn) : bookings;
   return (
@@ -79,7 +86,22 @@ export default function ClientBookingList({
                           >
                             No
                           </button>
-                          <button className="hover:text-primary">Si</button>
+                          <button
+                            className="hover:text-primary"
+                            onClick={() => {
+                              cancelBooking(booking.id, {
+                                onSuccess: () => {
+                                  setVisible("");
+                                  toast.success("Turno cancelado con exito");
+                                },
+                                onError: () => {
+                                  toast.error("Ha sucedido un error");
+                                },
+                              });
+                            }}
+                          >
+                            Si
+                          </button>
                         </div>
                       </div>
                     }
