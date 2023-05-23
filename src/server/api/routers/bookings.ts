@@ -141,6 +141,18 @@ export const bookingsRouter = createTRPCRouter({
         booking: { id, ...booking },
       } = input;
 
+      // If the book is in one day or less, it can't be updated
+      const oldBooking = await ctx.prisma.booking.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (
+        dayjs(oldBooking!.date).isBefore(dayjs().add(1, "day"), "day") &&
+        dayjs(oldBooking!.date).isAfter(dayjs(), "day")
+      )
+        throw new Error("No puedes modificar una reserva en menos de 24hs!");
+
       if (dayjs(booking.date).isBefore(dayjs(), "day"))
         throw new Error("No puedes reservar en el pasado!");
       if (booking.date.getDay() === 0)
@@ -201,6 +213,12 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
       if (!booking) throw new Error("La reserva no existe!");
+      // If the book is in one day or less, it can't be updated
+      if (
+        dayjs(booking.date).isBefore(dayjs().add(1, "day"), "day") &&
+        dayjs(booking.date).isAfter(dayjs(), "day")
+      )
+        throw new Error("No puedes modificar una reserva en menos de 24hs!");
 
       if (dayjs(booking.date).isBefore(dayjs(), "day"))
         throw new Error("No puedes cancelar una reserva en el pasado!");
