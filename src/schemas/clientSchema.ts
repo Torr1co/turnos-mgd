@@ -17,7 +17,7 @@ export const ClientCreationSchema = z.object({
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
   email: z.string().email("Ingrese un mail valido"),
   role: z.optional(z.nativeEnum(UserRoles)),
-  telephoneNumber: z.optional(z.string().max(15)),
+  telephoneNumber: z.optional(z.string().max(15, "Maximo 15 digitos")),
   birth: z.date({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
