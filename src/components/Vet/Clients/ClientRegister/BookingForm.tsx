@@ -21,6 +21,7 @@ export default function BookingForm() {
         disabledDate={(current) => {
           return current.isBefore(dayjs(), "d") || current.day() === 0;
         }}
+        required
       />
       <Form.Select
         path="booking.type"

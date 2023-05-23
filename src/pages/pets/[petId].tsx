@@ -54,12 +54,12 @@ const PetPage = ({ petId }: { petId: string }) => {
   const { data: pet } = api.pets.get.useQuery(petId, {
     onSuccess: (data) => {
       const { owner, healthBook, img, id, ...dog } = data;
-      console.log(dog);
-      methods.reset({ petId: id, dog });
+      methods.reset({ petId: id, dog: { ...dog, img: img ?? undefined } });
     },
     onError: () => {
       void router.push("/404");
     },
+    staleTime: Infinity,
   });
   const utils = api.useContext();
   const { mutate: updatePet, isLoading } = api.pets.update.useMutation({

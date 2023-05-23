@@ -19,6 +19,7 @@ export default function ClientForm() {
               e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
+          required
         />
         <Form.Input
           path="lastname"
@@ -29,6 +30,7 @@ export default function ClientForm() {
               e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
             );
           }}
+          required
         />
         <Form.Input
           path="dni"
@@ -36,6 +38,7 @@ export default function ClientForm() {
           onChange={(e) => {
             methods.setValue("dni", e.target.value.replace(/[^0-9]/g, ""));
           }}
+          required
         />
         <Form.Input
           path="telephoneNumber"
@@ -47,7 +50,7 @@ export default function ClientForm() {
             );
           }}
         />
-        <Form.Input path="email" label="Email" type="email" />
+        <Form.Input path="email" label="Email" type="email" required />
         <Form.Date
           path="birth"
           label="Nacimiento"

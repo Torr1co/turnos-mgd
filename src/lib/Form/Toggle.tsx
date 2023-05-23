@@ -36,7 +36,11 @@ export default function Toggle({
   );
 }
 
-export function FieldToggle({ path, label, ...props }: Field<ToggleProps>) {
+export function FieldToggle({
+  path,
+  label,
+  ...props
+}: Field<Omit<ToggleProps, "checked">>) {
   return (
     <Controller
       name={path}

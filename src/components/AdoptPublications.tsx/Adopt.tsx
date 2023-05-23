@@ -48,7 +48,7 @@ export default function Adopt({
             toast.success("Se ha enviado tu solicitud");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (error) => toast.error(error.message),
         });
       }}
     >
