@@ -69,7 +69,7 @@ export const bookingsRouter = createTRPCRouter({
                 equals: "B",
               },
               date: {
-                gte: dayjs().subtract(1, "year").toDate(),
+                gte: dayjs(booking.date).subtract(1, "year").toDate(),
               },
             },
           });
@@ -85,48 +85,47 @@ export const bookingsRouter = createTRPCRouter({
             );
           }
         }
-        if (booking.vaccine === "A") {
-          //Check if the dog has a vaccine A in the last 21 days (when the dog is younger than 4 months)
-          if (isPuppy) {
-            const lastVaccineA = await ctx.prisma.booking.findFirst({
-              where: {
-                dog: {
-                  id: dog,
-                },
-                vaccine: {
-                  equals: "A",
-                },
-                date: {
-                  gte: dayjs().subtract(21, "day").toDate(),
-                },
-              },
-            });
-            if (lastVaccineA) {
-              throw new Error(
-                "No se puede aplicar una vacuna A a un perro que ya tiene una en los ultimos 21 dias!"
-              );
-            }
-          } else {
-            const lastVaccineA = await ctx.prisma.booking.findFirst({
-              where: {
-                dog: {
-                  id: dog,
-                },
-                vaccine: {
-                  equals: "A",
-                },
-                date: {
-                  gte: dayjs().subtract(1, "year").toDate(),
-                },
-              },
-            });
-            if (lastVaccineA) {
-              throw new Error(
-                "No se puede aplicar una vacuna A a un perro que ya tiene una en el ultimo año!"
-              );
-            }
-          }
-        }
+        // if (booking.vaccine === "A") {
+        //   //Check if the dog has a vaccine A in the last 21 days (when the dog is younger than 4 months)
+        //   if (isPuppy) {
+        //     const lastVaccineA = await ctx.prisma.booking.findFirst({
+        //       where: {
+        //         dog: {
+        //           id: dog,
+        //         },
+        //         vaccine: {
+        //           equals: "A",
+        //         },
+        //         date: {
+        //           gte: dayjs(booking.date).subtract(21, "day").toDate(),
+        //         },
+        //       },
+        //     });
+        //     if (lastVaccineA) {
+        //       throw new Error(
+        //         "No se puede aplicar una vacuna A a un perro que ya tiene una en los ultimos 21 dias!"
+        //       );
+        //     }
+        //   } else {
+        //     const lastVaccineA = await ctx.prisma.booking.findFirst({
+        //       where: {
+        //         dog: {
+        //           id: dog,
+        //         },
+        //         vaccine: {
+        //           equals: "A",
+        //         },
+        //         date: {
+        //           gte: dayjs().subtract(1, "year").toDate(),
+        //         },
+        //       },
+        //     });
+        //     if (lastVaccineA) {
+        //       throw new Error(
+        //         "No se puede aplicar una vacuna A a un perro que ya tiene una en el ultimo año!"
+        //       );
+        //     }
+        //   }
       }
       // Check if the bookings are already taken
 
