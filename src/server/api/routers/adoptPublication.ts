@@ -3,7 +3,7 @@ import {
   AdoptCreationSchema,
   AdoptSchema,
   AdoptUpdateSchema,
-} from "~/schemas/adoptPublication";
+} from "~/schemas/adoptionSchema";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -61,12 +61,12 @@ export const adoptPublicationRouter = createTRPCRouter({
   adopt: publicProcedure.input(AdoptSchema).mutation(async ({ input }) => {
     const { receipt, sender, message, name } = input;
 
-    await sendEmail(
-      receipt,
-      "v.ohmydog@gmail.com",
-      `${name} quiere adoptar tu perro, contactalo a su mail ${sender}!`,
-      message
-    );
+    await sendEmail({
+      to: receipt,
+      from: "v.ohmydog@gmail.com",
+      subject: `${name} quiere adoptar tu perro, contactalo a su mail ${sender}!`,
+      text: message,
+    });
     return;
   }),
 
@@ -133,6 +133,22 @@ export const adoptPublicationRouter = createTRPCRouter({
         },
         include: {
           dog: true,
+        },
+      });
+      return adoptPublication;
+    }),
+
+  //Cancel an adopt publication
+  cancel: protectedProcedure
+    .input(string()) //Adopt publication id
+    .mutation(async ({ ctx, input }) => {
+      const id = input;
+      const adoptPublication = await ctx.prisma.adoptPublication.update({
+        where: {
+          id,
+        },
+        data: {
+          active: false,
         },
       });
       return adoptPublication;

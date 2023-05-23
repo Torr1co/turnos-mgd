@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";
 import Box from "~/lib/Box";
 import Button from "~/lib/Button";
@@ -6,7 +7,8 @@ import { PetIcon } from "~/lib/icons";
 import Tooltip from "~/lib/Tooltip";
 import Text from "~/lib/Typo/Text";
 import Title from "~/lib/Typo/Title";
-import { type AdoptWithDog } from "~/schemas/adoptPublication";
+import { type AdoptWithDog } from "~/schemas/adoptionSchema";
+import { api } from "~/utils/api";
 import { cn } from "~/utils/styles";
 import Adopt from "./Adopt";
 import AdoptPublicationUpdate from "./AdoptPublicationUpdate";
@@ -70,7 +72,17 @@ export default function AdoptList({
   mine?: boolean;
 }) {
   const { handleModal } = useModal();
-  const [visible, setVisible] = useState("");
+  const [visible, setVisible] = useState({
+    confirm: "",
+    delete: "",
+  });
+  const utils = api.useContext();
+  const { mutate: confirm } = api.adoptPublications.confirm.useMutation({
+    onSuccess: async () => {
+      await utils.adoptPublications.getAll.invalidate();
+    },
+  });
+
   return adoptions.length === 0 ? (
     <div>No se encontraron publicaciones de adopcion</div>
   ) : (
@@ -94,8 +106,10 @@ export default function AdoptList({
                       Editar
                     </Button>
                     <Tooltip
-                      visible={visible === adoption.id}
-                      onClickOutside={() => setVisible("")}
+                      visible={visible.confirm === adoption.id}
+                      onClickOutside={() =>
+                        setVisible((prev) => ({ ...prev, confirm: "" }))
+                      }
                       interactive={true}
                       content={
                         <div className="flex flex-col">
@@ -103,20 +117,92 @@ export default function AdoptList({
                           <div className="flex gap-2">
                             <button
                               className="hover:text-primary"
-                              onClick={() => setVisible("")}
+                              onClick={() =>
+                                setVisible((prev) => ({ ...prev, confirm: "" }))
+                              }
                             >
                               No
                             </button>
-                            <button className="hover:text-primary">Si</button>
+                            <button
+                              className="hover:text-primary"
+                              onClick={() => {
+                                confirm(adoption.id, {
+                                  onSuccess: () => {
+                                    setVisible((prev) => ({
+                                      ...prev,
+                                      confirm: "",
+                                    }));
+                                    toast.success("Adopcion confirmada");
+                                  },
+                                });
+                              }}
+                            >
+                              Si
+                            </button>
                           </div>
                         </div>
                       }
                     >
                       <Button
                         kind={Button.KINDS.gray}
-                        onClick={() => setVisible(adoption.id)}
+                        onClick={() =>
+                          setVisible((prev) => ({
+                            ...prev,
+                            confirm: adoption.id,
+                          }))
+                        }
                       >
-                        Confirmar Adopcion
+                        Completar
+                      </Button>
+                    </Tooltip>
+                    <Tooltip
+                      visible={visible.delete === adoption.id}
+                      onClickOutside={() =>
+                        setVisible((prev) => ({ ...prev, delete: "" }))
+                      }
+                      interactive={true}
+                      content={
+                        <div className="flex flex-col">
+                          Estas seguro?
+                          <div className="flex gap-2">
+                            <button
+                              className="hover:text-primary"
+                              onClick={() =>
+                                setVisible((prev) => ({ ...prev, delete: "" }))
+                              }
+                            >
+                              No
+                            </button>
+                            <button
+                              className="hover:text-primary"
+                              onClick={() => {
+                                confirm(adoption.id, {
+                                  onSuccess: () => {
+                                    setVisible((prev) => ({
+                                      ...prev,
+                                      delete: "",
+                                    }));
+                                    toast.success("Adopcion confirmada");
+                                  },
+                                });
+                              }}
+                            >
+                              Si
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Button
+                        kind={Button.KINDS.gray}
+                        onClick={() =>
+                          setVisible((prev) => ({
+                            ...prev,
+                            delete: adoption.id,
+                          }))
+                        }
+                      >
+                        Eliminar
                       </Button>
                     </Tooltip>
                   </>

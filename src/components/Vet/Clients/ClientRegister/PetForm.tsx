@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import Form from "~/lib/Form";
-import { GenderOptions, type PetCreationSchema } from "~/schemas/pet";
+import { GenderOptions, type PetCreationSchema } from "~/schemas/petSchema";
 import { useFormContext } from "react-hook-form";
 
 export default function PetForm() {

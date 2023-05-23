@@ -5,6 +5,7 @@ import DatePicker from "~/lib/Form/DatePicker";
 import { useModal } from "~/context/ModalContex";
 import Button from "~/lib/Button";
 import BookingCreation from "./BookingCreation";
+import dayjs from "dayjs";
 
 type FilterProps = {
   start?: Date;
@@ -53,7 +54,10 @@ export default function MyBookings() {
         <BookingList
           filterFn={(booking) => {
             if (!filters.start || !filters.end) return true;
-            return filters.start < booking.date && booking.date < filters.end;
+            return (
+              !dayjs(filters.start).isAfter(booking.date, "d") &&
+              !dayjs(booking.date).isAfter(filters.end, "d")
+            );
           }}
         />
       </div>

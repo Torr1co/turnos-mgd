@@ -1,5 +1,8 @@
 import React from "react";
-import { type SessionUpdate, SessionUpdateSchema } from "~/schemas/session";
+import {
+  type SessionUpdate,
+  SessionUpdateSchema,
+} from "~/schemas/sessionSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Form from "~/lib/Form";

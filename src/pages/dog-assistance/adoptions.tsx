@@ -8,6 +8,7 @@ import AdoptList from "~/components/AdoptPublications.tsx/AdoptList";
 import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPublicationCreation";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
+import Toggle from "~/lib/Form/Toggle";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -26,16 +27,14 @@ const Adoptions = () => {
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
-        <Title>Perros de adopcion {mine ? "propios" : "ajenos"}</Title>
+        <Title>Perros de adopcion</Title>
         <div className="flex gap-4">
           {session && (
-            <Button
-              className="transition-colors duration-300"
-              kind={mine ? Button.KINDS.primary : Button.KINDS.gray}
-              onClick={() => setMine((prev) => !prev)}
-            >
-              {mine ? "Mis" : "Otras"} publicaciones
-            </Button>
+            <Toggle
+              label="Mis publicaciones"
+              checked={mine}
+              onChange={() => setMine((prev) => !prev)}
+            />
           )}
           {/*   <Switch
             className={`${

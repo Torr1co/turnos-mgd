@@ -1,16 +1,18 @@
 import { UserRoles } from "@prisma/client";
 import { z } from "zod";
-import { PetSchema } from "./pet";
-import { BookingSchema } from "./booking";
+import { PetSchema } from "./petSchema";
+import { BookingSchema } from "./bookingSchema";
 
 export const ClientCreationSchema = z.object({
   name: z
     .string()
+    .trim()
     .min(3, "Mas de 3 caracteres")
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
-  dni: z.string().min(8, "Minimo 8 digitos ").max(8, "Maximo 8 digitos"),
+  dni: z.string().trim().min(7, "Minimo 7 digitos ").max(8, "Maximo 8 digitos"),
   lastname: z
     .string()
+    .trim()
     .min(3, "Mas de 3 caracteres")
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
   email: z.string().email("Ingrese un mail valido"),

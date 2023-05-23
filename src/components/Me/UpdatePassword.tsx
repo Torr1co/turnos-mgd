@@ -1,5 +1,8 @@
 import React from "react";
-import { type PasswordUpdate, PasswordUpdateSchema } from "~/schemas/session";
+import {
+  type PasswordUpdate,
+  PasswordUpdateSchema,
+} from "~/schemas/sessionSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Form from "~/lib/Form";
@@ -28,22 +31,19 @@ export default function UpdatePassword() {
         });
       }}
     >
-      <Form.Input
+      <Form.Password
         path="prevPassword"
         label="Contraseña actual"
-        type="password"
         placeholder="Escribe tu contraseña"
       />
       <div></div>
-      <Form.Input
+      <Form.Password
         label="Nueva contraseña"
-        type="password"
         placeholder="Escribe tu nueva contraseña"
         path="password"
       />
-      <Form.Input
+      <Form.Password
         label="Confirma tu contraseña"
-        type="password"
         placeholder="Vuelve a escribir tu nueva contraseña"
         path="confirm"
       />

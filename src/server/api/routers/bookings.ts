@@ -5,9 +5,14 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { BookingCreationSchema, BookingUpdateSchema } from "~/schemas/booking";
+import {
+  BookingCreationSchema,
+  BookingUpdateSchema,
+} from "~/schemas/bookingSchema";
 import dayjs from "dayjs";
 import { UserRoles } from "~/schemas";
+import { string } from "zod";
+import sendEmail from "~/server/email";
 
 export const bookingsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -130,7 +135,7 @@ export const bookingsRouter = createTRPCRouter({
     });
   }),
 
-  // //Update a booking
+  // Update a booking
   update: clientProcedure
     .input(BookingUpdateSchema)
     .mutation(async ({ input, ctx }) => {
@@ -175,10 +180,11 @@ export const bookingsRouter = createTRPCRouter({
 
   //Returns today's bookings
   getToday: publicProcedure.query(({ ctx }) => {
+    const today = dayjs().startOf("day").toDate();
     return ctx.prisma.booking.findMany({
       where: {
         date: {
-          equals: new Date(),
+          equals: today,
         },
       },
       include: {
@@ -187,4 +193,53 @@ export const bookingsRouter = createTRPCRouter({
       },
     });
   }),
+
+  // Cancel a booking
+  cancel: protectedProcedure
+    .input(string()) //Booking ID
+    .mutation(async ({ input, ctx }) => {
+      const booking = await ctx.prisma.booking.findUnique({
+        where: {
+          id: input,
+        },
+      });
+      if (!booking) throw new Error("La reserva no existe!");
+
+      if (dayjs(booking.date).isBefore(dayjs(), "day"))
+        throw new Error("No puedes cancelar una reserva en el pasado!");
+
+      //Look for the user email
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: booking.userId,
+        },
+      });
+
+      if (!user) throw new Error("El usuario no existe!");
+
+      const to =
+        ctx.session.user.role === UserRoles.VET
+          ? user.email
+          : "v.ohmydog@gmail.com";
+
+      const who =
+        ctx.session.user.role === UserRoles.VET ? "veterinario" : "cliente";
+
+      await sendEmail({
+        to,
+        from: "v.ohmydog@gmail.com",
+        subject: `Se ha cancelado el turno reservado por ${user.name}.`,
+        text: `El turno del día ${booking.date.getDate()}, horario ${
+          booking.timeZone
+        }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`,
+      });
+      return ctx.prisma.booking.update({
+        where: {
+          id: input,
+        },
+        data: {
+          completed: true,
+        },
+      });
+    }),
 });

@@ -3,7 +3,10 @@ import { type Booking, type Pet, type User } from "~/schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { type BookingUpdate, BookingUpdateSchema } from "~/schemas/booking";
+import {
+  type BookingUpdate,
+  BookingUpdateSchema,
+} from "~/schemas/bookingSchema";
 import { toast } from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";

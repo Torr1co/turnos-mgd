@@ -1,7 +1,10 @@
 import { Prisma, UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 
-import { ClientCreationSchema, UpdateClientSchema } from "~/schemas/client";
+import {
+  ClientCreationSchema,
+  UpdateClientSchema,
+} from "~/schemas/clientSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { systemEmail } from "~/server/email";
 import sendEmail from "~/server/email";
@@ -59,12 +62,12 @@ export const clientsRouter = createTRPCRouter({
             },
           });
 
-          await sendEmail(
-            client.email,
-            "v.ohmydog@gmail.com",
-            "Bienvenido a Oh My Dog",
-            `Hola ${client.name}! Gracias por registrarte en Oh My Dog. Tu contraseña es ${randomString}`
-          );
+          await sendEmail({
+            to: client.email,
+            from: "v.ohmydog@gmail.com",
+            subject: "Bienvenido a Oh My Dog",
+            text: `Hola ${client.name}! Gracias por registrarte en Oh My Dog. Tu contraseña es ${randomString}`,
+          });
 
           return client;
         }, {});
