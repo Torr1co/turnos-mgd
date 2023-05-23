@@ -28,6 +28,7 @@ export default function AdoptPublicationCreation() {
         gender: "MALE",
         height: 0,
         weight: 0,
+        race: "Mestizo",
       },
       email: session?.user.email,
     },

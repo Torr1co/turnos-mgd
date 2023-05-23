@@ -7,7 +7,7 @@ export const DogSchema = z
       required_error: "Requerido",
       invalid_type_error: "Requerido",
     }),
-    gender: z.string(),
+    gender: z.optional(z.string()).default("Mestizo"),
     color: z.string(),
     weight: z.optional(
       z

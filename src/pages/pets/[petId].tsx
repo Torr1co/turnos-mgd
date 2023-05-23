@@ -59,7 +59,7 @@ const PetPage = ({ petId }: { petId: string }) => {
     onError: () => {
       void router.push("/404");
     },
-    staleTime: Infinity,
+    enabled: !methods.watch("dog.img"),
   });
   const utils = api.useContext();
   const { mutate: updatePet, isLoading } = api.pets.update.useMutation({

@@ -16,6 +16,7 @@ export default function PetRegister({ ownerId }: { ownerId: string }) {
     defaultValues: {
       dog: {
         gender: "MALE",
+        race: "Mestizo",
         owner: ownerId,
       },
     },

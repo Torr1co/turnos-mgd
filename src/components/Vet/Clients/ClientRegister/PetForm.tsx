@@ -51,7 +51,6 @@ export default function PetForm() {
             e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
           );
         }}
-        required
       />
       <Form.Number
         path="dog.weight"

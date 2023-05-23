@@ -35,7 +35,7 @@ export default function AdoptPublicationUpdate({
         name: adoption.dog.name ?? undefined,
         birth: adoption.dog.birth ?? undefined,
         race: adoption.dog.race ?? undefined,
-        gender: adoption.dog.gender ?? undefined,
+        gender: adoption.dog.gender ?? "Mestizo",
         height: adoption.dog.height ?? undefined,
         weight: adoption.dog.weight ?? undefined,
         color: adoption.dog.color ?? undefined,
