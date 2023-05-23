@@ -6,7 +6,7 @@ import { type Pet } from ".prisma/client";
 
 export default function PetList({ pets }: { pets: Pet[] }) {
   return (
-    <ul className=" mt-8 grid grid-cols-3 gap-8">
+    <ul className=" mt-8 grid grid-cols-2 gap-8 md:grid-cols-3">
       {pets.length > 0 ? (
         pets.map((pet) => (
           <li key={pet.id} className="group">
