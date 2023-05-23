@@ -27,7 +27,7 @@ const Adoptions = () => {
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
-        <Title>Perros de adopcion {mine ? "propios" : "ajenos"}</Title>
+        <Title>Perros de adopcion</Title>
         <div className="flex gap-4">
           {session && (
             <Toggle
