@@ -32,14 +32,16 @@ export const bookingsRouter = createTRPCRouter({
             id: dog,
           },
           date: {
-            equals: booking.date,
+            gt: dayjs(booking.date).startOf("day").toDate(),
+            lt: dayjs(booking.date).endOf("day").toDate(),
           },
           type: {
             equals: booking.type,
           },
         },
       });
-      if (dogBookings.length > 0) throw new Error("Ya tienes un turno!");
+      if (dogBookings.length > 0)
+        throw new Error("Ya tienes un turno ese día!");
 
       // Check if the date is in the past or a Sunday
       if (dayjs(booking.date).isBefore(dayjs(), "day"))
@@ -56,7 +58,7 @@ export const bookingsRouter = createTRPCRouter({
             id: dog,
           },
         });
-        const isPuppy = dayjs(dogData?.birth).isBefore(
+        const isPuppy = dayjs(dogData?.birth).isAfter(
           dayjs().subtract(4, "month")
         );
         if (booking.vaccine === "B") {
@@ -143,7 +145,7 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
       // Check if the bookings are already taken
-      if (dayBookings >= 5) throw new Error("Horario ocupado!");
+      if (dayBookings >= 20) throw new Error("Horario ocupado!");
 
       return ctx.prisma.booking.create({
         data: {
@@ -168,7 +170,7 @@ export const bookingsRouter = createTRPCRouter({
     return ctx.prisma.booking.findMany({
       where: {
         date: {
-          gte: new Date(),
+          gte: dayjs().startOf("day").toDate(),
         },
         completed: {
           equals: false,
@@ -403,12 +405,9 @@ export const bookingsRouter = createTRPCRouter({
           booking.timeZone
         }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`,
       });
-      return ctx.prisma.booking.update({
+      return ctx.prisma.booking.delete({
         where: {
           id: input,
-        },
-        data: {
-          completed: true,
         },
       });
     }),
