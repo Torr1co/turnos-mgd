@@ -18,7 +18,7 @@ export default function BookingForm() {
         path="booking.date"
         label="Fecha"
         disabledDate={(current) => {
-          return current.isBefore(dayjs(), "d") || current.day() === 0;
+          return !current.isAfter(dayjs(), "d") || current.day() === 0;
         }}
         required
       />

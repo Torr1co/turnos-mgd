@@ -1,5 +1,5 @@
 import sgMail from "@sendgrid/mail";
-import { systemEmail } from "./nodeMailer";
+// import { systemEmail } from "./nodeMailer";
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
@@ -30,9 +30,11 @@ const sendEmail = ({ from: fromMsg = DEFAULT_EMAIL, ...msg }: SendEmail) => {
     typeof fromMsg === "string"
       ? { ...SYSTEM_ADDRESS, address: fromMsg, email: fromMsg }
       : fromMsg;
-  return process.env.NODE_ENV === "production"
-    ? sgMail.send({ from, ...msg })
-    : systemEmail({ from, ...msg });
+  return /* process.env.NODE_ENV === "production"?  */ sgMail.send({
+    from,
+    ...msg,
+  });
+  // : systemEmail({ from, ...msg });
 };
 
 export default sendEmail;

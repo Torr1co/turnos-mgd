@@ -27,7 +27,7 @@ export function AdoptItem({
           <PetIcon width="100" height="100" />
         </div>
         <div>
-          <Text>{adoption.email}</Text>
+          <Text className="max-w-xs break-words">{adoption.email}</Text>
         </div>
       </div>
       <div className="flex flex-col gap-6">
