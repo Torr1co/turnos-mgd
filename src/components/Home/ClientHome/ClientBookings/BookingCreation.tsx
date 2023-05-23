@@ -11,6 +11,7 @@ import Form from "~/lib/Form";
 import { useModal } from "~/context/ModalContex";
 import { z } from "zod";
 import { TimeZone, InquirieType } from "@prisma/client";
+import dayjs from "dayjs";
 
 const BookingCreationSchema = z.object({ booking: CreationSchema });
 type BookingCreation = z.infer<typeof BookingCreationSchema>;
@@ -30,7 +31,7 @@ export default function BookingCreation() {
       booking: {
         timeZone: TimeZone.MORNING,
         type: InquirieType.GENERAL,
-        date: new Date(),
+        date: dayjs().add(1, "d").toDate(),
       },
     },
   });
@@ -45,7 +46,7 @@ export default function BookingCreation() {
             toast.success("Turno creado con exito!");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (err) => toast.error(err.message),
         });
       }}
     >
@@ -67,6 +68,7 @@ export default function BookingCreation() {
           value: dog.id,
           label: dog.name,
         }))}
+        required
       />
     </Form>
   );

@@ -8,9 +8,9 @@ import Image from "next/image";
 
 export function PetItem({ pet }: { pet: Pet }) {
   return (
-    <div className="items group flex gap-10">
+    <div className="items group flex gap-8">
       {pet.img ? (
-        <div className="relative h-[76px] w-[76px]">
+        <div className="relative h-[76px] w-full max-w-[76px]">
           <Image
             src={pet.img}
             alt="pet photo"

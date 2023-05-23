@@ -28,7 +28,7 @@ export default function UnregisteredHome() {
               <Text>
                 Somos una veterinaria online que te ofrece todo lo que tu
                 mascota necesita para estar sana y feliz. Desde turnos con
-                profesionales veterinarios hasta Encontrar perros en adopcion.
+                veterinarios profesionales hasta Encontrar perros en adopcion.
                 ¡Todo en un solo lugar!
               </Text>
               <Link href={NAV_CONFIG.signin.href}>

@@ -37,7 +37,7 @@ export default function Header() {
           </div>
           <Button
             onClick={() => {
-              void signOut().then(() => router.reload());
+              void signOut().then(() => router.push("/"));
             }}
           >
             Cerrar sesion

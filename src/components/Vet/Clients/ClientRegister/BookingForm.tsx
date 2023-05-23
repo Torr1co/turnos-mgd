@@ -12,14 +12,13 @@ import { InquirieType } from "@prisma/client";
 
 export default function BookingForm() {
   const methods = useFormContext<{ booking: BookingCreation }>();
-  console.log(methods.watch());
   return (
     <div className="grid gap-6">
       <Form.Date
         path="booking.date"
         label="Fecha"
         disabledDate={(current) => {
-          return current.isBefore(dayjs(), "d") || current.day() === 0;
+          return !current.isAfter(dayjs(), "d") || current.day() === 0;
         }}
         required
       />

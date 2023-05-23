@@ -64,8 +64,11 @@ export const adoptPublicationRouter = createTRPCRouter({
     await sendEmail({
       to: receipt,
       from: "v.ohmydog@gmail.com",
-      subject: `${name} quiere adoptar tu perro, contactalo a su mail ${sender}!`,
-      text: message,
+      subject: "Publicación de adopción en Oh my dog!",
+      text: `Le escribimos para informarle que ${name} está interesado en adoptar a su perro. 
+          Puedes contactarlo a través de su correo: ${sender}. 
+          Mensaje: ${message}.
+          ¡Muchas gracias por usar Oh my dog!`,
     });
     return;
   }),
