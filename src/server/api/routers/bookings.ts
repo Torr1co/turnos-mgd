@@ -35,9 +35,6 @@ export const bookingsRouter = createTRPCRouter({
             gt: dayjs(booking.date).startOf("day").toDate(),
             lt: dayjs(booking.date).endOf("day").toDate(),
           },
-          type: {
-            equals: booking.type,
-          },
         },
       });
       if (dogBookings.length > 0)
