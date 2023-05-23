@@ -21,7 +21,15 @@ export const clientsRouter = createTRPCRouter({
       const randomString = Math.random().toString(36).replace("0.", "");
       const hashedPassword = hashSync(randomString, 10);
 
-      // Create the user with the hashed password
+      if (booking.type === "VACCINE") {
+        if (booking.vaccine === "B") {
+          if (dayjs(dog.birth).isAfter(dayjs().subtract(4, "month"))) {
+            throw new Error(
+              "No se puede aplicar una antirrabica a un perro menor de 4 meses!"
+            );
+          }
+        }
+      }
 
       try {
         const client = await ctx.prisma.$transaction(async (prisma) => {
@@ -46,23 +54,6 @@ export const clientsRouter = createTRPCRouter({
           });
           // Check if the bookings are already taken
           if (dayBookings >= 5) throw new Error("Horario ocupado!");
-
-          if (booking.type === "VACCINE") {
-            const dogData = await ctx.prisma.pet.findUnique({
-              where: {
-                id: dog.id,
-              },
-            });
-            if (booking.vaccine === "B") {
-              if (
-                dayjs(dogData?.birth).isBefore(dayjs().subtract(4, "month"))
-              ) {
-                throw new Error(
-                  "No se puede aplicar una antirrabica a un perro menor de 4 meses!"
-                );
-              }
-            }
-          }
 
           const dogCreation = await prisma.pet.create({
             data: {
