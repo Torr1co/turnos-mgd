@@ -3,7 +3,7 @@ import { z } from "zod";
 import { DogSchema } from "./dogSchema";
 
 export const AdoptCreationSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email("Ingrese un mail valido"),
   reason: z.string().trim().min(16),
   info: z.optional(z.string()),
   dog: DogSchema.partial(),
