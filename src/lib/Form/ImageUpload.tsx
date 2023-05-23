@@ -65,7 +65,7 @@ const ImageUploader = ({
       >
         {fileName ?? (
           <div className="flex justify-between">
-            {placeholder}
+            <span className="truncate">{placeholder}</span>
             <CameraIcon className="h-5 w-5 text-gray-600 group-hover:text-primary" />
           </div>
         )}

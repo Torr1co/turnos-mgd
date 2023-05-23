@@ -16,11 +16,11 @@ export const AdoptUpdateSchema = AdoptCreationSchema.extend({
 export const AdoptSchema = z.object({
   id: z.string(),
   receipt: z.string(), //Publication id
-  sender: z.string(), //Email of the user that wants to adopt
-  name: z.string(), //Name of the user that wants to adopt
-  lastname: z.string(), //Name of the user that wants to adopt
+  sender: z.string().trim().email("Ingrese un mail valido"), //Email of the user that wants to adopt
+  name: z.string().trim().min(1, "Requerido"), //Name of the user that wants to adopt
+  lastname: z.string().trim().min(1, "Requerido"), //Name of the user that wants to adopt
   telephone: z.optional(z.string()), //Telephone of the user that wants to adopt
-  message: z.string(), //Message of the user that wants to adopt
+  message: z.string().trim().min(10, "Minimo 10 caracteres"), //Message of the user that wants to adopt
 });
 export type AdoptUpdateSchema = z.infer<typeof AdoptUpdateSchema>;
 export type AdoptSchema = z.infer<typeof AdoptSchema>;

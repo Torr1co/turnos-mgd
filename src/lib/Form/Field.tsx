@@ -8,6 +8,7 @@ export interface FieldProps<P = unknown> {
   Component: ComponentType<P> | ElementType;
   path: string;
   options?: RegisterOptions;
+  required?: boolean;
 }
 export type FieldPropsInitial = Omit<FieldProps, "Component">;
 
@@ -15,7 +16,12 @@ export type FieldOmmitted = Omit<FieldProps, "Component" | "label">;
 export type FieldAdded = { error?: { type: string; message: string } };
 export type Field<C> = C & FieldOmmitted & FieldAdded;
 
-export default function Field({ label, Component, ...props }: FieldProps) {
+export default function Field({
+  label,
+  Component,
+  required,
+  ...props
+}: FieldProps) {
   const { formState } = useFormContext();
   const error = get(formState.errors, props.path) as
     | Record<string, string>
@@ -34,7 +40,7 @@ export default function Field({ label, Component, ...props }: FieldProps) {
           htmlFor={props.path}
         >
           {label}
-          {props.options?.required && <span className="text-red-400">*</span>}
+          {required && <span className="text-red-400">*</span>}
         </label>
       )}
       <Component {...props} error={error} />

@@ -7,9 +7,11 @@ import Navbar from "./Navbar";
 import NAV_CONFIG, { LINKS } from "~/utils/navConfig";
 import { UserIcon } from "~/lib/icons";
 import Tooltip from "~/lib/Tooltip";
+import { useRouter } from "next/router";
 
 export default function Header() {
   const { data: session } = useSession();
+  const router = useRouter();
   return (
     <header className="z-30 flex items-center justify-between px-10 py-5">
       <Link href={"/"}>
@@ -33,7 +35,13 @@ export default function Header() {
               </Link>
             </Tooltip>
           </div>
-          <Button onClick={() => void signOut()}>Cerrar sesion</Button>
+          <Button
+            onClick={() => {
+              void signOut().then(() => router.reload());
+            }}
+          >
+            Cerrar sesion
+          </Button>
         </div>
       ) : (
         <Link href={NAV_CONFIG.signin.href}>

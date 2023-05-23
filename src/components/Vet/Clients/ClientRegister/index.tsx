@@ -59,6 +59,7 @@ export default function ClientRegister() {
       },
       dog: {
         gender: "MALE",
+        race: "Mestizo",
       },
     },
   });

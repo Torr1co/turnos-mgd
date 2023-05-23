@@ -10,7 +10,7 @@ export const PetSchema = z.object({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
   }),
-  gender: z.string().trim(),
+  gender: z.optional(z.string().trim()).default("Mestizo"),
   color: z.string().trim(),
   weight: z
     .number({

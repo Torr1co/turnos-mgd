@@ -95,7 +95,7 @@ model Pet {
     owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId      String     @db.ObjectId
 
-    @@unique([name, ownerId])
+    @@unique([ownerId, name])
 }
 
 //------------------------------- HEALTH BOOK ---------------------------------

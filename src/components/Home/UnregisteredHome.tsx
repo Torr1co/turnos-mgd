@@ -19,7 +19,7 @@ export default function UnregisteredHome() {
   return (
     <>
       {!session && router.pathname === "/" && (
-        <div className="relative -z-10 -mx-20 -mt-40 h-[100vh]  overflow-hidden rounded-b-[15%] bg-primary-200 px-20 pt-48 pb-16">
+        <div className="relative -z-10 -mx-20 -mt-40 h-[88vh]  overflow-hidden rounded-b-[15%] bg-primary-200 px-20 pt-48 pb-16">
           <header className="mb-32 max-w-[44rem] scale-95">
             <div className="flex flex-col gap-6">
               <Title as="h1">

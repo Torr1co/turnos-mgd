@@ -3,11 +3,25 @@ import React from "react";
 import Form from "~/lib/Form";
 import { GenderOptions, type PetCreationSchema } from "~/schemas/petSchema";
 import { useFormContext } from "react-hook-form";
+import Image from "next/image";
 
 export default function PetForm() {
   const methods = useFormContext<{ dog: PetCreationSchema }>();
+  const img = methods.watch("dog.img");
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid gap-6 md:grid-cols-2">
+      {img && (
+        <div className="row-span-2 grid place-items-center">
+          <div className="relative h-[80px] w-[80px] md:h-[160px] md:w-[160px]">
+            <Image
+              src={img}
+              alt="pet photo"
+              fill={true}
+              className="rounded-full object-cover"
+            />
+          </div>
+        </div>
+      )}
       <Form.Input
         path="dog.name"
         label="Nombre"
@@ -17,6 +31,7 @@ export default function PetForm() {
             e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
           );
         }}
+        required
       />
       <Form.Date
         path="dog.birth"
@@ -24,6 +39,7 @@ export default function PetForm() {
         disabledDate={(current) => {
           return current.isAfter(dayjs(), "d");
         }}
+        required
       />
       <Form.Select path="dog.gender" label="Genero" values={GenderOptions} />
       <Form.Input
@@ -45,6 +61,7 @@ export default function PetForm() {
             +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
           );
         }}
+        required
       />
       <Form.Number
         path="dog.height"
@@ -56,6 +73,7 @@ export default function PetForm() {
             +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
           );
         }}
+        required
       />
       <Form.Input
         path="dog.color"
@@ -70,10 +88,10 @@ export default function PetForm() {
 
       <Form.ImageUploader path="dog.img" label="Imagen" />
 
-      <div className="col-span-2">
+      <div className="md:col-span-2">
         <Form.TextArea path="dog.observations" label="Observaciones" />
       </div>
-      <div className="col-span-2">
+      <div className="md:col-span-2">
         <Form.Toggle path="dog.castrated" label="Se encuentra castrado?" />
       </div>
       {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}

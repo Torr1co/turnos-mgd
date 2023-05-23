@@ -26,7 +26,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const Clients = () => {
   const { handleModal } = useModal();
-  const [filter, setfilter] = React.useState("");
+  const [filter, setfilter] = React.useState({
+    client: "",
+    dog: "",
+  });
 
   return (
     <div>
@@ -34,9 +37,15 @@ const Clients = () => {
         <Title>Clientes</Title>
         <div className="flex gap-4">
           <Input
+            placeholder="Buscar perro"
+            onChange={(e) => {
+              setfilter((prev) => ({ ...prev, dog: e.target.value }));
+            }}
+          />
+          <Input
             placeholder="Buscar cliente"
             onChange={(e) => {
-              setfilter(e.target.value);
+              setfilter((prev) => ({ ...prev, client: e.target.value }));
             }}
           />
           <Button
@@ -48,10 +57,16 @@ const Clients = () => {
         </div>
       </header>
       <ClientList
-        filterFn={(user) =>
-          user.email.toLowerCase().includes(filter.toLowerCase()) ||
-          user.name.toLowerCase().includes(filter.toLowerCase())
-        }
+        filterFn={(user) => {
+          const hasUser =
+            user.email.toLowerCase().includes(filter.client.toLowerCase()) ||
+            user.name.toLowerCase().includes(filter.client.toLowerCase());
+
+          const hasDog = user.dogs.some((dog) =>
+            dog.name.toLowerCase().includes(filter.dog.toLowerCase())
+          );
+          return hasDog && hasUser;
+        }}
       />
     </div>
   );

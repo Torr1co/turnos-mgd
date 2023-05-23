@@ -36,7 +36,6 @@ export default function Adopt({
       sender: session?.user.email,
     },
   });
-  console.log(methods.formState.errors);
 
   return (
     <Form
@@ -48,7 +47,7 @@ export default function Adopt({
             toast.success("Se ha enviado tu solicitud");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (error) => toast.error(error.message),
         });
       }}
     >
@@ -72,16 +71,16 @@ export default function Adopt({
           {adoption.dog.birth && (
             <>
               <dt>Edad:</dt>
-              <dd>
-                {dayjs(adoption.dog.birth).format("DD/MM/YYYY")} (
-                {dayjs(adoption.dog.birth).toNow(true)})
+              <dd className="text-gray-500">
+                {dayjs(adoption.dog.birth).toNow(true)} (
+                {dayjs(adoption.dog.birth).format("DD/MM/YYYY")})
               </dd>
             </>
           )}
           {adoption.dog.gender && (
             <>
               <dt>Genero:</dt>
-              <dd>
+              <dd className="text-gray-500">
                 {
                   GenderOptions.find(
                     (gender) => gender.value === adoption.dog.gender
@@ -94,28 +93,28 @@ export default function Adopt({
             <>
               <dt>Raza:</dt>
 
-              <dd>{adoption.dog.race}</dd>
+              <dd className="text-gray-500">{adoption.dog.race}</dd>
             </>
           )}
           {!!adoption.dog.weight && (
             <>
               <dt>Peso:</dt>
 
-              <dd>{adoption.dog.weight}kg</dd>
+              <dd className="text-gray-500">{adoption.dog.weight}kg</dd>
             </>
           )}
           {!!adoption.dog.height && (
             <>
               <dt>Altura:</dt>
 
-              <dd>{adoption.dog.height}cm</dd>
+              <dd className="text-gray-500">{adoption.dog.height}cm</dd>
             </>
           )}
           {adoption.dog.color && (
             <>
               <dt>Color:</dt>
 
-              <dd>{adoption.dog.color}</dd>
+              <dd className="text-gray-500">{adoption.dog.color}</dd>
             </>
           )}
         </dl>
