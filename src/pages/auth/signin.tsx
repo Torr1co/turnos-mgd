@@ -68,9 +68,8 @@ const SignIn: NextPage = () => {
             path="email"
             placeholder="usuario@email.com"
           />
-          <Form.Input
+          <Form.Password
             label="Contraseña"
-            type="password"
             className="test"
             placeholder="Escribe tu contraseña"
             path="password"

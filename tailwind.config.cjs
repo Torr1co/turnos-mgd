@@ -39,6 +39,7 @@ const config = {
         DEFAULT: "1.125rem",
       },
       borderRadius: {
+        sm: "6px",
         md: "10px",
         lg: "20px",
       },

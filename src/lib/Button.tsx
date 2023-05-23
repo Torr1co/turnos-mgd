@@ -5,8 +5,8 @@ import { type FC } from "~/utils/types";
 import Loading from "./Loading";
 
 const SIZES = {
-  sm: "px-4 py-2",
-  md: "px-6 py-3",
+  sm: "px-4 py-2 ",
+  md: "px-4 py-1.5 md:px-6 md:py-3 text-sm md:text-base",
 } as const;
 
 const KINDS = {
@@ -40,7 +40,7 @@ const Button = forwardRef<HTMLButtonElement, FC<ButtonProps>>(
         ref={ref}
         className={cn(
           className,
-          "relative rounded-md ",
+          "relative rounded-sm md:rounded-md ",
           hasKey(SIZES, size) ? SIZES[size] : size,
           hasKey(KINDS, kind) ? KINDS[kind] : kind
         )}

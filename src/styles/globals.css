@@ -6,16 +6,20 @@
 
 @media (max-width: 1250px) {
   html {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 
 @media (max-width: 768px) {
   html {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 @layer utilities {
   .scale-95 {
     transform: scale(0.95);

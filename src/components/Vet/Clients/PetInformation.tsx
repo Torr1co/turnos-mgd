@@ -1,7 +1,7 @@
 import { type Pet } from ".prisma/client";
 import dayjs from "dayjs";
 import React from "react";
-import { GenderOptions } from "~/schemas/pet";
+import { GenderOptions } from "~/schemas/petSchema";
 
 export default function PetInformation({ pet }: { pet: Pet }) {
   return (

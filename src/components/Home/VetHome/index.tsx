@@ -1,11 +1,12 @@
 import { type InquirieType } from "@prisma/client";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import Dropdown from "~/lib/Dropdown";
 import CustomDatePicker from "~/lib/Form/DatePicker";
 import Input from "~/lib/Form/Input";
 import Select from "~/lib/Form/Select";
 import Title from "~/lib/Typo/Title";
-import { InquirieOptions } from "~/schemas/booking";
+import { InquirieOptions } from "~/schemas/bookingSchema";
 import { api } from "~/utils/api";
 import VetBookingList from "./BookingList";
 // import BookingList from "./ClientHome/BookingList";
@@ -31,7 +32,7 @@ export default function VetHome() {
     <div>
       <header className="mb-14 flex items-center justify-between">
         <Title>Turnos Reservados</Title>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center gap-4 sm:flex-row">
           <CustomDatePicker.RangePicker
             onChange={(props) => {
               if (props) {
@@ -101,7 +102,8 @@ export default function VetHome() {
             const includesDate =
               !filters.start ||
               !filters.end ||
-              (filters.start < booking.date && booking.date < filters.end);
+              (!dayjs(filters.start).isAfter(booking.date, "d") &&
+                !dayjs(booking.date).isAfter(filters.end, "d"));
 
             const includesType =
               !filters.InquirieType || filters.InquirieType === booking.type;

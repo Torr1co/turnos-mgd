@@ -8,8 +8,10 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { BookingIcon } from "~/lib/icons";
 import dayjs from "dayjs";
 import Tooltip from "~/lib/Tooltip";
-import { InquirieOptions } from "~/schemas/booking";
+import { InquirieOptions } from "~/schemas/bookingSchema";
 import { InquirieType } from "~/schemas";
+import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
 
 export default function VetBookingList({
   bookings,
@@ -22,8 +24,14 @@ export default function VetBookingList({
   >;
 }) {
   const [visible, setVisible] = useState("");
+  const utils = api.useContext();
+  const { mutate: cancelBooking } = api.bookings.cancel.useMutation({
+    onSuccess: async () => {
+      await utils.bookings.getAll.invalidate();
+    },
+  });
   return (
-    <ul className="grid grid-cols-2 gap-6">
+    <ul className="grid gap-6 md:grid-cols-2">
       {bookings.length === 0 ? (
         <div>No se encontraron turnos</div>
       ) : (
@@ -77,7 +85,22 @@ export default function VetBookingList({
                           >
                             No
                           </button>
-                          <button className="hover:text-primary">Si</button>
+                          <button
+                            className="hover:text-primary"
+                            onClick={() => {
+                              cancelBooking(booking.id, {
+                                onSuccess: () => {
+                                  setVisible("");
+                                  toast.success("Turno cancelado con exito");
+                                },
+                                onError: () => {
+                                  toast.error("Ha sucedido un error");
+                                },
+                              });
+                            }}
+                          >
+                            Si
+                          </button>
                         </div>
                       </div>
                     }

@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { AdoptUpdateSchema } from "~/schemas/adoptPublication";
+import { AdoptUpdateSchema } from "~/schemas/adoptionSchema";
 import toast from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";
@@ -59,8 +59,8 @@ export default function AdoptPublicationUpdate({
     >
       <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         <Title as="h4" className="text-gray-500">
-          Actualizar publicacion de 
-          <span className="text-primary">Adopcion</span>
+          Editar publicacion de
+          <span className="text-primary"> Adopcion</span>
         </Title>
         <div className="pl-auto">
           <Button type="submit" loading={isLoading} size="sm">

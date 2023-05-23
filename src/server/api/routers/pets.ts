@@ -1,6 +1,6 @@
 import { Prisma, UserRoles } from ".prisma/client";
 import { z } from "zod";
-import { PetCreationSchema, PetUpdateSchema } from "~/schemas/pet";
+import { PetCreationSchema, PetUpdateSchema } from "~/schemas/petSchema";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 

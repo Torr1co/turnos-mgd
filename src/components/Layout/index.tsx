@@ -2,8 +2,12 @@ import React from "react";
 import Header from "./Header";
 import { type FC } from "~/utils/types";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function Layout({ children }: FC) {
+  const { data: session } = useSession();
+  const router = useRouter();
   return (
     <div className="flex min-h-screen flex-col font-custom text-base text-gray-600">
       <Head>
@@ -12,8 +16,12 @@ export default function Layout({ children }: FC) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="absolute -top-16 -z-10 h-screen w-full rounded-b-[25%] bg-primary-200"></div>
-      <main className="z-10 px-20 py-16">{children}</main>
+      {(router.pathname !== "/" || session) && (
+        <div className="absolute -top-16 -z-10 h-[100vh] w-full overflow-hidden rounded-b-[15%] bg-primary-200"></div>
+      )}
+      <main className="z-10 px-8 py-4 md:px-20 md:pt-8 md:pb-16">
+        {children}
+      </main>
     </div>
   );
 }

@@ -5,7 +5,10 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { BookingCreationSchema, BookingUpdateSchema } from "~/schemas/booking";
+import {
+  BookingCreationSchema,
+  BookingUpdateSchema,
+} from "~/schemas/bookingSchema";
 import dayjs from "dayjs";
 import { UserRoles } from "~/schemas";
 import { string } from "zod";
@@ -230,22 +233,24 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
 
+      if (!user) throw new Error("El usuario no existe!");
+
       const to =
         ctx.session.user.role === UserRoles.VET
-          ? user!.email
+          ? user.email
           : "v.ohmydog@gmail.com";
 
       const who =
         ctx.session.user.role === UserRoles.VET ? "veterinario" : "cliente";
 
-      await sendEmail(
+      await sendEmail({
         to,
-        "v.ohmydog@gmail.com",
-        `Se ha cancelado el turno reservado por ${user!.name}.`,
-        `El turno del día ${booking.date.getDate()}, horario ${
+        from: "v.ohmydog@gmail.com",
+        subject: `Se ha cancelado el turno reservado por ${user.name}.`,
+        text: `El turno del día ${booking.date.getDate()}, horario ${
           booking.timeZone
-        }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`
-      );
+        }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`,
+      });
       return ctx.prisma.booking.update({
         where: {
           id: input,

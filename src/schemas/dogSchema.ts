@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const DogSchema = z
   .object({
-    name: z.string().max(20, "Maximo 20 caracteres"),
+    name: z.string().trim().max(20, "Maximo 20 caracteres"),
     birth: z.date({
       required_error: "Requerido",
       invalid_type_error: "Requerido",

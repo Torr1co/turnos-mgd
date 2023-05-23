@@ -5,7 +5,7 @@ import {
   InquirieOptions,
   TimeZoneOptions,
   VaccineOptions,
-} from "~/schemas/booking";
+} from "~/schemas/bookingSchema";
 import dayjs from "dayjs";
 import { useFormContext } from "react-hook-form";
 import { InquirieType } from "@prisma/client";

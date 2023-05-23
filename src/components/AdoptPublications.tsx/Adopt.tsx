@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { AdoptSchema } from "~/schemas/adoptPublication";
+import { AdoptSchema } from "~/schemas/adoptionSchema";
 import toast from "react-hot-toast";
 import Title from "~/lib/Typo/Title";
 import Button from "~/lib/Button";
@@ -13,7 +13,7 @@ import AdoptForm from "./AdoptForm";
 import { AdoptItem } from "./AdoptList";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
-import { GenderOptions } from "~/schemas/pet";
+import { GenderOptions } from "~/schemas/petSchema";
 
 export default function Adopt({
   adoption,
@@ -52,20 +52,18 @@ export default function Adopt({
         });
       }}
     >
-      <section>
-        <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
-          <Title as="h4" className="text-gray-500">
-            Formulario de <span className="text-primary">Adopcion</span>
-          </Title>
-          <div className="pl-auto">
-            <Button type="submit" loading={isLoading} size="sm">
-              Adoptar
-            </Button>
-          </div>
-        </header>
-        <div>
-          <AdoptForm />
+      <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
+        <Title as="h4" className="text-gray-500">
+          Formulario de <span className="text-primary">Adopcion</span>
+        </Title>
+        <div className="pl-auto">
+          <Button type="submit" loading={isLoading} size="sm">
+            Adoptar
+          </Button>
         </div>
+      </header>
+      <section>
+        <AdoptForm />
       </section>
       <hr />
       <section className="flex flex-col gap-12">
