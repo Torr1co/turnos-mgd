@@ -25,6 +25,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
 export const config = {
   matcher: [
     "/",
+    "/me",
     "/services",
     "/admin/clients",
     "/auth/signin",

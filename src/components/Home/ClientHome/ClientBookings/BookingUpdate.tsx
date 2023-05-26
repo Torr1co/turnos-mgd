@@ -37,6 +37,7 @@ export default function BookingUpdate({ booking }: BookingUpdateProps) {
         timeZone: booking.timeZone,
         date: booking.date,
         id: booking.id,
+        ...(booking.vaccine ? { vaccine: booking.vaccine } : undefined),
       },
       dog: booking.dog.id,
     },
@@ -52,7 +53,7 @@ export default function BookingUpdate({ booking }: BookingUpdateProps) {
             toast.success("Turno actualizado!");
             handleModal();
           },
-          onError: () => toast.error("Ha sucedido un error"),
+          onError: (err) => toast.error(err.message),
         });
       }}
     >

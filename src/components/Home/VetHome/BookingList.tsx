@@ -47,11 +47,12 @@ export default function VetBookingList({
                   <div>
                     <Title
                       as="h3"
+                      size={"text-md font-semibold"}
                       className={cn(
                         "capitalize transition-colors duration-300"
                       )}
                     >
-                      {booking.dog.name} -{" "}
+                      {dayjs(booking.date).format("MMMM D, YYYY ")} -{" "}
                       {
                         InquirieOptions.find(
                           (type) => type.value === booking.type
@@ -62,11 +63,12 @@ export default function VetBookingList({
                       )}
                     </Title>
                     <Text>
-                      Dueño:{" "}
-                      <span className="capitalize">{booking.user.name}</span>
+                      Perro:{" "}
+                      <span className="capitalize">{booking.dog.name}</span>
                     </Text>
                     <Text>
-                      Fecha: {dayjs(booking.date).format("MMMM D, YYYY ")}
+                      Dueño:{" "}
+                      <span className="capitalize">{booking.user.name}</span>
                     </Text>
                   </div>
                 </div>

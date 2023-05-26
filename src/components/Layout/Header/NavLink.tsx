@@ -27,26 +27,24 @@ export default function NavLink({ link }: { link: NavItem }) {
           {Object.values(link.children).map((child) => (
             <Link key={child.href} href={child.href}>
               <Dropdown.Item>
-                {({ active }) => (
-                  <div
-                    className={cn(
-                      active && "translate-x-2 text-primary",
-                      "flex items-center gap-1 transition-all duration-300"
-                    )}
-                  >
-                    {child.label}
+                <div
+                  className={cn(
+                    "group-hover:translate-x-2 group-hover:text-primary",
+                    "flex items-center gap-1 transition-all duration-300"
+                  )}
+                >
+                  {child.label}
 
-                    <ArrowSmallRightIcon
-                      className={cn(
-                        active ? "opacity-100" : "opacity-0",
-                        "h-5 w-5 stroke-2 transition-opacity duration-300"
-                      )}
-                      style={{
-                        transform: "rotate(-45deg)",
-                      }}
-                    />
-                  </div>
-                )}
+                  <ArrowSmallRightIcon
+                    className={cn(
+                      "opacity-0 group-hover:opacity-100",
+                      "h-5 w-5 stroke-2 transition-opacity duration-300"
+                    )}
+                    style={{
+                      transform: "rotate(-45deg)",
+                    }}
+                  />
+                </div>
               </Dropdown.Item>
             </Link>
           ))}

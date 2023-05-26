@@ -73,7 +73,7 @@ export function FieldPassword({
 }: Field<InputProps>) {
   const [show, setShow] = useState(false);
   return (
-    <div className={cn("relative h-full w-full", className)}>
+    <div className={cn("relative w-full", className)}>
       <FieldInput
         type={show ? "text" : "password"}
         className="h-full w-full pr-12"

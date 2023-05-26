@@ -54,6 +54,7 @@ export default function PetForm() {
       />
       <Form.Number
         path="dog.weight"
+        step={0.1}
         label="Peso (kg)"
         onChange={(e) => {
           methods.setValue(

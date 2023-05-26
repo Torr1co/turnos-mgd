@@ -14,7 +14,7 @@ export default function MyPets() {
         <Title>Mis Perros</Title>
         <div className="flex gap-4">
           <Input
-            placeholder="Buscar Perro"
+            placeholder="Buscar por nombre"
             onChange={(e) => {
               setFilters(e.target.value);
             }}

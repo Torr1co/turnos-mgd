@@ -8,128 +8,60 @@ import {
 import {
   BookingCreationSchema,
   BookingUpdateSchema,
+  TimeZoneOptions,
 } from "~/schemas/bookingSchema";
-import dayjs from "dayjs";
-import { UserRoles } from "~/schemas";
+import dayjs, { type Dayjs } from "dayjs";
+import { InquirieType, UserRoles } from "~/schemas";
 import { string } from "zod";
 import sendEmail from "~/server/email";
+import { isPuppy } from "./pets";
+
+export const BookingErrors = {
+  NOT_FOUND: "La reserva no fue encontrada.",
+  FULL: "Horario ocupado!",
+  LAST_DAY: "No puedes modificar una reserva en menos de 24hs!",
+  ALREADY_BOOKED: "Ya tienes un turno ese día!",
+  PAST_DATE: "El turno se encuentra en el pasado!",
+  SUNDAY: "No abrimos los domingos!",
+  VACCINE_B_YOUNG:
+    "No se puede aplicar una antirrabica a un perro menor de 4 meses!",
+  VACCINE_B_LAST_YEAR:
+    "No se puede aplicar una antirrabica a un perro que ya tiene una en el ultimo año!",
+} as const;
+
+export function canUpdateBooking(date: Date | Dayjs) {
+  return dayjs(date).isAfter(dayjs().add(1, "day"), "day");
+}
+
+export function bookingDateChecks(date: Dayjs) {
+  if (!canUpdateBooking(date)) throw new Error(BookingErrors.LAST_DAY);
+  if (date.isBefore(dayjs(), "day")) throw new Error(BookingErrors.PAST_DATE);
+  if (date.day() === 0) throw new Error(BookingErrors.SUNDAY);
+}
 
 export const bookingsRouter = createTRPCRouter({
-  create: protectedProcedure
+  create: clientProcedure
     .input(BookingCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { dog, user, ...booking } = input;
 
-      if (ctx.session.user.role === UserRoles.VET && !user)
-        throw new Error(
-          "No puedes crear una cita para un usuario que no existe!"
-        );
+      const bookingDate = dayjs(booking.date);
+      bookingDateChecks(bookingDate);
 
-      // If the dog has a booking in the same day with the same type of booking, it can't be booked
-      const dogBookings = await ctx.prisma.booking.findMany({
+      const alreadyExists = await ctx.prisma.booking.findFirst({
         where: {
           dog: {
             id: dog,
           },
           date: {
-            gt: dayjs(booking.date).startOf("day").toDate(),
-            lt: dayjs(booking.date).endOf("day").toDate(),
+            gt: bookingDate.startOf("day").toDate(),
+            lt: bookingDate.endOf("day").toDate(),
           },
         },
       });
-      if (dogBookings.length > 0)
-        throw new Error("Ya tienes un turno ese día!");
+      if (alreadyExists) throw new Error(BookingErrors.ALREADY_BOOKED);
 
-      // Check if the date is in the past or a Sunday
-      if (dayjs(booking.date).isBefore(dayjs(), "day"))
-        throw new Error("No puedes reservar en el pasado!");
-      if (booking.date.getDay() === 0)
-        throw new Error("No abrimos los domingos!");
-
-      //TODO: Change this validation to a healtBook validation
-
-      //Check if the dog is in conditions to get the vaccine
-      if (booking.type === "VACCINE") {
-        const dogData = await ctx.prisma.pet.findUnique({
-          where: {
-            id: dog,
-          },
-        });
-        const isPuppy = dayjs(dogData?.birth).isAfter(
-          dayjs().subtract(4, "month")
-        );
-        if (booking.vaccine === "B") {
-          //Check if the dog has a rabies vaccine in the last year
-          const lastVaccineB = await ctx.prisma.booking.findFirst({
-            where: {
-              dog: {
-                id: dog,
-              },
-              vaccine: {
-                equals: "B",
-              },
-              date: {
-                gte: dayjs(booking.date).subtract(1, "year").toDate(),
-              },
-            },
-          });
-          if (lastVaccineB) {
-            throw new Error(
-              "No se puede aplicar una antirrabica a un perro que ya tiene una en el ultimo año!"
-            );
-          }
-          //Check if the dog is younger than 4 months
-          if (isPuppy) {
-            throw new Error(
-              "No se puede aplicar una antirrabica a un perro menor de 4 meses!"
-            );
-          }
-        }
-        // if (booking.vaccine === "A") {
-        //   //Check if the dog has a vaccine A in the last 21 days (when the dog is younger than 4 months)
-        //   if (isPuppy) {
-        //     const lastVaccineA = await ctx.prisma.booking.findFirst({
-        //       where: {
-        //         dog: {
-        //           id: dog,
-        //         },
-        //         vaccine: {
-        //           equals: "A",
-        //         },
-        //         date: {
-        //           gte: dayjs(booking.date).subtract(21, "day").toDate(),
-        //         },
-        //       },
-        //     });
-        //     if (lastVaccineA) {
-        //       throw new Error(
-        //         "No se puede aplicar una vacuna A a un perro que ya tiene una en los ultimos 21 dias!"
-        //       );
-        //     }
-        //   } else {
-        //     const lastVaccineA = await ctx.prisma.booking.findFirst({
-        //       where: {
-        //         dog: {
-        //           id: dog,
-        //         },
-        //         vaccine: {
-        //           equals: "A",
-        //         },
-        //         date: {
-        //           gte: dayjs().subtract(1, "year").toDate(),
-        //         },
-        //       },
-        //     });
-        //     if (lastVaccineA) {
-        //       throw new Error(
-        //         "No se puede aplicar una vacuna A a un perro que ya tiene una en el ultimo año!"
-        //       );
-        //     }
-        //   }
-      }
-      // Check if the bookings are already taken
-
-      const dayBookings = await ctx.prisma.booking.count({
+      const bookingsInSamedate = await ctx.prisma.booking.count({
         where: {
           date: {
             gt: dayjs(booking.date).startOf("day").toDate(),
@@ -140,8 +72,81 @@ export const bookingsRouter = createTRPCRouter({
           },
         },
       });
-      // Check if the bookings are already taken
-      if (dayBookings >= 20) throw new Error("Horario ocupado!");
+      if (bookingsInSamedate >= 20) throw new Error(BookingErrors.FULL);
+
+      if (booking.type === InquirieType.VACCINE) {
+        const dogData = await ctx.prisma.pet
+          .findFirstOrThrow({
+            where: {
+              id: dog,
+            },
+          })
+          .catch(() => {
+            throw new Error("El perro no existe!");
+          });
+
+        if (booking.vaccine === "B") {
+          if (isPuppy(dogData.birth)) {
+            throw new Error(BookingErrors.VACCINE_B_YOUNG);
+          }
+          const alreadyHasVaccineB = await ctx.prisma.booking.findFirst({
+            where: {
+              dog: {
+                id: dog,
+              },
+              vaccine: {
+                equals: "B",
+              },
+              date: {
+                gte: bookingDate.subtract(1, "year").toDate(),
+              },
+            },
+          });
+          if (alreadyHasVaccineB) {
+            throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
+          }
+        }
+        /* if (booking.vaccine === "A") {
+          if (isPuppy) {
+            const lastVaccineA = await ctx.prisma.booking.findFirst({
+              where: {
+                dog: {
+                  id: dog,
+                },
+                vaccine: {
+                  equals: "A",
+                },
+                date: {
+                  gte: dayjs(booking.date).subtract(21, "day").toDate(),
+                },
+              },
+            });
+            if (lastVaccineA) {
+              throw new Error(
+                "No se puede aplicar una vacuna A a un perro que ya tiene una en los ultimos 21 dias!"
+              );
+            }
+          } else {
+            const lastVaccineA = await ctx.prisma.booking.findFirst({
+              where: {
+                dog: {
+                  id: dog,
+                },
+                vaccine: {
+                  equals: "A",
+                },
+                date: {
+                  gte: dayjs().subtract(1, "year").toDate(),
+                },
+              },
+            });
+            if (lastVaccineA) {
+              throw new Error(
+                "No se puede aplicar una vacuna A a un perro que ya tiene una en el ultimo año!"
+              );
+            }
+          } */
+      }
 
       return ctx.prisma.booking.create({
         data: {
@@ -192,25 +197,17 @@ export const bookingsRouter = createTRPCRouter({
         booking: { id, ...booking },
       } = input;
 
-      // If the book is in one day or less, it can't be updated
+      const bookingDate = dayjs(booking.date);
+      bookingDateChecks(bookingDate);
       const oldBooking = await ctx.prisma.booking.findUnique({
         where: {
           id,
         },
       });
-      if (
-        dayjs(oldBooking!.date).isBefore(dayjs().add(1, "day"), "day") &&
-        dayjs(oldBooking!.date).isAfter(dayjs(), "day")
-      )
-        throw new Error("No puedes modificar una reserva en menos de 24hs!");
-
-      if (dayjs(booking.date).isBefore(dayjs(), "day"))
-        throw new Error("No puedes reservar en el pasado!");
-      if (booking.date.getDay() === 0)
-        throw new Error("No abrimos los domingos!");
+      if (!oldBooking) throw new Error(BookingErrors.NOT_FOUND);
 
       // If the dog has a booking in the same day with the same type of booking, it can't be booked
-      const dogBookings = await ctx.prisma.booking.findMany({
+      const alreadyBooked = await ctx.prisma.booking.findFirst({
         where: {
           dog: {
             id: dog,
@@ -223,27 +220,25 @@ export const bookingsRouter = createTRPCRouter({
           },
         },
       });
-      if (dogBookings.length > 0) throw new Error("Ya tienes un turno!");
-
-      // Check if the date is in the past or a Sunday
-      if (dayjs(booking.date).isBefore(dayjs(), "day"))
-        throw new Error("No puedes reservar en el pasado!");
-      if (booking.date.getDay() === 0)
-        throw new Error("No abrimos los domingos!");
+      if (alreadyBooked) throw new Error(BookingErrors.ALREADY_BOOKED);
 
       //Check if the dog is in conditions to get the vaccine
-      if (booking.type === "VACCINE") {
-        const dogData = await ctx.prisma.pet.findUnique({
-          where: {
-            id: dog,
-          },
-        });
-        const isPuppy = dayjs(dogData?.birth).isBefore(
-          dayjs().subtract(4, "month")
-        );
+      if (booking.type === InquirieType.VACCINE) {
+        const dogData = await ctx.prisma.pet
+          .findFirstOrThrow({
+            where: {
+              id: dog,
+            },
+          })
+          .catch(() => {
+            throw new Error("El perro no existe!");
+          });
+
         if (booking.vaccine === "B") {
-          //Check if the dog has a rabies vaccine in the last year
-          const lastVaccineB = await ctx.prisma.booking.findFirst({
+          if (isPuppy(dogData.birth)) {
+            throw new Error(BookingErrors.VACCINE_B_YOUNG);
+          }
+          const alreadyHasVaccineB = await ctx.prisma.booking.findFirst({
             where: {
               dog: {
                 id: dog,
@@ -252,25 +247,16 @@ export const bookingsRouter = createTRPCRouter({
                 equals: "B",
               },
               date: {
-                gte: dayjs().subtract(1, "year").toDate(),
+                gte: bookingDate.subtract(1, "year").toDate(),
               },
             },
           });
-          if (lastVaccineB) {
-            throw new Error(
-              "No se puede aplicar una antirrabica a un perro que ya tiene una en el ultimo año!"
-            );
-          }
-          //Check if the dog is younger than 4 months
-          if (isPuppy) {
-            throw new Error(
-              "No se puede aplicar una antirrabica a un perro menor de 4 meses!"
-            );
+          if (alreadyHasVaccineB) {
+            throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
           }
         }
-        if (booking.vaccine === "A") {
-          //Check if the dog has a vaccine A in the last 21 days (when the dog is younger than 4 months)
-          if (isPuppy) {
+        /* if (booking.vaccine === "A") {
+          if (isPuppy(dogData.birth)) {
             const lastVaccineA = await ctx.prisma.booking.findFirst({
               where: {
                 dog: {
@@ -309,11 +295,11 @@ export const bookingsRouter = createTRPCRouter({
               );
             }
           }
-        }
+        } */
       }
       //Check the amount of bookings in the same DAY at the same timeZone (max 20)
 
-      const dayBookings = await ctx.prisma.booking.count({
+      const bookingsInSameDate = await ctx.prisma.booking.count({
         where: {
           date: {
             gt: dayjs(booking.date).startOf("day").toDate(),
@@ -325,7 +311,7 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
       // Check if the bookings are already taken
-      if (dayBookings >= 5) throw new Error("Horario ocupado!");
+      if (bookingsInSameDate >= 20) throw new Error(BookingErrors.FULL);
 
       return ctx.prisma.booking.update({
         where: {
@@ -340,41 +326,21 @@ export const bookingsRouter = createTRPCRouter({
       });
     }),
 
-  //Returns today's bookings
-  getToday: publicProcedure.query(({ ctx }) => {
-    const today = dayjs().startOf("day").toDate();
-    return ctx.prisma.booking.findMany({
-      where: {
-        date: {
-          equals: today,
-        },
-      },
-      include: {
-        dog: true,
-        user: true,
-      },
-    });
-  }),
-
   // Cancel a booking
   cancel: protectedProcedure
     .input(string()) //Booking ID
     .mutation(async ({ input, ctx }) => {
-      const booking = await ctx.prisma.booking.findUnique({
-        where: {
-          id: input,
-        },
-      });
-      if (!booking) throw new Error("La reserva no existe!");
+      const booking = await ctx.prisma.booking
+        .findFirstOrThrow({
+          where: {
+            id: input,
+          },
+        })
+        .catch(() => {
+          throw new Error(BookingErrors.NOT_FOUND);
+        });
       // If the book is in one day or less, it can't be updated
-      if (
-        dayjs(booking.date).isBefore(dayjs().add(1, "day"), "day") &&
-        dayjs(booking.date).isAfter(dayjs(), "day")
-      )
-        throw new Error("No puedes modificar una reserva en menos de 24hs!");
-
-      if (dayjs(booking.date).isBefore(dayjs(), "day"))
-        throw new Error("No puedes cancelar una reserva en el pasado!");
+      bookingDateChecks(dayjs(booking.date));
 
       //Look for the user email
       const user = await ctx.prisma.user.findUnique({
@@ -398,7 +364,8 @@ export const bookingsRouter = createTRPCRouter({
         from: "v.ohmydog@gmail.com",
         subject: `Se ha cancelado el turno reservado por ${user.name}.`,
         text: `El turno del día ${booking.date.getDate()}, horario ${
-          booking.timeZone
+          TimeZoneOptions.find((option) => option.value === booking.timeZone)
+            ?.label as string
         }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`,
       });
       return ctx.prisma.booking.delete({

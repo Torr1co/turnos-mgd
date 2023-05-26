@@ -94,8 +94,8 @@ export default function ClientBookingList({
                                   setVisible("");
                                   toast.success("Turno cancelado con exito");
                                 },
-                                onError: () => {
-                                  toast.error("Ha sucedido un error");
+                                onError: (err) => {
+                                  toast.error(err.message);
                                 },
                               });
                             }}

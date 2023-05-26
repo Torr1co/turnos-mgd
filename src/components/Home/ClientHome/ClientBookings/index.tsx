@@ -24,6 +24,9 @@ export default function MyBookings() {
         <Title>Mis Turnos</Title>
         <div className="flex gap-4">
           <DatePicker.RangePicker
+            disabledDate={(current) => {
+              return !current.isAfter(dayjs(), "d");
+            }}
             onChange={(props) => {
               if (props) {
                 const [start, end] = props;

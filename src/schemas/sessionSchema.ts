@@ -19,7 +19,7 @@ export const SessionUpdateSchema = z.object({
 });
 
 export const SessionUpdatePasswordSchema = z.object({
-  prevPassword: z.optional(z.string()),
+  prevPassword: z.optional(z.string().min(1, "Requerido")),
   password: z.string().min(8, "Minimo 8 caracteres"),
 });
 

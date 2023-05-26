@@ -23,7 +23,7 @@ const Adoptions = () => {
   const { data: adoptions = [], isLoading } =
     api.adoptPublications.getAll.useQuery();
   const { data: session } = useSession();
-  const [mine, setMine] = useState(!!session);
+  const [mine, setMine] = useState(false);
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
@@ -36,17 +36,6 @@ const Adoptions = () => {
               onChange={() => setMine((prev) => !prev)}
             />
           )}
-          {/*   <Switch
-            className={`${
-              mine ? "bg-primary" : "bg-gray-200"
-            } relative inline-flex h-6 w-11 items-center rounded-full`}
-          >
-            <span
-              className={`${
-                mine ? "translate-x-6" : "translate-x-1"
-              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-            />
-          </Switch> */}
           {session && (
             <Button
               kind={Button.KINDS.gray}

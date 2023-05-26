@@ -50,7 +50,7 @@ export const VaccineOptions = [
   },
   {
     value: VaccineType.B,
-    label: "Tipo B",
+    label: "Tipo B (Antirrabica)",
   },
 ] as const;
 

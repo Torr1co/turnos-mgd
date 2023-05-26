@@ -5,6 +5,7 @@ import Dropdown from "~/lib/Dropdown";
 import CustomDatePicker from "~/lib/Form/DatePicker";
 import Input from "~/lib/Form/Input";
 import Select from "~/lib/Form/Select";
+import Toggle from "~/lib/Form/Toggle";
 import Title from "~/lib/Typo/Title";
 import { InquirieOptions } from "~/schemas/bookingSchema";
 import { api } from "~/utils/api";
@@ -13,6 +14,7 @@ import VetBookingList from "./BookingList";
 
 type FilterProps = {
   InquirieType?: InquirieType;
+  pending: boolean;
   start?: Date;
   end?: Date;
   text?: string;
@@ -22,6 +24,7 @@ export default function VetHome() {
   const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
 
   const [filters, setFilters] = useState<FilterProps>({
+    pending: false,
     start: undefined,
     end: undefined,
     text: undefined,
@@ -31,28 +34,42 @@ export default function VetHome() {
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
-        <Title>Turnos Reservados</Title>
+        <Title>Turnos</Title>
         <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <CustomDatePicker.RangePicker
-            onChange={(props) => {
-              if (props) {
-                const [start, end] = props;
-                setFilters((prev) => ({
-                  ...prev,
-                  start: start?.toDate(),
-                  end: end?.toDate(),
-                }));
-                return;
-              }
+          <Toggle
+            label="Turnos Pendientes"
+            checked={filters.pending}
+            onChange={() =>
               setFilters((prev) => ({
                 ...prev,
-                start: undefined,
-                end: undefined,
-              }));
-            }}
+                pending: !prev.pending,
+              }))
+            }
           />
+
           <Dropdown label="Filtros" className="hover:text-primary">
             <div className=" flex min-w-[320px] flex-col gap-4">
+              <CustomDatePicker.RangePicker
+                disabledDate={(current) => {
+                  return !current.isAfter(dayjs(), "d");
+                }}
+                onChange={(props) => {
+                  if (props) {
+                    const [start, end] = props;
+                    setFilters((prev) => ({
+                      ...prev,
+                      start: start?.toDate(),
+                      end: end?.toDate(),
+                    }));
+                    return;
+                  }
+                  setFilters((prev) => ({
+                    ...prev,
+                    start: undefined,
+                    end: undefined,
+                  }));
+                }}
+              />
               <div className="w-full">
                 <Select<InquirieType | undefined>
                   kind="bg-white"
@@ -60,7 +77,7 @@ export default function VetHome() {
                   values={[
                     {
                       value: undefined,
-                      label: "Todas",
+                      label: "Todos",
                     },
                     ...InquirieOptions,
                   ]}
@@ -71,11 +88,12 @@ export default function VetHome() {
                     }));
                   }}
                 >
-                  Todas las consultas
+                  Todos los Turnos
                 </Select>
               </div>
 
               <Input
+                value={filters.text}
                 placeholder="Buscar turno"
                 onChange={(e) => {
                   setFilters((prev) => ({ ...prev, text: e.target.value }));

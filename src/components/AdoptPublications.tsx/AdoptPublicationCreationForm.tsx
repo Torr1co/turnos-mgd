@@ -50,6 +50,7 @@ export default function AdoptPublicationCreationForm() {
       <Form.Number
         path="dog.weight"
         label="Peso (kg)"
+        step={0.1}
         onChange={(e) => {
           methods.setValue(
             "dog.weight",

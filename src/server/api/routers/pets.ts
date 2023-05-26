@@ -1,9 +1,13 @@
 import { Prisma, UserRoles } from ".prisma/client";
+import dayjs from "dayjs";
 import { z } from "zod";
 import { PetCreationSchema, PetUpdateSchema } from "~/schemas/petSchema";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
+export function isPuppy(birthDate: Date) {
+  return dayjs(birthDate).isAfter(dayjs().subtract(4, "month"));
+}
 export const petsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(PetCreationSchema)
