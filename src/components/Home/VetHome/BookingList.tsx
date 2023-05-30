@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { type Booking, type User, type Pet } from "@prisma/client";
+import {
+  type Booking,
+  type User,
+  type Pet,
+  InquirieType,
+} from "@prisma/client";
 import Box from "~/lib/Box";
 import Text from "~/lib/Typo/Text";
 import Title from "~/lib/Typo/Title";
@@ -9,7 +14,6 @@ import { BookingIcon } from "~/lib/icons";
 import dayjs from "dayjs";
 import Tooltip from "~/lib/Tooltip";
 import { InquirieOptions } from "~/schemas/bookingSchema";
-import { InquirieType } from "~/schemas";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 
@@ -67,7 +71,7 @@ export default function VetBookingList({
                       <span className="capitalize">{booking.dog.name}</span>
                     </Text>
                     <Text>
-                      Dueño:{" "}
+                      Cliente:{" "}
                       <span className="capitalize">{booking.user.name}</span>
                     </Text>
                   </div>

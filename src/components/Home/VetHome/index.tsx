@@ -21,8 +21,6 @@ type FilterProps = {
 };
 
 export default function VetHome() {
-  const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
-
   const [filters, setFilters] = useState<FilterProps>({
     pending: false,
     start: undefined,
@@ -30,6 +28,10 @@ export default function VetHome() {
     text: undefined,
     InquirieType: undefined,
   });
+
+  const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery(
+    filters.pending
+  );
 
   return (
     <div>
@@ -50,9 +52,6 @@ export default function VetHome() {
           <Dropdown label="Filtros" className="hover:text-primary">
             <div className=" flex min-w-[320px] flex-col gap-4">
               <CustomDatePicker.RangePicker
-                disabledDate={(current) => {
-                  return !current.isAfter(dayjs(), "d");
-                }}
                 onChange={(props) => {
                   if (props) {
                     const [start, end] = props;
@@ -94,7 +93,7 @@ export default function VetHome() {
 
               <Input
                 value={filters.text}
-                placeholder="Buscar turno"
+                placeholder="Buscar por nombre de cliente o email"
                 onChange={(e) => {
                   setFilters((prev) => ({ ...prev, text: e.target.value }));
                 }}
@@ -110,7 +109,7 @@ export default function VetHome() {
           bookings={bookings.filter((booking) => {
             const includesText =
               !filters.text ||
-              booking.dog.name
+              booking.user.email
                 .toLowerCase()
                 .includes(filters.text.toLowerCase()) ||
               booking.user.name

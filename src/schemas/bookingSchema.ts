@@ -25,8 +25,8 @@ export const BookingCreationSchema = BookingSchema.extend({
   dog: z.string({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
-  }),
-  user: z.optional(z.string()),
+  }), // should be dogId
+  user: z.optional(z.string()), // should be userId
 });
 
 export const BookingUpdateSchema = z.object({
@@ -36,7 +36,7 @@ export const BookingUpdateSchema = z.object({
   }).extend({
     id: z.string(),
   }),
-  dog: z.string(),
+  dog: z.string(), // should be dogId
 });
 
 export type Booking = z.infer<typeof BookingSchema>;

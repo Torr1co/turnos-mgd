@@ -4,18 +4,24 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-
 import {
+  type Booking,
   BookingCreationSchema,
   BookingUpdateSchema,
   TimeZoneOptions,
 } from "~/schemas/bookingSchema";
+import {
+  type Pet,
+  InquirieType,
+  UserRoles,
+  type PrismaClient,
+} from "@prisma/client";
 import dayjs, { type Dayjs } from "dayjs";
-import { InquirieType, UserRoles } from "~/schemas";
-import { string } from "zod";
+import { string, z } from "zod";
 import sendEmail from "~/server/email";
 import { isPuppy } from "./pets";
 
+export const MAX_BOOKINGS_PER_DAY = 20;
 export const BookingErrors = {
   NOT_FOUND: "La reserva no fue encontrada.",
   FULL: "Horario ocupado!",
@@ -39,6 +45,70 @@ export function bookingDateChecks(date: Dayjs) {
   if (date.day() === 0) throw new Error(BookingErrors.SUNDAY);
 }
 
+async function alreadyBookedHandler(
+  prisma: PrismaClient,
+  booking: Booking,
+  dogId: string
+) {
+  const alreadyBooked = await prisma.booking.findFirst({
+    where: {
+      dog: {
+        id: dogId,
+      },
+      date: {
+        gt: dayjs(booking.date).startOf("day").toDate(),
+        lt: dayjs(booking.date).endOf("day").toDate(),
+      },
+      timeZone: {
+        equals: booking.timeZone,
+      },
+    },
+  });
+  if (alreadyBooked) throw new Error(BookingErrors.ALREADY_BOOKED);
+}
+
+async function fullBookingsHandler(prisma: PrismaClient, booking: Booking) {
+  const bookingsInSamedate = await prisma.booking.count({
+    where: {
+      date: {
+        gt: dayjs(booking.date).startOf("day").toDate(),
+        lt: dayjs(booking.date).endOf("day").toDate(),
+      },
+      timeZone: {
+        equals: booking.timeZone,
+      },
+    },
+  });
+  if (bookingsInSamedate >= MAX_BOOKINGS_PER_DAY)
+    throw new Error(BookingErrors.FULL);
+}
+
+async function vaccineBHanlder(
+  prisma: PrismaClient,
+  pet: Pet,
+  booking: Booking
+) {
+  if (isPuppy(pet.birth)) {
+    throw new Error(BookingErrors.VACCINE_B_YOUNG);
+  }
+  const alreadyHasVaccineB = await prisma.booking.findFirst({
+    where: {
+      dog: {
+        id: pet.id,
+      },
+      vaccine: {
+        equals: "B",
+      },
+      date: {
+        gte: dayjs(booking.date).subtract(1, "year").toDate(),
+      },
+    },
+  });
+  if (alreadyHasVaccineB) {
+    throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
+  }
+}
+
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
     .input(BookingCreationSchema)
@@ -48,31 +118,8 @@ export const bookingsRouter = createTRPCRouter({
       const bookingDate = dayjs(booking.date);
       bookingDateChecks(bookingDate);
 
-      const alreadyExists = await ctx.prisma.booking.findFirst({
-        where: {
-          dog: {
-            id: dog,
-          },
-          date: {
-            gt: bookingDate.startOf("day").toDate(),
-            lt: bookingDate.endOf("day").toDate(),
-          },
-        },
-      });
-      if (alreadyExists) throw new Error(BookingErrors.ALREADY_BOOKED);
-
-      const bookingsInSamedate = await ctx.prisma.booking.count({
-        where: {
-          date: {
-            gt: dayjs(booking.date).startOf("day").toDate(),
-            lt: dayjs(booking.date).endOf("day").toDate(),
-          },
-          timeZone: {
-            equals: booking.timeZone,
-          },
-        },
-      });
-      if (bookingsInSamedate >= 20) throw new Error(BookingErrors.FULL);
+      await alreadyBookedHandler(ctx.prisma, booking, dog);
+      await fullBookingsHandler(ctx.prisma, booking);
 
       if (booking.type === InquirieType.VACCINE) {
         const dogData = await ctx.prisma.pet
@@ -86,25 +133,7 @@ export const bookingsRouter = createTRPCRouter({
           });
 
         if (booking.vaccine === "B") {
-          if (isPuppy(dogData.birth)) {
-            throw new Error(BookingErrors.VACCINE_B_YOUNG);
-          }
-          const alreadyHasVaccineB = await ctx.prisma.booking.findFirst({
-            where: {
-              dog: {
-                id: dog,
-              },
-              vaccine: {
-                equals: "B",
-              },
-              date: {
-                gte: bookingDate.subtract(1, "year").toDate(),
-              },
-            },
-          });
-          if (alreadyHasVaccineB) {
-            throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
-          }
+          await vaccineBHanlder(ctx.prisma, dogData, booking);
         }
         /* if (booking.vaccine === "A") {
           if (isPuppy) {
@@ -167,15 +196,17 @@ export const bookingsRouter = createTRPCRouter({
     }),
 
   //Returns all future bookings
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: publicProcedure.input(z.boolean()).query(({ ctx, input }) => {
     return ctx.prisma.booking.findMany({
       where: {
-        date: {
-          gte: dayjs().startOf("day").toDate(),
-        },
-        completed: {
-          equals: false,
-        },
+        ...(input && {
+          date: {
+            gte: dayjs().startOf("day").toDate(),
+          },
+          completed: {
+            equals: false,
+          },
+        }),
         userId:
           ctx.session?.user.role === UserRoles.VET
             ? undefined
@@ -199,28 +230,15 @@ export const bookingsRouter = createTRPCRouter({
 
       const bookingDate = dayjs(booking.date);
       bookingDateChecks(bookingDate);
-      const oldBooking = await ctx.prisma.booking.findUnique({
+      await alreadyBookedHandler(ctx.prisma, booking, dog);
+      await fullBookingsHandler(ctx.prisma, booking);
+
+      /* const oldBooking = await ctx.prisma.booking.findUnique({
         where: {
           id,
         },
       });
-      if (!oldBooking) throw new Error(BookingErrors.NOT_FOUND);
-
-      // If the dog has a booking in the same day with the same type of booking, it can't be booked
-      const alreadyBooked = await ctx.prisma.booking.findFirst({
-        where: {
-          dog: {
-            id: dog,
-          },
-          date: {
-            equals: booking.date,
-          },
-          type: {
-            equals: booking.type,
-          },
-        },
-      });
-      if (alreadyBooked) throw new Error(BookingErrors.ALREADY_BOOKED);
+      if (!oldBooking) throw new Error(BookingErrors.NOT_FOUND); */
 
       //Check if the dog is in conditions to get the vaccine
       if (booking.type === InquirieType.VACCINE) {
@@ -235,25 +253,7 @@ export const bookingsRouter = createTRPCRouter({
           });
 
         if (booking.vaccine === "B") {
-          if (isPuppy(dogData.birth)) {
-            throw new Error(BookingErrors.VACCINE_B_YOUNG);
-          }
-          const alreadyHasVaccineB = await ctx.prisma.booking.findFirst({
-            where: {
-              dog: {
-                id: dog,
-              },
-              vaccine: {
-                equals: "B",
-              },
-              date: {
-                gte: bookingDate.subtract(1, "year").toDate(),
-              },
-            },
-          });
-          if (alreadyHasVaccineB) {
-            throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
-          }
+          await vaccineBHanlder(ctx.prisma, dogData, booking);
         }
         /* if (booking.vaccine === "A") {
           if (isPuppy(dogData.birth)) {
@@ -297,21 +297,6 @@ export const bookingsRouter = createTRPCRouter({
           }
         } */
       }
-      //Check the amount of bookings in the same DAY at the same timeZone (max 20)
-
-      const bookingsInSameDate = await ctx.prisma.booking.count({
-        where: {
-          date: {
-            gt: dayjs(booking.date).startOf("day").toDate(),
-            lt: dayjs(booking.date).endOf("day").toDate(),
-          },
-          timeZone: {
-            equals: booking.timeZone,
-          },
-        },
-      });
-      // Check if the bookings are already taken
-      if (bookingsInSameDate >= 20) throw new Error(BookingErrors.FULL);
 
       return ctx.prisma.booking.update({
         where: {

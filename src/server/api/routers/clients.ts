@@ -1,4 +1,4 @@
-import { Prisma, UserRoles } from "@prisma/client";
+import { type User, UserRoles } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 import dayjs from "dayjs";
 
@@ -9,6 +9,7 @@ import {
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { systemEmail } from "~/server/email";
 import sendEmail from "~/server/email";
+import { prismaError } from "~/utils/errors";
 // import { send } from "process";
 
 export const clientsRouter = createTRPCRouter({
@@ -31,84 +32,84 @@ export const clientsRouter = createTRPCRouter({
         }
       }
 
-      try {
-        const client = await ctx.prisma.$transaction(async (prisma) => {
-          const client = await prisma.user.create({
+      /*  try { */
+      const client = await ctx.prisma.$transaction(async (prisma) => {
+        const client = (await prisma.user
+          .create({
             data: {
               ...userData,
               role: UserRoles.CLIENT,
               password: hashedPassword,
             },
-          });
-          //Booking checks
-          const dayBookings = await ctx.prisma.booking.count({
-            where: {
-              date: {
-                gt: dayjs(booking.date).startOf("day").toDate(),
-                lt: dayjs(booking.date).endOf("day").toDate(),
-              },
-              timeZone: {
-                equals: booking.timeZone,
+          })
+          .catch((error) => {
+            const prismaHandler = prismaError(
+              error,
+              "No se pudo crear el cliente"
+            );
+            prismaHandler("email", "El email ya existe");
+            prismaHandler("dni", "El DNI ya existe");
+          })) as User;
+
+        //Booking checks
+        const dayBookings = await ctx.prisma.booking.count({
+          where: {
+            date: {
+              gt: dayjs(booking.date).startOf("day").toDate(),
+              lt: dayjs(booking.date).endOf("day").toDate(),
+            },
+            timeZone: {
+              equals: booking.timeZone,
+            },
+          },
+        });
+        // Check if the bookings are already taken
+        if (dayBookings >= 5) throw new Error("Horario ocupado!");
+
+        const dogCreation = await prisma.pet.create({
+          data: {
+            ...dog,
+            healthBook: {
+              create: {},
+            },
+            owner: {
+              connect: {
+                id: client.id,
               },
             },
-          });
-          // Check if the bookings are already taken
-          if (dayBookings >= 5) throw new Error("Horario ocupado!");
-
-          const dogCreation = await prisma.pet.create({
-            data: {
-              ...dog,
-              healthBook: {
-                create: {},
-              },
-              owner: {
-                connect: {
-                  id: client.id,
-                },
+          },
+        });
+        await prisma.booking.create({
+          data: {
+            ...booking,
+            dog: {
+              connect: {
+                id: dogCreation.id,
               },
             },
-          });
-          await prisma.booking.create({
-            data: {
-              ...booking,
-              dog: {
-                connect: {
-                  id: dogCreation.id,
-                },
-              },
-              user: {
-                connect: {
-                  id: client.id,
-                },
+            user: {
+              connect: {
+                id: client.id,
               },
             },
-          });
+          },
+        });
 
-          await sendEmail({
-            to: client.email,
-            from: "v.ohmydog@gmail.com",
-            subject: "Bienvenido a Oh My Dog",
-            text: `Hola ${client.name}! Gracias por registrarte en Oh My Dog. Tu contraseña es ${randomString}`,
-          });
+        await sendEmail({
+          to: client.email,
+          from: "v.ohmydog@gmail.com",
+          subject: "Bienvenido a Oh My Dog",
+          text: `Hola ${client.name}! Gracias por registrarte en Oh My Dog. Tu contraseña es ${randomString}`,
+        });
 
-          return client;
-        }, {});
         return client;
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.meta?.target
-        ) {
-          const target = error.meta.target as string;
-          if (target.includes("email")) {
-            throw new Error("El email ya existe");
-          }
-          if (target.includes("dni")) {
-            throw new Error("El DNI ya existe");
-          }
-        }
-        throw new Error("No se pudo crear el cliente");
-      }
+      }, {});
+      return client;
+      /* } catch (error) {
+        const prismaHandler = prismaError(error, "No se pudo crear el cliente");
+        prismaHandler("email", "El email ya existe");
+        prismaHandler("dni", "El DNI ya existe");
+      } */
     }),
 
   //Returns all Clients and their dogs
