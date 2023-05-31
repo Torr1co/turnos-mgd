@@ -86,6 +86,22 @@ export const adoptPublicationRouter = createTRPCRouter({
     return adoptPublications;
   }),
 
+  getAdopted: publicProcedure.query(async ({ ctx }) => {
+    const adoptPublications = await ctx.prisma.adoptPublication.findMany({
+      where: {
+        active: false,
+      },
+      include: {
+        dog: true,
+      },
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return adoptPublications;
+  }),
+
   //Confirm the adoption
   confirm: protectedProcedure
     .input(string())

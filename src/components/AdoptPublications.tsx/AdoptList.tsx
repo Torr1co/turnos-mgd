@@ -3,13 +3,12 @@ import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";
 import Box from "~/lib/Box";
 import Button from "~/lib/Button";
-import { PetIcon } from "~/lib/icons";
 import Tooltip from "~/lib/Tooltip";
 import Text from "~/lib/Typo/Text";
 import Title from "~/lib/Typo/Title";
 import { type AdoptWithDog } from "~/schemas/adoptionSchema";
 import { api } from "~/utils/api";
-import { cn } from "~/utils/styles";
+import { cn, getDogIcon } from "~/utils/styles";
 import Adopt from "./Adopt";
 import AdoptPublicationUpdate from "./AdoptPublicationUpdate";
 
@@ -20,6 +19,7 @@ export function AdoptItem({
   adoption: AdoptWithDog;
   truncate?: boolean;
 }) {
+  const PetIcon = getDogIcon(adoption.id);
   return (
     <div className="flex  flex-col gap-8 bg-white">
       <div className="items group flex justify-between">
@@ -80,6 +80,7 @@ export default function AdoptList({
   const { mutate: confirm } = api.adoptPublications.confirm.useMutation({
     onSuccess: async () => {
       await utils.adoptPublications.getAll.invalidate();
+      await utils.adoptPublications.getAdopted.invalidate();
     },
   });
 

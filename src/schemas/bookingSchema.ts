@@ -39,9 +39,18 @@ export const BookingUpdateSchema = z.object({
   dog: z.string(), // should be dogId
 });
 
+export const BookingGetAllSchema = z
+  .optional(
+    z.object({
+      pending: z.boolean(),
+    })
+  )
+  .default({ pending: true });
+
 export type Booking = z.infer<typeof BookingSchema>;
 export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
 export type BookingCreation = z.infer<typeof BookingCreationSchema>;
+export type BookingGetAllSchema = z.infer<typeof BookingGetAllSchema>;
 
 export const VaccineOptions = [
   {

@@ -9,6 +9,7 @@ import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPu
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import Toggle from "~/lib/Form/Toggle";
+import AdoptedList from "~/components/AdoptPublications.tsx/AdoptedList";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -26,7 +27,8 @@ const Adoptions = () => {
   const [mine, setMine] = useState(false);
   return (
     <div>
-      <header className="mb-14 flex items-center justify-between">
+      <AdoptedList />
+      <header className="my-14 flex items-center justify-between">
         <Title>Perros de adopcion</Title>
         <div className="flex gap-4">
           {session && (

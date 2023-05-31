@@ -1,12 +1,13 @@
 import React from "react";
 import { type Pet } from "@prisma/client";
-import { PetIcon } from "~/lib/icons";
 import Title from "~/lib/Typo/Title";
 import Link from "next/link";
 import Text from "~/lib/Typo/Text";
 import Image from "next/image";
+import { getDogIcon } from "~/utils/styles";
 
 export function PetItem({ pet }: { pet: Pet }) {
+  const PetIcon = getDogIcon(pet.id);
   return (
     <div className="items group flex gap-8">
       {pet.img ? (

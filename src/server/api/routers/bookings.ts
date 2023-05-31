@@ -9,6 +9,7 @@ import {
   BookingCreationSchema,
   BookingUpdateSchema,
   TimeZoneOptions,
+  BookingGetAllSchema,
 } from "~/schemas/bookingSchema";
 import {
   type Pet,
@@ -17,7 +18,7 @@ import {
   type PrismaClient,
 } from "@prisma/client";
 import dayjs, { type Dayjs } from "dayjs";
-import { string, z } from "zod";
+import { string } from "zod";
 import sendEmail from "~/server/email";
 import { isPuppy } from "./pets";
 
@@ -40,7 +41,6 @@ export function canUpdateBooking(date: Date | Dayjs) {
 }
 
 export function bookingDateChecks(date: Dayjs) {
-  if (!canUpdateBooking(date)) throw new Error(BookingErrors.LAST_DAY);
   if (date.isBefore(dayjs(), "day")) throw new Error(BookingErrors.PAST_DATE);
   if (date.day() === 0) throw new Error(BookingErrors.SUNDAY);
 }
@@ -196,10 +196,10 @@ export const bookingsRouter = createTRPCRouter({
     }),
 
   //Returns all future bookings
-  getAll: publicProcedure.input(z.boolean()).query(({ ctx, input }) => {
+  getAll: publicProcedure.input(BookingGetAllSchema).query(({ ctx, input }) => {
     return ctx.prisma.booking.findMany({
       where: {
-        ...(input && {
+        ...(input.pending && {
           date: {
             gte: dayjs().startOf("day").toDate(),
           },
@@ -230,6 +230,8 @@ export const bookingsRouter = createTRPCRouter({
 
       const bookingDate = dayjs(booking.date);
       bookingDateChecks(bookingDate);
+      if (!canUpdateBooking(bookingDate))
+        throw new Error(BookingErrors.LAST_DAY);
       await alreadyBookedHandler(ctx.prisma, booking, dog);
       await fullBookingsHandler(ctx.prisma, booking);
 
@@ -325,6 +327,8 @@ export const bookingsRouter = createTRPCRouter({
           throw new Error(BookingErrors.NOT_FOUND);
         });
       // If the book is in one day or less, it can't be updated
+      if (!canUpdateBooking(dayjs(booking.date)))
+        throw new Error(BookingErrors.LAST_DAY);
       bookingDateChecks(dayjs(booking.date));
 
       //Look for the user email
