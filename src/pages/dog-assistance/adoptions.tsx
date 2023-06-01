@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import Title from "~/lib/Typo/Title";
+import Title from "~/components/_common/Typo/Title";
 import { useModal } from "~/context/ModalContex";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import AdoptList from "~/components/AdoptPublications.tsx/AdoptList";
-import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPublicationCreation";
+import AdoptList from "~/components/Adoptions/AdoptionList";
+import AdoptPublicationCreation from "~/components/Adoptions/AdoptPublication/AdoptCreationModal";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
-import Toggle from "~/lib/Form/Toggle";
+import Toggle from "~/components/_common/Form/Toggle";
+import AdoptedList from "~/components/Adoptions/AdoptSlider";
+import Dropdown from "~/components/_common/Dropdown";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -23,30 +25,24 @@ const Adoptions = () => {
   const { data: adoptions = [], isLoading } =
     api.adoptPublications.getAll.useQuery();
   const { data: session } = useSession();
-  const [mine, setMine] = useState(!!session);
+  const [mine, setMine] = useState(false);
   return (
     <div>
-      <header className="mb-14 flex items-center justify-between">
+      <AdoptedList />
+      <header className="my-14 flex items-center justify-between">
         <Title>Perros de adopcion</Title>
         <div className="flex gap-4">
           {session && (
-            <Toggle
-              label="Mis publicaciones"
-              checked={mine}
-              onChange={() => setMine((prev) => !prev)}
-            />
+            <Dropdown
+              label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
+            >
+              <Toggle
+                label="Mis publicaciones"
+                checked={mine}
+                onChange={() => setMine((prev) => !prev)}
+              />
+            </Dropdown>
           )}
-          {/*   <Switch
-            className={`${
-              mine ? "bg-primary" : "bg-gray-200"
-            } relative inline-flex h-6 w-11 items-center rounded-full`}
-          >
-            <span
-              className={`${
-                mine ? "translate-x-6" : "translate-x-1"
-              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-            />
-          </Switch> */}
           {session && (
             <Button
               kind={Button.KINDS.gray}

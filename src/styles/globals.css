@@ -21,6 +21,9 @@ input::-ms-clear {
   display: none;
 }
 @layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
   .scale-95 {
     transform: scale(0.95);
   }

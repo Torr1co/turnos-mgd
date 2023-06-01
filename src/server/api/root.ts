@@ -1,12 +1,12 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 // import { exampleRouter } from "~/server/api/routers/example";
 // import { usersRouter } from "~/server/api/routers/users";
-import { petsRouter } from "./routers/pets";
-import { bookingsRouter } from "./routers/bookings";
-import { vetsRouter } from "./routers/vets";
-import { clientsRouter } from "./routers/clients";
-import { adoptPublicationRouter } from "./routers/adoptPublication";
-import { sessionRouter } from "./routers/session";
+import { petsRouter } from "./routers/petsRouter";
+import { bookingsRouter } from "./routers/bookingsRouter";
+import { vetsRouter } from "./routers/vetsRouter";
+import { clientsRouter } from "./routers/clientsRouter";
+import { adoptPublicationRouter } from "./routers/adoptionRouter";
+import { sessionRouter } from "./routers/sessionRouter";
 /**
  * This is the primary router for your server.
  *

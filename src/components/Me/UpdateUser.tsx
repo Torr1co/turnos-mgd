@@ -5,10 +5,10 @@ import {
 } from "~/schemas/sessionSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { toast } from "react-hot-toast";
 
 export default function UpdateUser() {

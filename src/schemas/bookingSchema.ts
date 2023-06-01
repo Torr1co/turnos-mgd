@@ -25,8 +25,8 @@ export const BookingCreationSchema = BookingSchema.extend({
   dog: z.string({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
-  }),
-  user: z.optional(z.string()),
+  }), // should be dogId
+  user: z.optional(z.string()), // should be userId
 });
 
 export const BookingUpdateSchema = z.object({
@@ -36,12 +36,21 @@ export const BookingUpdateSchema = z.object({
   }).extend({
     id: z.string(),
   }),
-  dog: z.string(),
+  dog: z.string(), // should be dogId
 });
 
-export type Booking = z.infer<typeof BookingSchema>;
-export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
-export type BookingCreation = z.infer<typeof BookingCreationSchema>;
+export const BookingGetAllSchema = z
+  .optional(
+    z.object({
+      pending: z.boolean(),
+    })
+  )
+  .default({ pending: true });
+
+export type BookingSchema = z.infer<typeof BookingSchema>;
+export type BookingUpdateSchema = z.infer<typeof BookingUpdateSchema>;
+export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
+export type BookingGetAllSchema = z.infer<typeof BookingGetAllSchema>;
 
 export const VaccineOptions = [
   {
@@ -50,7 +59,7 @@ export const VaccineOptions = [
   },
   {
     value: VaccineType.B,
-    label: "Tipo B",
+    label: "Tipo B (Antirrabica)",
   },
 ] as const;
 

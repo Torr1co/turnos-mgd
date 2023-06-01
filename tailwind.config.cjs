@@ -1,4 +1,3 @@
-// @ts-nocheck
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
@@ -36,6 +35,7 @@ const config = {
         md: "1.25rem",
         base: "1.125rem",
         sm: "1rem",
+        xs: "0.875rem",
         DEFAULT: "1.125rem",
       },
       borderRadius: {
@@ -48,8 +48,13 @@ const config = {
         shake: "shake 0.82s cubic-bezier(.36,.07,.19,.97) ",
         fadein: "fadein 340ms linear",
         fadeout: "fadeout 340ms ease-in",
+        infiniteScroll: "infiniteScroll 60s linear infinite",
       },
       keyframes: {
+        infiniteScroll: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-220%)" },
+        },
         blink: {
           "0%": { opacity: "0.2" },
           "20%": { opacity: "1" },

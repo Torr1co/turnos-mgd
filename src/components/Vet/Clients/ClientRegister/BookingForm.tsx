@@ -1,7 +1,7 @@
 import React from "react";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import {
-  type BookingCreation,
+  type BookingCreationSchema,
   InquirieOptions,
   TimeZoneOptions,
   VaccineOptions,
@@ -11,7 +11,7 @@ import { useFormContext } from "react-hook-form";
 import { InquirieType } from "@prisma/client";
 
 export default function BookingForm() {
-  const methods = useFormContext<{ booking: BookingCreation }>();
+  const methods = useFormContext<{ booking: BookingCreationSchema }>();
   return (
     <div className="grid gap-6">
       <Form.Date

@@ -1,12 +1,12 @@
 import React from "react";
 import { type NextPage, type GetServerSideProps } from "next";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { useForm } from "react-hook-form";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Title from "~/lib/Typo/Title";
-import Box from "~/lib/Box";
-import { Blob, Blob2 } from "~/lib/icons";
+import Title from "~/components/_common/Typo/Title";
+import Box from "~/components/_common/Box";
+import { Blob, Blob2 } from "~/components/_common/icons";
 import { useRouter } from "next/router";
 import { getServerAuthSession } from "~/server/auth";
 import { UserRoles } from "@prisma/client";

@@ -1,22 +1,22 @@
 import React from "react";
-import Title from "~/lib/Typo/Title";
-// import Button from "~/lib/Button";
+import Title from "~/components/_common/Typo/Title";
+// import Button from "~/components/_common/Button";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
-// import Input from "~/lib/Form/Input";
+// import Input from "~/components/_common/Form/Input";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import Box from "~/lib/Box";
+import Box from "~/components/_common/Box";
 import { PetUpdateSchema } from "~/schemas/petSchema";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { toast } from "react-hot-toast";
 import { UserRoles } from ".prisma/client";
 import PetInformation from "~/components/Vet/Clients/PetInformation";
 import PetForm from "~/components/Vet/Clients/ClientRegister/PetForm";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (typeof ctx.params?.petId !== "string") {

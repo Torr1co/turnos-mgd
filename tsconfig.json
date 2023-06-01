@@ -34,7 +34,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "src/components/Vet/Clients/Pet"
+    "src/components/Vet/Clients/Pet",
+    "src/components/Adoptions"
   ],
   "exclude": ["node_modules"]
 }

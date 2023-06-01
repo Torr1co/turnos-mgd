@@ -5,6 +5,7 @@ export const LINKS = {
   me: "/me",
   services: "/services",
   clients: "/admin/clients",
+  pets: "/pets",
   signin: "/auth/signin",
   newPassword: "/auth/new-password",
   dogAssistance: "/dog-assistance",
@@ -38,6 +39,17 @@ const NAV_CONFIG = {
         label: "Adopciones",
         href: LINKS.adoptions,
       },
+      clientPets: {
+        label: "Mis perros",
+        href: LINKS.pets,
+        roles: [UserRoles.CLIENT],
+      },
+      /*  vetPets: {
+        label: "Perros",
+        href: LINKS.pets,
+        roles: [UserRoles.VET],
+      }, */
+
       /*       crossBreeds: {
         label: "Cruza",
         href: LINKS.crossBreeds,
