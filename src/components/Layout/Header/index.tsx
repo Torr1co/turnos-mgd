@@ -1,12 +1,12 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { signOut, useSession } from "next-auth/react";
 import Navbar from "./Navbar";
 import NAV_CONFIG, { LINKS } from "~/utils/navConfig";
-import { UserIcon } from "~/lib/icons";
-import Tooltip from "~/lib/Tooltip";
+import { UserIcon } from "~/components/_common/icons";
+import Tooltip from "~/components/_common/Tooltip";
 import { useRouter } from "next/router";
 
 export default function Header() {

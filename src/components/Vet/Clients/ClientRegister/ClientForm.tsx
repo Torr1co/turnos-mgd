@@ -1,5 +1,5 @@
 import React from "react";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { useFormContext } from "react-hook-form";
 import { type ClientCreation } from "~/schemas/clientSchema";
 import dayjs from "dayjs";

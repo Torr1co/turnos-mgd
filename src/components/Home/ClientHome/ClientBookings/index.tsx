@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import Title from "~/lib/Typo/Title";
-import BookingList from "./BookingList";
-import DatePicker from "~/lib/Form/DatePicker";
+import Title from "~/components/_common/Typo/Title";
+import BookingList from "./ClientBookingList";
+import DatePicker from "~/components/_common/Form/DatePicker";
 import { useModal } from "~/context/ModalContex";
-import Button from "~/lib/Button";
-import BookingCreation from "./BookingCreation";
+import Button from "~/components/_common/Button";
+import BookingCreation from "./BookingCreationModal";
 import dayjs from "dayjs";
+import { api } from "~/utils/api";
 
 type FilterProps = {
   start?: Date;
   end?: Date;
 };
 
-export default function MyBookings() {
+export default function ClientBookings() {
+  const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
   const [filters, setFilters] = useState<FilterProps>({
     start: undefined,
     end: undefined,
@@ -54,15 +56,19 @@ export default function MyBookings() {
         </div>
       </header>
       <div>
-        <BookingList
-          filterFn={(booking) => {
-            if (!filters.start || !filters.end) return true;
-            return (
-              !dayjs(filters.start).isAfter(booking.date, "d") &&
-              !dayjs(booking.date).isAfter(filters.end, "d")
-            );
-          }}
-        />
+        {isLoading ? (
+          <div>Cargando...</div>
+        ) : (
+          <BookingList
+            bookings={bookings.filter((booking) => {
+              if (!filters.start || !filters.end) return true;
+              return (
+                !dayjs(filters.start).isAfter(booking.date, "d") &&
+                !dayjs(booking.date).isAfter(filters.end, "d")
+              );
+            })}
+          />
+        )}
       </div>
     </section>
   );

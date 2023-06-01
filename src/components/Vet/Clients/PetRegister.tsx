@@ -1,13 +1,13 @@
 import React from "react";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PetCreationSchema } from "~/schemas/petSchema";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import Title from "~/lib/Typo/Title";
+import Title from "~/components/_common/Typo/Title";
 import PetForm from "./ClientRegister/PetForm";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { z } from "zod";
 
 export default function PetRegister({ ownerId }: { ownerId: string }) {

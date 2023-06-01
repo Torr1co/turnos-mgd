@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React from "react";
-import Form from "~/lib/Form";
+import Form from "~/components/_common/Form";
 import { GenderOptions, type PetCreationSchema } from "~/schemas/petSchema";
 import { useFormContext } from "react-hook-form";
 import Image from "next/image";

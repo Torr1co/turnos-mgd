@@ -5,9 +5,9 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React from "react";
-import Button from "~/lib/Button";
-import Text from "~/lib/Typo/Text";
-import Title from "~/lib/Typo/Title";
+import Button from "~/components/_common/Button";
+import Text from "~/components/_common/Typo/Text";
+import Title from "~/components/_common/Typo/Title";
 import NAV_CONFIG from "~/utils/navConfig";
 import Image from "next/image";
 import { useSession } from "next-auth/react";

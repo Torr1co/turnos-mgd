@@ -3,9 +3,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { type NavItem } from "./Navbar";
 import { useRouter } from "next/router";
-import { cn } from "~/utils/styles";
-import Text from "~/lib/Typo/Text";
-import Dropdown from "~/lib/Dropdown";
+import { cn } from "~/utils/styleUtils";
+import Text from "~/components/_common/Typo/Text";
+import Dropdown from "~/components/_common/Dropdown";
 import { ArrowSmallRightIcon } from "@heroicons/react/24/solid";
 
 export default function NavLink({ link }: { link: NavItem }) {
@@ -24,30 +24,36 @@ export default function NavLink({ link }: { link: NavItem }) {
     return (
       <Dropdown className={cn(isActive && "text-primary")} label={link.label}>
         <div className="flex flex-col gap-1">
-          {Object.values(link.children).map((child) => (
-            <Link key={child.href} href={child.href}>
-              <Dropdown.Item>
-                <div
-                  className={cn(
-                    "group-hover:translate-x-2 group-hover:text-primary",
-                    "flex items-center gap-1 transition-all duration-300"
-                  )}
-                >
-                  {child.label}
-
-                  <ArrowSmallRightIcon
+          {Object.values(link.children)
+            .filter((child) => {
+              return (
+                !child.roles || child.roles.includes(session?.user.role ?? null)
+              );
+            })
+            .map((child) => (
+              <Link key={child.href} href={child.href}>
+                <Dropdown.Item>
+                  <div
                     className={cn(
-                      "opacity-0 group-hover:opacity-100",
-                      "h-5 w-5 stroke-2 transition-opacity duration-300"
+                      "group-hover:translate-x-2 group-hover:text-primary",
+                      "flex items-center gap-1 transition-all duration-300"
                     )}
-                    style={{
-                      transform: "rotate(-45deg)",
-                    }}
-                  />
-                </div>
-              </Dropdown.Item>
-            </Link>
-          ))}
+                  >
+                    {child.label}
+
+                    <ArrowSmallRightIcon
+                      className={cn(
+                        "opacity-0 group-hover:opacity-100",
+                        "h-5 w-5 stroke-2 transition-opacity duration-300"
+                      )}
+                      style={{
+                        transform: "rotate(-45deg)",
+                      }}
+                    />
+                  </div>
+                </Dropdown.Item>
+              </Link>
+            ))}
         </div>
       </Dropdown>
     );

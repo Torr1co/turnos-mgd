@@ -1,14 +1,14 @@
 import React from "react";
-import Box from "~/lib/Box";
-import Button from "~/lib/Button";
-import Title from "~/lib/Typo/Title";
-import Text from "~/lib/Typo/Text";
+import Box from "~/components/_common/Box";
+import Button from "~/components/_common/Button";
+import Title from "~/components/_common/Typo/Title";
+import Text from "~/components/_common/Typo/Text";
 import { api } from "~/utils/api";
 import { type User, type Pet } from ".prisma/client";
 import { useModal } from "~/context/ModalContex";
 import PetRegister from "./PetRegister";
 import { Transition } from "@headlessui/react";
-import { cn } from "~/utils/styles";
+import { cn } from "~/utils/styleUtils";
 import PetList from "./PetList";
 
 export default function ClientList({
@@ -51,21 +51,21 @@ export default function ClientList({
                   <div className="flex gap-4">
                     <Button
                       className="transition-colos duration-200"
-                      kind={Button.KINDS.gray}
-                      onClick={() =>
-                        handleModal(<PetRegister ownerId={user.id} />)
-                      }
-                    >
-                      Registrar Perro
-                    </Button>
-                    <Button
-                      className="transition-colos duration-200"
                       kind={
                         isSelected ? Button.KINDS.primary : Button.KINDS.gray
                       }
                       onClick={() => setSelectedUser(isSelected ? null : user)}
                     >
                       Ver Perros
+                    </Button>
+                    <Button
+                      className="transition-colos duration-200"
+                      kind={Button.KINDS.gray}
+                      onClick={() =>
+                        handleModal(<PetRegister ownerId={user.id} />)
+                      }
+                    >
+                      Registrar Perro
                     </Button>
                   </div>
                 </div>

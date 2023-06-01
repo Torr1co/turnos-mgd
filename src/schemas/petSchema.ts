@@ -4,6 +4,7 @@ export const PetSchema = z.object({
   name: z
     .string()
     .trim()
+    .toLowerCase()
     .min(1, "Minimo 1 caracter")
     .max(20, "Maximo 20 caracteres"),
   birth: z.date({

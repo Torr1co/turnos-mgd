@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import Form from "~/lib/Form";
-import Title from "~/lib/Typo/Title";
+import Form from "~/components/_common/Form";
+import Title from "~/components/_common/Typo/Title";
 import {
   ClientCreationSchema,
   type ClientCreation,
@@ -11,7 +11,7 @@ import { api } from "~/utils/api";
 import ClientForm from "./ClientForm";
 import BookingForm from "./BookingForm";
 import PetForm from "./PetForm";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";

@@ -47,9 +47,9 @@ export const BookingGetAllSchema = z
   )
   .default({ pending: true });
 
-export type Booking = z.infer<typeof BookingSchema>;
-export type BookingUpdate = z.infer<typeof BookingUpdateSchema>;
-export type BookingCreation = z.infer<typeof BookingCreationSchema>;
+export type BookingSchema = z.infer<typeof BookingSchema>;
+export type BookingUpdateSchema = z.infer<typeof BookingUpdateSchema>;
+export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
 export type BookingGetAllSchema = z.infer<typeof BookingGetAllSchema>;
 
 export const VaccineOptions = [

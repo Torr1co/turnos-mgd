@@ -1,5 +1,5 @@
 import React from "react";
-import Title from "~/lib/Typo/Title";
+import Title from "~/components/_common/Typo/Title";
 import { type GetServerSideProps } from "next";
 import UpdateUser from "~/components/Me/UpdateUser";
 import UpdatePassword from "~/components/Me/UpdatePassword";

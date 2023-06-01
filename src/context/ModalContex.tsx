@@ -4,7 +4,7 @@ import React, {
   useContext,
   type ReactNode,
 } from "react";
-import Modal from "~/lib/Modal";
+import Modal from "~/components/_common/Modal";
 
 interface ModalConfig {
   className: string;

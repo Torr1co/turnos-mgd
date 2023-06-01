@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import Title from "~/lib/Typo/Title";
+import Title from "~/components/_common/Typo/Title";
 import { useModal } from "~/context/ModalContex";
-import Button from "~/lib/Button";
+import Button from "~/components/_common/Button";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import AdoptList from "~/components/AdoptPublications.tsx/AdoptList";
-import AdoptPublicationCreation from "~/components/AdoptPublications.tsx/AdoptPublicationCreation";
+import AdoptList from "~/components/Adoptions/AdoptionList";
+import AdoptPublicationCreation from "~/components/Adoptions/AdoptPublication/AdoptCreationModal";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
-import Toggle from "~/lib/Form/Toggle";
-import AdoptedList from "~/components/AdoptPublications.tsx/AdoptedList";
+import Toggle from "~/components/_common/Form/Toggle";
+import AdoptedList from "~/components/Adoptions/AdoptSlider";
+import Dropdown from "~/components/_common/Dropdown";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -32,11 +33,15 @@ const Adoptions = () => {
         <Title>Perros de adopcion</Title>
         <div className="flex gap-4">
           {session && (
-            <Toggle
-              label="Mis publicaciones"
-              checked={mine}
-              onChange={() => setMine((prev) => !prev)}
-            />
+            <Dropdown
+              label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
+            >
+              <Toggle
+                label="Mis publicaciones"
+                checked={mine}
+                onChange={() => setMine((prev) => !prev)}
+              />
+            </Dropdown>
           )}
           {session && (
             <Button
