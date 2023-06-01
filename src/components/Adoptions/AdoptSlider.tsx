@@ -44,18 +44,30 @@ export function AdoptSlideItem({ adoption }: { adoption: AdoptWithDog }) {
 export default function AdoptSlider() {
   const { data: adopted = [] } = api.adoptPublications.getAdopted.useQuery();
 
+  const triggerSlider = adopted.length >= 5;
   return adopted.length >= 0 ? (
-    <div className="-mx-16 overflow-x-hidden">
-      <ul className="no-scrollbar flex h-full animate-infiniteScroll gap-8">
-        {[...adopted, ...adopted].map((adoption) => {
-          return (
-            <li key={adoption.id} className="h-full">
-              <Box className="w-max bg-white" size="p-8 rounded-md">
-                <AdoptSlideItem adoption={adoption} />
-              </Box>
-            </li>
-          );
-        })}
+    <div
+      className={cn(
+        triggerSlider ? "-mx-16 overflow-x-hidden " : "overflow-x-auto"
+      )}
+    >
+      <ul
+        className={cn(
+          "no-scrollbar flex h-full gap-8",
+          triggerSlider && "animate-infiniteScroll"
+        )}
+      >
+        {(triggerSlider ? [...adopted, ...adopted] : adopted).map(
+          (adoption) => {
+            return (
+              <li key={adoption.id} className="h-full">
+                <Box className="w-max bg-white" size="p-8 rounded-md">
+                  <AdoptSlideItem adoption={adoption} />
+                </Box>
+              </li>
+            );
+          }
+        )}
       </ul>
     </div>
   ) : (

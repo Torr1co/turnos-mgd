@@ -50,6 +50,34 @@ export const FieldDatePicker = ({
     />
   );
 };
+
+export const FieldRangePicker = ({
+  path,
+  options,
+  error,
+  ...props
+}: Field<RangePickerProps>) => {
+  return (
+    <Controller<{ [x: string]: [Date, Date] | undefined }, string>
+      name={path}
+      rules={options}
+      render={({ field: { value, onChange } }) => {
+        return (
+          <CustomRangePicker
+            id={path}
+            name={path}
+            value={value ? [dayjs(value[0]), dayjs(value[1])] : null}
+            onChange={(e) => {
+              onChange(e?.map((date) => date?.toDate()));
+            }}
+            {...props}
+          />
+        );
+      }}
+    />
+  );
+};
+
 export default Object.assign(CustomDatePicker, {
   ...DatePicker,
   RangePicker: CustomRangePicker,

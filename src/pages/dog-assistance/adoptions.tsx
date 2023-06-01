@@ -9,7 +9,7 @@ import AdoptPublicationCreation from "~/components/Adoptions/AdoptPublication/Ad
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import Toggle from "~/components/_common/Form/Toggle";
-import AdoptedList from "~/components/Adoptions/AdoptSlider";
+import AdoptSlider from "~/components/Adoptions/AdoptSlider";
 import Dropdown from "~/components/_common/Dropdown";
 // import { Switch } from "@headlessui/react";
 
@@ -28,9 +28,10 @@ const Adoptions = () => {
   const [mine, setMine] = useState(false);
   return (
     <div>
-      <AdoptedList />
+      <AdoptSlider />
       <header className="my-14 flex items-center justify-between">
-        <Title>Perros de adopcion</Title>
+        {/* {Mejora este mensaje} */}
+        <Title>Perros en adopcion {mine ? "propios" : "ajenos"}</Title>
         <div className="flex gap-4">
           {session && (
             <Dropdown

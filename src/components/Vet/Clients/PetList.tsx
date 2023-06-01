@@ -28,7 +28,7 @@ export function PetItem({ pet }: { pet: Pet }) {
         <Title
           as="h4"
           size="font-semibold"
-          className=" transition-colors duration-200 group-hover:text-primary"
+          className=" capitalize transition-colors duration-200 group-hover:text-primary"
         >
           {pet.name}
         </Title>
@@ -42,7 +42,7 @@ export function PetItem({ pet }: { pet: Pet }) {
 
 export default function PetList({ pets }: { pets: Pet[] }) {
   return (
-    <ul className=" mt-8 grid grid-cols-3 gap-8">
+    <ul className="grid grid-cols-3 gap-8">
       {pets.length > 0 ? (
         pets.map((pet) => (
           <li key={pet.id} className="">

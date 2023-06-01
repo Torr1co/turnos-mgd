@@ -25,8 +25,8 @@ export default function UpdatePassword() {
           onSuccess: () => {
             toast.success("Contraseña actualizada");
           },
-          onError: () => {
-            toast.error("Error al actualizar la contraseña");
+          onError: (error) => {
+            toast.error(error.message);
           },
         });
       }}
