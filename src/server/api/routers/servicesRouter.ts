@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ContactSchema } from "~/schemas/contactSchema";
 import {
   ServiceCreationSchema,
   ServiceGetAllSchema,
@@ -10,7 +9,6 @@ import {
   publicProcedure,
   vetProcedure,
 } from "~/server/api/trpc";
-import sendEmail from "~/server/email";
 
 export const servicesRouter = createTRPCRouter({
   create: vetProcedure
@@ -61,20 +59,5 @@ export const servicesRouter = createTRPCRouter({
       .catch(() => {
         throw new Error("No se pudo eliminar el servicio");
       });
-  }),
-
-  contact: publicProcedure.input(ContactSchema).mutation(async ({ input }) => {
-    const { receipt, sender, message, name } = input;
-
-    await sendEmail({
-      to: receipt,
-      from: "v.ohmydog@gmail.com",
-      subject: "Te han contactado en Oh my dog!",
-      text: `Le escribimos para informarle que ${name} está interesado en utilizar sus servicios. 
-          Puedes contactarlo a través de su correo: ${sender}. 
-          Mensaje: ${message}.
-          ¡Muchas gracias por usar Oh my dog!`,
-    });
-    return;
   }),
 });

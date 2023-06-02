@@ -28,7 +28,7 @@ export default function ContactForm() {
         }}
       />
 
-      <Form.Input path="sender" label="Email" type="email" />
+      <Form.Input path="from" label="Email" type="email" />
       <Form.Input
         path="telephone"
         label="Telefono"

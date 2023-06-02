@@ -8,6 +8,7 @@ import { clientsRouter } from "./routers/clientsRouter";
 import { adoptPublicationRouter } from "./routers/adoptionRouter";
 import { sessionRouter } from "./routers/sessionRouter";
 import { servicesRouter } from "./routers/servicesRouter";
+import { contactRouter } from "./routers/contactRouter";
 /**
  * This is the primary router for your server.
  *
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   vets: vetsRouter,
   session: sessionRouter,
   services: servicesRouter,
+  contact: contactRouter,
 });
 
 // export type definition of API
