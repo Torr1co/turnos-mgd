@@ -3,14 +3,14 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { Controller } from "react-hook-form";
 import { cn } from "~/utils/styleUtils";
-import { type FC } from "~/utils/types";
+import { type FC } from "~/utils/language/types";
 
-type SelectOption<T> = {
+export type SelectOption<T> = {
   value: T;
   label: string;
 };
 
-interface SelectProps<T> extends FC {
+export interface SelectProps<T> extends FC {
   values: SelectOption<T>[] | readonly SelectOption<T>[];
   value: SelectOption<T>["value"];
   onChange: (value: SelectOption<T>["value"]) => void;
@@ -35,7 +35,7 @@ export default function Select<T extends string | number | undefined | null>({
           return (
             <div className="flex items-center justify-between">
               <div>
-                {(value &&
+                {(value !== undefined &&
                   values.find((option) => option.value === value)?.label) ??
                   children}
               </div>

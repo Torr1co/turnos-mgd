@@ -200,7 +200,7 @@ model Service {
     updatedAt    DateTime     @updatedAt
     name         String
     email        String
-    availability Boolean
+    availability Boolean      @default(true)
     zone         String
     hour         String
     photo        String?

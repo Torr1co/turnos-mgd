@@ -13,9 +13,16 @@ export default function NavLink({ link }: { link: NavItem }) {
   const router = useRouter();
   const canAccess =
     !link.roles || link.roles.includes(session?.user.role ?? null);
+
   const isActive = link.children
-    ? router.asPath.startsWith(link.href)
+    ? Object.values(link.children).some((child) => {
+        return router.asPath.startsWith(child.href);
+      })
     : router.asPath === link.href;
+
+  /* const isActive = link.children
+    ? router.asPath.startsWith(link.href)
+    : router.asPath === link.href; */
   if (!canAccess) {
     return null;
   }

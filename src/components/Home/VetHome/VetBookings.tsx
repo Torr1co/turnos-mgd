@@ -9,7 +9,7 @@ import { VetBookingFilters } from "../BookingActions";
 import VetBookingList from "./VetBookingList";
 
 type FilterProps = {
-  inquirieType?: InquirieType;
+  inquirieType: InquirieType | null;
   pending: boolean;
   dateRange?: [Date, Date];
   text?: string;
@@ -21,7 +21,7 @@ export default function VetBookings() {
       pending: true,
       dateRange: undefined,
       text: undefined,
-      inquirieType: undefined,
+      inquirieType: null,
     },
   });
   const filters = methods.watch();

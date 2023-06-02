@@ -7,8 +7,8 @@ import {
 import { UserRoles } from "@prisma/client";
 import { LINKS } from "./utils/navConfig";
 import { type Session } from "next-auth";
-import NAV_CONFIG from "~/utils/navConfig";
-import { type NavItem } from "./components/Layout/Header/Navbar";
+/* import NAV_CONFIG from "~/utils/navConfig";
+import { type NavItem } from "./components/Layout/Header/Navbar"; */
 
 export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   const token = (await getToken({ req: request })) as Session | null;
@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   }
 
   // checks if the user has access to that page
-  const url = new URL(request.url);
+  /* const url = new URL(request.url);
   const path = url.pathname;
   const navItem = Object.values(NAV_CONFIG).find((item: NavItem) => {
     if (item.href === path) return true;
@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
     if (!canAccess) {
       return NextResponse.redirect(LINKS.home);
     }
-  }
+  } */
 
   return NextResponse.next();
 }

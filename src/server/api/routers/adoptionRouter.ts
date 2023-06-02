@@ -1,9 +1,9 @@
 import { string } from "zod";
 import {
   AdoptCreationSchema,
-  AdoptSchema,
   AdoptUpdateSchema,
 } from "~/schemas/adoptionSchema";
+import { ContactSchema } from "~/schemas/contactSchema";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -58,7 +58,7 @@ export const adoptPublicationRouter = createTRPCRouter({
     }),
 
   //Send a mail to the publication owner
-  adopt: publicProcedure.input(AdoptSchema).mutation(async ({ input }) => {
+  adopt: publicProcedure.input(ContactSchema).mutation(async ({ input }) => {
     const { receipt, sender, message, name } = input;
 
     await sendEmail({

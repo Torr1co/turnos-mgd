@@ -2,8 +2,9 @@ import React from "react";
 import Form from "~/components/_common/Form";
 import { useFormContext } from "react-hook-form";
 
-export default function AdoptContactForm() {
+export default function ContactForm() {
   const methods = useFormContext();
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <Form.Input

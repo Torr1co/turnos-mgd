@@ -61,13 +61,13 @@ export const VetBookingFilters = () => (
         path="inquirieType"
         values={[
           {
-            value: undefined,
-            label: "Todos",
+            value: null,
+            label: "Ver todos los tipos",
           },
           ...InquirieOptions,
         ]}
       >
-        Todos los Turnos
+        Ver todos los tipos
       </Form.Select>
       <Form.Input
         label="Filtrar por nombre de cliente o email"

@@ -2,18 +2,18 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
-import { AdoptSchema } from "~/schemas/adoptionSchema";
 import toast from "react-hot-toast";
 import Title from "~/components/_common/Typo/Title";
 import Button from "~/components/_common/Button";
 import Form from "~/components/_common/Form";
 import { useModal } from "~/context/ModalContex";
 import { type AdoptPublication, type Dog } from "@prisma/client";
-import AdoptForm from "./AdoptContactForm";
+import ContactForm from "../../ContactForm";
 import { AdoptItem } from "../AdoptionList";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { GenderOptions } from "~/schemas/petSchema";
+import { ContactSchema } from "~/schemas/contactSchema";
 
 export default function AdoptContactModal({
   adoption,
@@ -25,8 +25,8 @@ export default function AdoptContactModal({
   const { data: session } = useSession();
   const { mutate: createPublication, isLoading } =
     api.adoptPublications.adopt.useMutation();
-  const methods = useForm<AdoptSchema>({
-    resolver: zodResolver(AdoptSchema),
+  const methods = useForm<ContactSchema>({
+    resolver: zodResolver(ContactSchema),
     defaultValues: {
       id: adoption.id,
       receipt: adoption.email,
@@ -62,7 +62,7 @@ export default function AdoptContactModal({
         </div>
       </header>
       <section>
-        <AdoptForm />
+        <ContactForm />
       </section>
       <hr />
       <section className="flex flex-col gap-12">
