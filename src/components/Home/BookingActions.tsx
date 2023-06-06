@@ -4,6 +4,10 @@ import ConfirmTooltip from "~/components/_common/ConfirmTooltip";
 import { api } from "~/utils/api";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { type Booking } from "@prisma/client";
+import Dropdown from "../_common/Dropdown";
+import Button from "../_common/Button";
+import Form from "../_common/Form";
+import { InquirieOptions } from "~/schemas/bookingSchema";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -41,3 +45,35 @@ export const CancelBooking = ({ booking }: { booking: Booking }) => {
     </ConfirmTooltip>
   );
 };
+
+export const VetBookingFilters = () => (
+  <Dropdown
+    label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
+    placement={"bottomRight"}
+  >
+    <div className=" flex min-w-[320px] flex-col gap-4">
+      <Form.Toggle label="Turnos Pendientes" path="pending" />
+
+      <Form.DateRange label="Filtrar por rango de fechas" path={"dateRange"} />
+      <Form.Select
+        label="Filtrar por tipo de turno"
+        kind="bg-white"
+        path="inquirieType"
+        values={[
+          {
+            value: null,
+            label: "Ver todos los tipos",
+          },
+          ...InquirieOptions,
+        ]}
+      >
+        Ver todos los tipos
+      </Form.Select>
+      <Form.Input
+        label="Filtrar por nombre de cliente o email"
+        path="text"
+        placeholder="Buscar por nombre de cliente o email"
+      />
+    </div>
+  </Dropdown>
+);

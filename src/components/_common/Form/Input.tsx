@@ -2,7 +2,7 @@ import React, { forwardRef, useState, type InputHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 import { type Field } from "./Field";
 import { cn } from "~/utils/styleUtils";
-import { hasKey } from "~/utils/objUtils";
+import { hasKey } from "~/utils/language/objUtils";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const KINDS = {

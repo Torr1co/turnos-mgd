@@ -1,7 +1,7 @@
 import React, { forwardRef, type ButtonHTMLAttributes } from "react";
-import { hasKey } from "~/utils/objUtils";
+import { hasKey } from "~/utils/language/objUtils";
 import { cn } from "~/utils/styleUtils";
-import { type FC } from "~/utils/types";
+import { type FC } from "~/utils/language/types";
 import Loading from "./Loading";
 
 const SIZES = {

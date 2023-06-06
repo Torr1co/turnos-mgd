@@ -1,7 +1,7 @@
 import React, { type HTMLAttributes } from "react";
-import { hasKey } from "~/utils/objUtils";
+import { hasKey } from "~/utils/language/objUtils";
 import { cn } from "~/utils/styleUtils";
-import { type FC } from "~/utils/types";
+import { type FC } from "~/utils/language/types";
 
 const KINDS = {
   gray: "border border-gray-400",

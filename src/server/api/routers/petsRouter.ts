@@ -1,8 +1,9 @@
-import { Prisma, UserRoles } from ".prisma/client";
+import { UserRoles } from ".prisma/client";
 import { z } from "zod";
 import { PetCreationSchema, PetUpdateSchema } from "~/schemas/petSchema";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { prismaError } from "~/utils/errors";
 
 export const petsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -16,8 +17,8 @@ export const petsRouter = createTRPCRouter({
         },
       });
 
-      try {
-        const dog = await ctx.prisma.pet.create({
+      const dog = await ctx.prisma.pet
+        .create({
           data: {
             ...dogData,
             healthBook: {
@@ -27,20 +28,12 @@ export const petsRouter = createTRPCRouter({
               connect: { id: owner },
             },
           },
+        })
+        .catch((err) => {
+          const prismaHandler = prismaError(err, "No se pudo crear el perro");
+          prismaHandler("name", "Ya existe un perro con ese nombre");
         });
-        return dog;
-      } catch (error) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError &&
-          error.meta?.target
-        ) {
-          const target = error.meta.target as string;
-          if (target.includes("name")) {
-            throw new Error("Ya existe un perro con ese nombre");
-          }
-        }
-        throw new Error("No se pudo crear el perro");
-      }
+      return dog;
     }),
 
   //Update pet

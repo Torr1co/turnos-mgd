@@ -25,17 +25,18 @@ const NewPassword: NextPage = () => {
   });
   const { data: session, update } = useSession();
   const router = useRouter();
-  const { mutate: updatePassword } = api.session.updatePassword.useMutation({
-    onSuccess: async () => {
-      await update({
-        passwordVerified: new Date(),
-      });
-      await router.push("/");
-    },
-    onError: () => {
-      toast.error("Error al cambiar la contraseña");
-    },
-  });
+  const { mutate: updatePassword, isLoading } =
+    api.session.updatePassword.useMutation({
+      onSuccess: async () => {
+        await update({
+          passwordVerified: new Date(),
+        });
+        await router.push("/");
+      },
+      onError: () => {
+        toast.error("Error al cambiar la contraseña");
+      },
+    });
   return (
     <div className="relative mx-auto max-w-xl">
       <div className="absolute -bottom-24 -left-28">
@@ -68,7 +69,9 @@ const NewPassword: NextPage = () => {
             path="confirm"
           />
           <div>
-            <Button type="submit">Cambiar contraseña</Button>
+            <Button type="submit" loading={isLoading}>
+              Cambiar contraseña
+            </Button>
           </div>
         </Form>
       </Box>

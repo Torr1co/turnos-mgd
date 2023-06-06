@@ -15,14 +15,14 @@ export const sessionRouter = createTRPCRouter({
       });
 
       if (!user) {
-        throw new Error("Client not found");
+        throw new Error("Hubo un error al actualizar la contraseña");
       }
 
       if (
         input.prevPassword &&
         !compareSync(input.prevPassword, user.password)
       ) {
-        throw new Error("Incorrect password");
+        throw new Error("Credenciales invalidas");
       }
 
       //Hash the new password

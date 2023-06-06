@@ -17,32 +17,35 @@ export const LINKS = {
 
 const NAV_CONFIG = {
   home: { label: "Inicio", href: LINKS.home },
-  /*   services: {
-    label: "Servicios",
-    href: LINKS.services,
-    roles: [UserRoles.CLIENT, null],
-  }, */
   admin: {
     label: "Administracion",
-    href: "/admin",
     roles: [UserRoles.VET],
     children: {
-      // services: { label: "Servicios", href: LINKS.services },
       clients: { label: "Clientes", href: LINKS.clients },
+      services: { label: "Servicios", href: LINKS.services },
     },
   },
-  dogAssistance: {
-    label: "Asistencia de perros",
-    href: "/dog-assistance",
+  breedDogs: {
+    label: "Cuida tus mascotas",
+    roles: [UserRoles.CLIENT, null],
     children: {
-      adoptions: {
-        label: "Adopciones",
-        href: LINKS.adoptions,
-      },
       clientPets: {
         label: "Mis perros",
         href: LINKS.pets,
         roles: [UserRoles.CLIENT],
+      },
+      services: {
+        label: "Servicios",
+        href: LINKS.services,
+      },
+    },
+  },
+  dogAssistance: {
+    label: "Asistencia de perros",
+    children: {
+      adoptions: {
+        label: "Adopciones",
+        href: LINKS.adoptions,
       },
       /*  vetPets: {
         label: "Perros",

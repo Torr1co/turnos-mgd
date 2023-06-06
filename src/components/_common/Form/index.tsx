@@ -9,13 +9,13 @@ import {
 } from "react-hook-form";
 import { FieldSelect } from "./Select";
 import { FieldToggle } from "./Toggle";
-import { FieldDatePicker } from "./DatePicker";
+import { FieldDatePicker, FieldRangePicker } from "./DatePicker";
 import { FieldImage } from "./ImageUpload";
 
 interface FormProps<T extends FieldValues>
   extends Omit<FormHTMLAttributes<HTMLFormElement>, "onSubmit"> {
   methods: UseFormReturn<T>;
-  onSubmit: (data: T) => void | Promise<void>;
+  onSubmit?: (data: T) => void | Promise<void>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +26,7 @@ type FieldConvertion<T extends (...args: any) => any> = (
 const Form = <T extends FieldValues>({
   methods,
   children,
-  onSubmit,
+  onSubmit = () => undefined,
   ...props
 }: FormProps<T>) => {
   const handleSubmit = methods.handleSubmit(onSubmit) as () => void;
@@ -43,6 +43,7 @@ const Form = <T extends FieldValues>({
 Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
 Form.Date = FieldDatePicker as FieldConvertion<typeof FieldDatePicker>;
+Form.DateRange = FieldRangePicker as FieldConvertion<typeof FieldRangePicker>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
 Form.ImageUploader = FieldImage as FieldConvertion<typeof FieldImage>;
