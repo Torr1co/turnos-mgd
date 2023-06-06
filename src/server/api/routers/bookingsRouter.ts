@@ -3,6 +3,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  vetProcedure,
 } from "~/server/api/trpc";
 import {
   BookingCreationSchema,
@@ -10,7 +11,7 @@ import {
   TimeZoneOptions,
   BookingGetAllSchema,
 } from "~/schemas/bookingSchema";
-import { InquirieType, UserRoles } from "@prisma/client";
+import { BookingType, UserRoles } from "@prisma/client";
 import dayjs from "dayjs";
 import { string } from "zod";
 import sendEmail from "~/server/email";
@@ -28,7 +29,7 @@ export const bookingsRouter = createTRPCRouter({
       await BookingHandlers.alreadyBooked(ctx.prisma, booking, dog);
       await BookingHandlers.maxBookings(ctx.prisma, booking);
 
-      if (booking.type === InquirieType.VACCINE) {
+      if (booking.type === BookingType.VACCINE) {
         const dogData = await ctx.prisma.pet
           .findFirstOrThrow({
             where: {
@@ -150,7 +151,7 @@ export const bookingsRouter = createTRPCRouter({
       await BookingHandlers.alreadyBooked(ctx.prisma, booking, dog);
       await BookingHandlers.maxBookings(ctx.prisma, booking);
 
-      if (booking.type === InquirieType.VACCINE) {
+      if (booking.type === BookingType.VACCINE) {
         const dogData = await ctx.prisma.pet
           .findFirstOrThrow({
             where: {
@@ -262,4 +263,9 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
     }),
+
+  get: vetProcedure.input(string()).query(async ({ input, ctx }) => {
+    const booking = await getBooking(ctx.prisma, input);
+    return booking;
+  }),
 });

@@ -2,13 +2,13 @@ import React from "react";
 import Form from "~/components/_common/Form";
 import {
   type BookingCreationSchema,
-  InquirieOptions,
+  BookingOptions,
   TimeZoneOptions,
   VaccineOptions,
 } from "~/schemas/bookingSchema";
 import dayjs from "dayjs";
 import { useFormContext } from "react-hook-form";
-import { InquirieType } from "@prisma/client";
+import { BookingType } from "@prisma/client";
 
 export default function BookingForm() {
   const methods = useFormContext<{ booking: BookingCreationSchema }>();
@@ -25,16 +25,16 @@ export default function BookingForm() {
       <Form.Select
         path="booking.type"
         label="Tipo"
-        values={InquirieOptions}
+        values={BookingOptions}
         onChange={() => {
-          if (methods.watch("booking.type") === InquirieType.VACCINE) {
+          if (methods.watch("booking.type") === BookingType.VACCINE) {
             methods.setValue("booking.vaccine", VaccineOptions[0].value);
             return;
           }
           methods.setValue("booking.vaccine", undefined);
         }}
       />
-      {methods.watch("booking.type") === InquirieType.VACCINE && (
+      {methods.watch("booking.type") === BookingType.VACCINE && (
         <Form.Select
           path="booking.vaccine"
           label="Tipo de vacuna"

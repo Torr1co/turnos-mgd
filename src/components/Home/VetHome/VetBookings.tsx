@@ -1,4 +1,4 @@
-import { type InquirieType } from "@prisma/client";
+import { type BookingType } from "@prisma/client";
 import dayjs from "dayjs";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { VetBookingFilters } from "../BookingActions";
 import VetBookingList from "./VetBookingList";
 
 type FilterProps = {
-  inquirieType: InquirieType | null;
+  inquirieType: BookingType | null;
   pending: boolean;
   dateRange?: [Date, Date];
   text?: string;

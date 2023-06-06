@@ -7,7 +7,7 @@ import Title from "~/components/_common/Typo/Title";
 import { cn } from "~/utils/styleUtils";
 import { BookingIcon } from "~/components/_common/icons";
 import dayjs from "dayjs";
-import { InquirieOptions } from "~/schemas/bookingSchema";
+import { BookingOptions } from "~/schemas/bookingSchema";
 import Button from "~/components/_common/Button";
 import BookingUpdate from "./BookingUpdateModal";
 import { useModal } from "~/context/ModalContex";
@@ -48,7 +48,7 @@ export default function ClientBookingList({
                     >
                       {booking.dog.name} -{" "}
                       {
-                        InquirieOptions.find(
+                        BookingOptions.find(
                           (type) => type.value === booking.type
                         )?.label
                       }

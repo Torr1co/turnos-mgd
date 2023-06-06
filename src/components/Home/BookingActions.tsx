@@ -7,7 +7,7 @@ import { type Booking } from "@prisma/client";
 import Dropdown from "../_common/Dropdown";
 import Button from "../_common/Button";
 import Form from "../_common/Form";
-import { InquirieOptions } from "~/schemas/bookingSchema";
+import { BookingOptions } from "~/schemas/bookingSchema";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -64,7 +64,7 @@ export const VetBookingFilters = () => (
             value: null,
             label: "Ver todos los tipos",
           },
-          ...InquirieOptions,
+          ...BookingOptions,
         ]}
       >
         Ver todos los tipos

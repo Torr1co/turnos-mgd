@@ -18,7 +18,7 @@ enum UserRoles {
     CLIENT
 }
 
-enum InquirieType {
+enum BookingType {
     VACCINE
     DEWORMING
     GENERAL
@@ -63,7 +63,7 @@ model Booking {
 
     completed Boolean?     @default(false)
     date      DateTime
-    type      InquirieType
+    type      BookingType
     vaccine   VaccineType?
     timeZone  TimeZone
     user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)

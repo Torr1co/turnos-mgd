@@ -15,7 +15,7 @@ import Button from "~/components/_common/Button";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
 import { useModal } from "~/context/ModalContex";
-import { InquirieType, TimeZone } from "@prisma/client";
+import { BookingType, TimeZone } from "@prisma/client";
 import dayjs from "dayjs";
 
 const steps = [
@@ -54,7 +54,7 @@ export default function ClientRegister() {
       birth: dayjs().subtract(18, "y").toDate(),
       booking: {
         // date: new Date(),
-        type: InquirieType.GENERAL,
+        type: BookingType.GENERAL,
         timeZone: TimeZone.MORNING,
       },
       dog: {
