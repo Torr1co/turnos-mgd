@@ -14,7 +14,7 @@ export default function Pets() {
   return (
     <section>
       <header className="mb-14 flex items-center justify-between">
-        <Title>{session?.user.role === UserRoles.CLIENT && "Mis"}Perros</Title>
+        <Title>{session?.user.role === UserRoles.CLIENT && "Mis "}Perros</Title>
         <div className="flex gap-4">
           <Input
             placeholder="Buscar por nombre"

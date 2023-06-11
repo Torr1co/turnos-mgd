@@ -1,4 +1,4 @@
-import { InquirieType, TimeZone, VaccineType } from "@prisma/client";
+import { BookingType, TimeZone, VaccineType } from "@prisma/client";
 import { z } from "zod";
 
 export const BookingSchema = z.object({
@@ -6,7 +6,7 @@ export const BookingSchema = z.object({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
   }),
-  type: z.nativeEnum(InquirieType),
+  type: z.nativeEnum(BookingType),
   timeZone: z.nativeEnum(TimeZone, {
     errorMap: () => {
       return { message: "Selecciona un horario valido" };
@@ -63,19 +63,23 @@ export const VaccineOptions = [
   },
 ] as const;
 
-export const InquirieOptions = [
+export const BookingOptions = [
   {
-    value: InquirieType.VACCINE,
+    value: BookingType.VACCINE,
     label: "Vacuna",
   },
   {
-    value: InquirieType.DEWORMING,
+    value: BookingType.DEWORMING,
     label: "Desparasitacion",
   },
   {
-    value: InquirieType.GENERAL,
-    label: "General",
+    value: BookingType.GENERAL,
+    label: "Consulta General",
   },
+  {
+    value: BookingType.CASTRATION,
+    label: "Castracion",
+  }
 ];
 
 export const TimeZoneOptions = [

@@ -9,7 +9,7 @@ import {
 } from "react-hook-form";
 import { FieldSelect } from "./Select";
 import { FieldToggle } from "./Toggle";
-import { FieldDatePicker } from "./DatePicker";
+import { FieldDatePicker, FieldRangePicker } from "./DatePicker";
 import { FieldImage } from "./ImageUpload";
 
 interface FormProps<T extends FieldValues>
@@ -43,6 +43,7 @@ const Form = <T extends FieldValues>({
 Form.Input = FieldInput as FieldConvertion<typeof FieldInput>;
 Form.Number = FieldNumber as FieldConvertion<typeof FieldInput>;
 Form.Date = FieldDatePicker as FieldConvertion<typeof FieldDatePicker>;
+Form.RangeDate = FieldRangePicker as FieldConvertion<typeof FieldRangePicker>;
 Form.Select = FieldSelect as FieldConvertion<typeof FieldSelect>;
 Form.TextArea = FieldTextArea as FieldConvertion<typeof FieldTextArea>;
 Form.ImageUploader = FieldImage as FieldConvertion<typeof FieldImage>;

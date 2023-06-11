@@ -71,7 +71,7 @@ export default function ClientList({
                 </div>
                 <Transition
                   show={isSelected}
-                  className="overflow-hidden"
+                  className="overflow-auto"
                   enter=" transition transition-all duration-700 ease-out"
                   enterFrom="max-h-[0]"
                   enterTo="max-h-72"

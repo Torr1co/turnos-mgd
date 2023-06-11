@@ -3,7 +3,11 @@ import { toast } from "react-hot-toast";
 import ConfirmTooltip from "~/components/_common/ConfirmTooltip";
 import { api } from "~/utils/api";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { type Booking } from "@prisma/client";
+import { UserRoles, type Booking } from "@prisma/client";
+import Dropdown from "../_common/Dropdown";
+import Button from "../_common/Button";
+import Form from "../_common/Form";
+import { BookingOptions } from "~/schemas/bookingSchema";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -39,5 +43,42 @@ export const CancelBooking = ({ booking }: { booking: Booking }) => {
         <XMarkIcon className="text-gray-600" />
       </button>
     </ConfirmTooltip>
+  );
+};
+
+export const BookingFilters = ({ role }: { role?: UserRoles }) => {
+  return (
+    <Dropdown
+      label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
+      placement={"bottomRight"}
+    >
+      <div className=" flex min-w-[320px] flex-col gap-4">
+        <Form.RangeDate
+          path="filters.rangeDate"
+          label="Filtrar por rango de fechas"
+        />
+        <Form.Select
+          label="Filtrar por tipo de turno"
+          kind="bg-white"
+          path="filters.bookingType"
+          values={[
+            {
+              value: undefined,
+              label: "Todos",
+            },
+            ...BookingOptions,
+          ]}
+        >
+          Todos los Turnos
+        </Form.Select>
+        {role === UserRoles.VET && (
+          <Form.Input
+            label="Filtrar por nombre de cliente o email"
+            path={"filters.text"}
+            placeholder="Buscar por nombre de cliente o email"
+          />
+        )}
+      </div>
+    </Dropdown>
   );
 };

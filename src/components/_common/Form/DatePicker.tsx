@@ -2,7 +2,7 @@ import { DatePicker, type DatePickerProps } from "antd";
 import React from "react";
 import { type Field } from "./Field";
 import { Controller } from "react-hook-form";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { type RangePickerProps } from "antd/es/date-picker";
 
 const CustomDatePicker = (props: DatePickerProps) => {
@@ -50,6 +50,41 @@ export const FieldDatePicker = ({
     />
   );
 };
+
+export const FieldRangePicker = ({
+  path,
+  options,
+  error,
+  ...props
+}: Field<RangePickerProps>) => {
+  return (
+    <Controller
+      name={path}
+      rules={options}
+      render={({ field }) => {
+        return (
+          <CustomRangePicker
+            id={path}
+            name={path}
+            value={
+              field.value
+                ? ((field.value as [Date, Date]).map((date) => dayjs(date)) as [
+                    Dayjs,
+                    Dayjs
+                  ])
+                : null
+            }
+            onChange={(e) => {
+              field.onChange(e?.map((date) => date?.toDate()));
+            }}
+            {...props}
+          />
+        );
+      }}
+    />
+  );
+};
+
 export default Object.assign(CustomDatePicker, {
   ...DatePicker,
   RangePicker: CustomRangePicker,

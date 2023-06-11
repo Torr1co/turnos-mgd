@@ -3,6 +3,7 @@ import { z } from "zod";
 import { PetCreationSchema, PetUpdateSchema } from "~/schemas/petSchema";
 // import { get } from 'react-hook-form';
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { prismaError } from "~/utils/errors";
 
 export const petsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -36,7 +37,9 @@ export const petsRouter = createTRPCRouter({
         ) {
           const target = error.meta.target as string;
           if (target.includes("name")) {
-            throw new Error("Ya existe un perro con ese nombre");
+            throw new Error(
+              "Ya existe un perro con ese nombre asociado a esa cuenta"
+            );
           }
         }
         throw new Error("No se pudo crear el perro");
@@ -48,12 +51,20 @@ export const petsRouter = createTRPCRouter({
     .input(PetUpdateSchema)
     .mutation(async ({ input, ctx }) => {
       const { petId, dog } = input;
-      const pet = await ctx.prisma.pet.update({
-        where: {
-          id: petId,
-        },
-        data: dog,
-      });
+      const pet = await ctx.prisma.pet
+        .update({
+          where: {
+            id: petId,
+          },
+          data: dog,
+        })
+        .catch((error) => {
+          const prismaHandler = prismaError(error, "No se pudo crear el perro");
+          prismaHandler(
+            "name",
+            "Ya existe un perro con ese nombre asociado a esa cuenta"
+          );
+        });
 
       return pet;
     }),
@@ -92,7 +103,7 @@ export const petsRouter = createTRPCRouter({
       },
     });
 
-    if (!pet) throw new Error("Mascota no encontrada");
+    if (!pet) throw new Error("Perro no encontrado");
     if (
       ctx.session.user.role === UserRoles.CLIENT &&
       ctx.session.user.id !== pet.owner.id
