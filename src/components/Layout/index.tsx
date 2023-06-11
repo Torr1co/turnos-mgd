@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import { type FC } from "~/utils/types";
+import { type FC } from "~/utils/language/types";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";

@@ -1,12 +1,16 @@
 import { type BookingSchema } from "~/schemas/bookingSchema";
 import { type Pet, type PrismaClient } from "@prisma/client";
 import dayjs, { type Dayjs } from "dayjs";
+import { BookingStatus } from "@prisma/client";
 
 const MAX_BOOKINGS_PER_DAY = 20;
+
+// el mensaje de LAST_DAY debe mejorar, puede ser usado para cancelar un turno y para modificarlo, este caso solo abarca la modificacion
 export const BookingErrors = {
   NOT_FOUND: "El turno no fue encontrada.",
   FULL: "Horario ocupado!",
-  LAST_DAY: "No puedes modificar un turno en menos de 24hs!",
+  LAST_DAY:
+    "No puedes cancelar o modificar el turno con menos de 24 horas de anticipación!",
   ALREADY_BOOKED: "Ya tienes un turno ese día!",
   PAST_DATE: "El turno se encuentra en el pasado!",
   SUNDAY: "No abrimos los domingos!",
@@ -111,6 +115,43 @@ async function vaccineBHandler(
     throw new Error(BookingErrors.VACCINE_B_LAST_YEAR);
   }
 }
+
+export const BookingStatusQueries = {
+  [BookingStatus.COMPLETED]: {
+    /* 
+    TODO: ONLY THIS
+    status: {
+      equals: BookingStatus.COMPLETED,
+    }, */
+    date: {
+      lt: dayjs().startOf("day").toDate(),
+    },
+    status: {
+      in: [BookingStatus.APPROVED, BookingStatus.COMPLETED],
+    },
+  },
+  [BookingStatus.APPROVED]: {
+    /* 
+    TODO: ONLY THIS
+    status: {
+      equals: BookingStatus.APPROVED,
+    }, */
+    date: {
+      gte: dayjs().startOf("day").toDate(),
+    },
+    status: {
+      equals: BookingStatus.APPROVED,
+    },
+  },
+  [BookingStatus.PENDING]: {
+    date: {
+      gte: dayjs().startOf("day").toDate(),
+    },
+    status: {
+      equals: BookingStatus.PENDING,
+    },
+  },
+};
 
 export const BookingHandlers = {
   date: bookingDateHandler,

@@ -2,7 +2,7 @@ import React from "react";
 import Form from "~/components/_common/Form";
 import {
   type BookingCreationSchema,
-  BookingOptions,
+  BookingTypeOptions,
   TimeZoneOptions,
   VaccineOptions,
 } from "~/schemas/bookingSchema";
@@ -25,7 +25,7 @@ export default function BookingForm() {
       <Form.Select
         path="booking.type"
         label="Tipo"
-        values={BookingOptions}
+        values={BookingTypeOptions}
         onChange={() => {
           if (methods.watch("booking.type") === BookingType.VACCINE) {
             methods.setValue("booking.vaccine", VaccineOptions[0].value);

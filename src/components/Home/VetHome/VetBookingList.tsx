@@ -6,8 +6,9 @@ import Title from "~/components/_common/Typo/Title";
 import { cn } from "~/utils/styleUtils";
 import { BookingIcon } from "~/components/_common/icons";
 import dayjs from "dayjs";
-import { BookingOptions } from "~/schemas/bookingSchema";
+import { BookingTypeOptions } from "~/schemas/bookingSchema";
 import { CancelBooking } from "../BookingActions";
+import Link from "next/link";
 
 export default function VetBookingList({
   bookings,
@@ -26,46 +27,51 @@ export default function VetBookingList({
       ) : (
         bookings.map((booking) => {
           return (
-            <li key={booking.id}>
-              <Box
-                size="lgX"
-                className="flex items-center justify-between bg-white"
-              >
-                <div className="items group flex gap-10">
-                  <BookingIcon />
-                  <div>
-                    <Title
-                      as="h3"
-                      size={"text-md font-semibold"}
-                      className={cn(
-                        "capitalize transition-colors duration-300"
-                      )}
-                    >
-                      {dayjs(booking.date).format("MMMM D, YYYY ")} -{" "}
-                      {
-                        BookingOptions.find(
-                          (type) => type.value === booking.type
-                        )?.label
-                      }
-                      {booking.type === BookingType.VACCINE && (
-                        <span>({booking.vaccine})</span>
-                      )}
-                    </Title>
-                    <Text>
-                      Perro:{" "}
-                      <span className="capitalize">{booking.dog.name}</span>
-                    </Text>
-                    <Text>
-                      Cliente:{" "}
-                      <span className="capitalize">{booking.user.name}</span>
-                    </Text>
+            <Link
+              key={booking.id}
+              href={`/pets/${booking.dog.id}?bookingId=${booking.id}`}
+            >
+              <li>
+                <Box
+                  size="lgX"
+                  className="flex items-center justify-between bg-white"
+                >
+                  <div className="items group flex gap-10">
+                    <BookingIcon />
+                    <div>
+                      <Title
+                        as="h3"
+                        size={"text-md font-semibold"}
+                        className={cn(
+                          "capitalize transition-colors duration-300"
+                        )}
+                      >
+                        {dayjs(booking.date).format("MMMM D, YYYY ")} -{" "}
+                        {
+                          BookingTypeOptions.find(
+                            (type) => type.value === booking.type
+                          )?.label
+                        }
+                        {booking.type === BookingType.VACCINE && (
+                          <span>({booking.vaccine})</span>
+                        )}
+                      </Title>
+                      <Text>
+                        Perro:{" "}
+                        <span className="capitalize">{booking.dog.name}</span>
+                      </Text>
+                      <Text>
+                        Cliente:{" "}
+                        <span className="capitalize">{booking.user.name}</span>
+                      </Text>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-4">
-                  <CancelBooking booking={booking} />
-                </div>
-              </Box>
-            </li>
+                  <div className="flex gap-4">
+                    <CancelBooking booking={booking} />
+                  </div>
+                </Box>
+              </li>
+            </Link>
           );
         })
       )}

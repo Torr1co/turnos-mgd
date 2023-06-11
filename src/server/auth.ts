@@ -9,7 +9,7 @@ import CredentialProviders from "next-auth/providers/credentials";
 import { prisma } from "~/server/db";
 import { type User } from "@prisma/client";
 import { compareSync } from "bcryptjs";
-import { hasKey } from "~/utils/objUtils";
+import { hasKey } from "~/utils/language/objUtils";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.

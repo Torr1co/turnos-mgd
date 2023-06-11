@@ -31,6 +31,12 @@ enum TimeZone {
     EVENING
 }
 
+enum BookingStatus {
+    PENDING
+    APPROVED
+    COMPLETED
+}
+
 //-----------------------------   USER     ---------------------------------
 model User {
     id                String             @id @default(auto()) @map("_id") @db.ObjectId
@@ -62,7 +68,7 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    completed Boolean?     @default(false)
+    status    BookingStatus @default(PENDING)
     date      DateTime
     type      BookingType
     vaccine   VaccineType?
@@ -201,7 +207,7 @@ model Service {
     updatedAt    DateTime     @updatedAt
     name         String
     email        String
-    availability Boolean
+    availability Boolean      @default(true)
     zone         String
     hour         String
     photo        String?

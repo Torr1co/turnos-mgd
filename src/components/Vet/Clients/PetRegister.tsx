@@ -1,7 +1,5 @@
 import React from "react";
 import Form from "~/components/_common/Form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { PetCreationSchema } from "~/schemas/petSchema";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
@@ -9,10 +7,11 @@ import Title from "~/components/_common/Typo/Title";
 import PetForm from "./ClientRegister/PetForm";
 import Button from "~/components/_common/Button";
 import { z } from "zod";
+import { useForm } from "~/utils/schemaUtils";
 
 export default function PetRegister({ ownerId }: { ownerId: string }) {
   const methods = useForm<{ dog: PetCreationSchema }>({
-    resolver: zodResolver(z.object({ dog: PetCreationSchema })),
+    schema: z.object({ dog: PetCreationSchema }),
     defaultValues: {
       dog: {
         gender: "MALE",

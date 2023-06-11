@@ -34,8 +34,14 @@ export default function ClientList({
           const isSelected = selectedUser?.id === user.id;
           return (
             <li key={user.id}>
-              <Box size="lgX" className="flex flex-col bg-white">
-                <div className="flex items-center justify-between">
+              <Box
+                size={cn(
+                  "pt-6 px-8 md:px-14 md:pt-10 rounded-lg",
+                  isSelected && "pb-8"
+                )}
+                className="flex flex-col bg-white"
+              >
+                <div className="flex items-center justify-between pb-8">
                   <div>
                     <Title
                       as="h3"
@@ -74,9 +80,9 @@ export default function ClientList({
                   className="overflow-auto"
                   enter=" transition transition-all duration-700 ease-out"
                   enterFrom="max-h-[0]"
-                  enterTo="max-h-72"
+                  enterTo="max-h-64"
                   leave="transition transition-all duration-500 ease-out"
-                  leaveFrom="max-h-72"
+                  leaveFrom="max-h-64"
                   leaveTo="max-h-0"
                 >
                   <PetList pets={user.dogs} />

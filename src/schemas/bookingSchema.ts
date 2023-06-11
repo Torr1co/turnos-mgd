@@ -1,5 +1,6 @@
 import { BookingType, TimeZone, VaccineType } from "@prisma/client";
 import { z } from "zod";
+import { BookingStatus } from "@prisma/client";
 
 export const BookingSchema = z.object({
   date: z.date({
@@ -42,10 +43,10 @@ export const BookingUpdateSchema = z.object({
 export const BookingGetAllSchema = z
   .optional(
     z.object({
-      pending: z.boolean(),
+      status: z.nativeEnum(BookingStatus),
     })
   )
-  .default({ pending: true });
+  .default({ status: BookingStatus.APPROVED });
 
 export type BookingSchema = z.infer<typeof BookingSchema>;
 export type BookingUpdateSchema = z.infer<typeof BookingUpdateSchema>;
@@ -63,7 +64,22 @@ export const VaccineOptions = [
   },
 ] as const;
 
-export const BookingOptions = [
+export const BookingStatusOptions = [
+  {
+    value: BookingStatus.COMPLETED,
+    label: /* "Turnos completados" */ "Turnos pasados",
+  },
+  {
+    value: BookingStatus.APPROVED,
+    label: /* "Turnos aprobados"  */ "Turnos futuros",
+  },
+  {
+    value: BookingStatus.PENDING,
+    label: "Turnos por aprobar",
+  },
+] as const;
+
+export const BookingTypeOptions = [
   {
     value: BookingType.VACCINE,
     label: "Vacuna",
@@ -79,8 +95,8 @@ export const BookingOptions = [
   {
     value: BookingType.CASTRATION,
     label: "Castracion",
-  }
-];
+  },
+] as const;
 
 export const TimeZoneOptions = [
   {
@@ -95,4 +111,4 @@ export const TimeZoneOptions = [
     value: TimeZone.EVENING,
     label: "Anochecer",
   },
-];
+] as const;

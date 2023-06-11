@@ -5,7 +5,7 @@ export const PetSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .min(1, "Minimo 1 caracter")
+    .min(1, "Requerido")
     .max(20, "Maximo 20 caracteres"),
   birth: z.date({
     required_error: "Requerido",
@@ -26,7 +26,7 @@ export const PetSchema = z.object({
     })
     .max(200, "No puede medir mas de 200"),
   img: z.optional(z.string()),
-  race: z.string().min(1, "Minimo 1 caracter").trim(),
+  race: z.string().min(1, "Requerido").trim(),
   castrated: z.optional(z.boolean()).default(false),
   letsCross: z.optional(z.boolean()).default(false),
   observations: z.optional(z.string()).default(""),

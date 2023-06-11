@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "~/utils/styleUtils";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { type FC } from "~/utils/types";
+import { type FC } from "~/utils/language/types";
 import { Popover, type PopoverProps } from "antd";
 
 const DropdownItem = ({ children }: FC) => {

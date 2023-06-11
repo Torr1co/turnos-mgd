@@ -3,6 +3,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  vetProcedure,
 } from "~/server/api/trpc";
 import {
   BookingCreationSchema,
@@ -10,11 +11,16 @@ import {
   TimeZoneOptions,
   BookingGetAllSchema,
 } from "~/schemas/bookingSchema";
-import { BookingType, UserRoles } from "@prisma/client";
+import { BookingType, UserRoles, BookingStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import { string } from "zod";
 import sendEmail from "~/server/email";
-import { BookingHandlers, getBooking } from "~/utils/schemas/bookingUtils";
+import {
+  BookingHandlers,
+  BookingStatusQueries,
+  getBooking,
+} from "~/utils/schemas/bookingUtils";
+import { isVet } from "~/utils/schemas/usersUtils";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -103,38 +109,20 @@ export const bookingsRouter = createTRPCRouter({
     }),
 
   //Returns all future bookings
-  getAll: publicProcedure.input(BookingGetAllSchema).query(({ ctx, input }) => {
-    const pendingOptions = input.pending
-      ? {
-          date: {
-            gte: dayjs().startOf("day").toDate(),
-          },
-          completed: {
-            equals: false,
-          },
-        }
-      : {
-          date: {
-            lte: dayjs().startOf("day").toDate(),
-          },
-          completed: {
-            equals: true,
-          },
-        };
-    return ctx.prisma.booking.findMany({
-      where: {
-        ...pendingOptions,
-        userId:
-          ctx.session?.user.role === UserRoles.VET
-            ? undefined
-            : ctx.session?.user.id,
-      },
-      include: {
-        dog: true,
-        user: true,
-      },
-    });
-  }),
+  getAll: publicProcedure
+    .input(BookingGetAllSchema)
+    .query(({ ctx, input: { status } }) => {
+      return ctx.prisma.booking.findMany({
+        where: {
+          ...BookingStatusQueries[status],
+          userId: isVet(ctx.session?.user) ? undefined : ctx.session?.user.id,
+        },
+        include: {
+          dog: true,
+          user: true,
+        },
+      });
+    }),
 
   // Update a booking
   update: clientProcedure
@@ -142,15 +130,14 @@ export const bookingsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const {
         dog,
-        booking: { id, ...booking },
+        booking: { id, ...newData },
       } = input;
+      const booking = await getBooking(ctx.prisma, id);
+      BookingHandlers.update(dayjs(booking.date));
+      await BookingHandlers.alreadyBooked(ctx.prisma, newData, dog);
+      await BookingHandlers.maxBookings(ctx.prisma, newData);
 
-      const bookingDate = dayjs(booking.date);
-      BookingHandlers.update(bookingDate);
-      await BookingHandlers.alreadyBooked(ctx.prisma, booking, dog);
-      await BookingHandlers.maxBookings(ctx.prisma, booking);
-
-      if (booking.type === BookingType.VACCINE) {
+      if (newData.type === BookingType.VACCINE) {
         const dogData = await ctx.prisma.pet
           .findFirstOrThrow({
             where: {
@@ -161,8 +148,8 @@ export const bookingsRouter = createTRPCRouter({
             throw new Error("El perro no existe!");
           });
 
-        if (booking.vaccine === "B") {
-          await BookingHandlers.vaccineB(ctx.prisma, booking, dogData);
+        if (newData.vaccine === "B") {
+          await BookingHandlers.vaccineB(ctx.prisma, newData, dogData);
         }
         /* if (booking.vaccine === "A") {
           if (isPuppy(dogData.birth)) {
@@ -212,7 +199,8 @@ export const bookingsRouter = createTRPCRouter({
           id,
         },
         data: {
-          ...booking,
+          ...newData,
+          status: BookingStatus.PENDING,
           dog: {
             connect: { id: dog },
           },
@@ -226,6 +214,48 @@ export const bookingsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const booking = await getBooking(ctx.prisma, input);
 
+      BookingHandlers.date(dayjs(booking.date));
+      BookingHandlers.update(dayjs(booking.date));
+
+      //Look for the user email
+      const user = await ctx.prisma.user
+        .findFirstOrThrow({
+          where: {
+            id: booking.userId,
+          },
+        })
+        .catch(() => {
+          throw new Error("El usuario no existe!");
+        });
+
+      const to =
+        ctx.session.user.role === UserRoles.VET
+          ? user.email
+          : "v.ohmydog@gmail.com";
+
+      const sender =
+        ctx.session.user.role === UserRoles.VET ? "veterinario" : "cliente";
+
+      await sendEmail({
+        to,
+        from: "v.ohmydog@gmail.com",
+        subject: `Se ha cancelado el turno reservado por ${user.name}.`,
+        text: `El turno del día ${booking.date.getDate()}, horario ${
+          TimeZoneOptions.find((option) => option.value === booking.timeZone)
+            ?.label as string
+        }. Ha sido cancelado. Por favor, contacte con el ${sender} para reprogramar el turno.`,
+      });
+      return ctx.prisma.booking.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
+
+  approve: vetProcedure
+    .input(string()) //BookingSchema ID
+    .mutation(async ({ input, ctx }) => {
+      const booking = await getBooking(ctx.prisma, input);
       BookingHandlers.date(dayjs(booking.date));
 
       //Look for the user email
@@ -244,22 +274,27 @@ export const bookingsRouter = createTRPCRouter({
           ? user.email
           : "v.ohmydog@gmail.com";
 
-      const who =
-        ctx.session.user.role === UserRoles.VET ? "veterinario" : "cliente";
-
       await sendEmail({
         to,
         from: "v.ohmydog@gmail.com",
-        subject: `Se ha cancelado el turno reservado por ${user.name}.`,
+        subject: `Se ha aprobado el turno reservado por ${user.name}.`,
         text: `El turno del día ${booking.date.getDate()}, horario ${
           TimeZoneOptions.find((option) => option.value === booking.timeZone)
             ?.label as string
-        }. Ha sido cancelado. Por favor, contacte con el ${who} para reprogramar el turno.`,
+        }. Ha sido aprobado. Muchas gracias por confiar en nosotros!`,
       });
-      return ctx.prisma.booking.delete({
+      return ctx.prisma.booking.update({
         where: {
           id: input,
         },
+        data: {
+          status: BookingStatus.APPROVED,
+        },
       });
     }),
+
+  get: vetProcedure.input(string()).query(async ({ input, ctx }) => {
+    const booking = await getBooking(ctx.prisma, input);
+    return booking;
+  }),
 });
