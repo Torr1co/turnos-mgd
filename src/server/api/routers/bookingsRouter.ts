@@ -27,24 +27,24 @@ export const bookingsRouter = createTRPCRouter({
     .input(BookingCreationSchema)
     .mutation(async ({ input, ctx }) => {
       const { dog, user, ...booking } = input;
-
       const bookingDate = dayjs(booking.date);
-      BookingHandlers.date(bookingDate);
 
+      const dogData = await ctx.prisma.pet
+        .findFirstOrThrow({
+          where: {
+            id: dog,
+          },
+        })
+        .catch(() => {
+          throw new Error("El perro no existe!");
+        });
+
+      BookingHandlers.date(bookingDate);
+      BookingHandlers.alreadyCastrated(booking.type, dogData.castrated);
       await BookingHandlers.alreadyBooked(ctx.prisma, booking, dog);
       await BookingHandlers.maxBookings(ctx.prisma, booking);
 
       if (booking.type === BookingType.VACCINE) {
-        const dogData = await ctx.prisma.pet
-          .findFirstOrThrow({
-            where: {
-              id: dog,
-            },
-          })
-          .catch(() => {
-            throw new Error("El perro no existe!");
-          });
-
         if (booking.vaccine === "B") {
           await BookingHandlers.vaccineB(ctx.prisma, booking, dogData);
         }
@@ -133,21 +133,22 @@ export const bookingsRouter = createTRPCRouter({
         booking: { id, ...newData },
       } = input;
       const booking = await getBooking(ctx.prisma, id);
+      const dogData = await ctx.prisma.pet
+        .findFirstOrThrow({
+          where: {
+            id: dog,
+          },
+        })
+        .catch(() => {
+          throw new Error("El perro no existe!");
+        });
+
       BookingHandlers.update(dayjs(booking.date));
+      BookingHandlers.alreadyCastrated(booking.type, dogData.castrated);
       await BookingHandlers.alreadyBooked(ctx.prisma, newData, dog);
       await BookingHandlers.maxBookings(ctx.prisma, newData);
 
       if (newData.type === BookingType.VACCINE) {
-        const dogData = await ctx.prisma.pet
-          .findFirstOrThrow({
-            where: {
-              id: dog,
-            },
-          })
-          .catch(() => {
-            throw new Error("El perro no existe!");
-          });
-
         if (newData.vaccine === "B") {
           await BookingHandlers.vaccineB(ctx.prisma, newData, dogData);
         }
