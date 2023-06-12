@@ -10,7 +10,6 @@ import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import Toggle from "~/components/_common/Form/Toggle";
 import AdoptSlider from "~/components/Adoptions/AdoptSlider";
-import Dropdown from "~/components/_common/Dropdown";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -34,15 +33,11 @@ const Adoptions = () => {
         <Title>Perros en adopcion {mine ? "propios" : "ajenos"}</Title>
         <div className="flex gap-4">
           {session && (
-            <Dropdown
-              label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
-            >
-              <Toggle
-                label="Mis publicaciones"
-                checked={mine}
-                onChange={() => setMine((prev) => !prev)}
-              />
-            </Dropdown>
+            <Toggle
+              label="Mis publicaciones"
+              checked={mine}
+              onChange={() => setMine((prev) => !prev)}
+            />
           )}
           {session && (
             <Button

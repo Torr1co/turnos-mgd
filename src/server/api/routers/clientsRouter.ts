@@ -1,4 +1,4 @@
-import { type User, UserRoles } from "@prisma/client";
+import { type User, UserRoles, BookingStatus } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 import {
   ClientCreationSchema,
@@ -61,6 +61,7 @@ export const clientsRouter = createTRPCRouter({
           await prisma.booking.create({
             data: {
               ...booking,
+              status: BookingStatus.APPROVED,
               dog: {
                 connect: {
                   id: dogCreation.id,
