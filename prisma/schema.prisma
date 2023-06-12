@@ -18,16 +18,23 @@ enum UserRoles {
     CLIENT
 }
 
-enum InquirieType {
+enum BookingType {
     VACCINE
     DEWORMING
     GENERAL
+    CASTRATION
 }
 
 enum TimeZone {
     MORNING
     AFTERNOON
     EVENING
+}
+
+enum BookingStatus {
+    PENDING
+    APPROVED
+    COMPLETED
 }
 
 //-----------------------------   USER     ---------------------------------
@@ -61,9 +68,9 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    completed Boolean?     @default(false)
+    status    BookingStatus @default(PENDING)
     date      DateTime
-    type      InquirieType
+    type      BookingType
     vaccine   VaccineType?
     timeZone  TimeZone
     user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)

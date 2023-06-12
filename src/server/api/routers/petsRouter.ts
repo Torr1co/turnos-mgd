@@ -41,12 +41,20 @@ export const petsRouter = createTRPCRouter({
     .input(PetUpdateSchema)
     .mutation(async ({ input, ctx }) => {
       const { petId, dog } = input;
-      const pet = await ctx.prisma.pet.update({
-        where: {
-          id: petId,
-        },
-        data: dog,
-      });
+      const pet = await ctx.prisma.pet
+        .update({
+          where: {
+            id: petId,
+          },
+          data: dog,
+        })
+        .catch((error) => {
+          const prismaHandler = prismaError(error, "No se pudo crear el perro");
+          prismaHandler(
+            "name",
+            "Ya existe un perro con ese nombre asociado a esa cuenta"
+          );
+        });
 
       return pet;
     }),
@@ -85,7 +93,7 @@ export const petsRouter = createTRPCRouter({
       },
     });
 
-    if (!pet) throw new Error("Mascota no encontrada");
+    if (!pet) throw new Error("Perro no encontrado");
     if (
       ctx.session.user.role === UserRoles.CLIENT &&
       ctx.session.user.id !== pet.owner.id

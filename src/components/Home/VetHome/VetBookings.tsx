@@ -1,47 +1,56 @@
-import { type InquirieType } from "@prisma/client";
+import { type BookingType, BookingStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import React from "react";
 import { useForm } from "react-hook-form";
 import Form from "~/components/_common/Form";
-import Title from "~/components/_common/Typo/Title";
+import { FieldSelectHeader } from "~/components/_common/Form/Select";
+import { BookingStatusOptions } from "~/schemas/bookingSchema";
 import { api } from "~/utils/api";
-import { VetBookingFilters } from "../BookingActions";
-import VetBookingList from "./VetBookingList";
+import { BookingFilters } from "../BookingActions";
+import BookingList from "../BookingList";
 
 type FilterProps = {
-  inquirieType: InquirieType | null;
+  bookingStatus: BookingStatus;
+  bookingType: BookingType | null;
   pending: boolean;
-  dateRange?: [Date, Date];
+  rangeDate?: [Date, Date];
   text?: string;
 };
 
 export default function VetBookings() {
-  const methods = useForm<FilterProps>({
+  const methods = useForm<{ filters: FilterProps }>({
     defaultValues: {
-      pending: true,
-      dateRange: undefined,
-      text: undefined,
-      inquirieType: null,
+      filters: {
+        bookingStatus: BookingStatus.APPROVED,
+        pending: true,
+        rangeDate: undefined,
+        text: undefined,
+        bookingType: null,
+      },
     },
   });
-  const filters = methods.watch();
+  const filters = methods.watch("filters");
   const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery({
-    pending: filters.pending,
+    status: filters.bookingStatus,
   });
 
   return (
     <div>
-      <header className="mb-14 flex items-center justify-between">
-        <Title>Turnos {filters.pending ? "Pendientes" : "Pasados"}</Title>
-
-        <Form methods={methods}>
-          <VetBookingFilters />
-        </Form>
-      </header>
+      <Form methods={methods}>
+        <header className="mb-14 flex items-center justify-between">
+          {/* <Title>Turnos {filters.pending ? "Pendientes" : "Pasados"}</Title> */}
+          <FieldSelectHeader
+            values={BookingStatusOptions}
+            path="filters.bookingStatus"
+          />
+          <BookingFilters />
+        </header>
+      </Form>
       {isLoading ? (
         <div>Cargando...</div>
       ) : (
-        <VetBookingList
+        <BookingList
+          status={filters.bookingStatus} // TODO: remove
           bookings={bookings.filter((booking) => {
             const includesText =
               !filters.text ||
@@ -53,12 +62,12 @@ export default function VetBookings() {
                 .includes(filters.text.toLowerCase());
 
             const includesDate =
-              !filters.dateRange ||
-              (!dayjs(filters.dateRange[0]).isAfter(booking.date, "d") &&
-                !dayjs(booking.date).isAfter(filters.dateRange[1], "d"));
+              !filters.rangeDate ||
+              (!dayjs(filters.rangeDate[0]).isAfter(booking.date, "d") &&
+                !dayjs(booking.date).isAfter(filters.rangeDate[1], "d"));
 
             const includesType =
-              !filters.inquirieType || filters.inquirieType === booking.type;
+              !filters.bookingType || filters.bookingType === booking.type;
 
             return includesDate && includesText && includesType;
           })}

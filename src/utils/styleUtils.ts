@@ -1,6 +1,5 @@
 import { PET_ICONS } from "~/components/_common/icons";
 import { type Icon } from "./language/types";
-
 export const cn = (
   ...classes: Array<false | null | undefined | string>
 ): string => classes.filter(Boolean).join(" ");

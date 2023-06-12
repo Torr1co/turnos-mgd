@@ -1,12 +1,13 @@
-import { InquirieType, TimeZone, VaccineType } from "@prisma/client";
+import { BookingType, TimeZone, VaccineType } from "@prisma/client";
 import { z } from "zod";
+import { BookingStatus } from "@prisma/client";
 
 export const BookingSchema = z.object({
   date: z.date({
     required_error: "Requerido",
     invalid_type_error: "Requerido",
   }),
-  type: z.nativeEnum(InquirieType),
+  type: z.nativeEnum(BookingType),
   timeZone: z.nativeEnum(TimeZone, {
     errorMap: () => {
       return { message: "Selecciona un horario valido" };
@@ -42,10 +43,10 @@ export const BookingUpdateSchema = z.object({
 export const BookingGetAllSchema = z
   .optional(
     z.object({
-      pending: z.boolean(),
+      status: z.nativeEnum(BookingStatus),
     })
   )
-  .default({ pending: true });
+  .default({ status: BookingStatus.APPROVED });
 
 export type BookingSchema = z.infer<typeof BookingSchema>;
 export type BookingUpdateSchema = z.infer<typeof BookingUpdateSchema>;
@@ -63,20 +64,39 @@ export const VaccineOptions = [
   },
 ] as const;
 
-export const InquirieOptions = [
+export const BookingStatusOptions = [
   {
-    value: InquirieType.VACCINE,
+    value: BookingStatus.COMPLETED,
+    label: /* "Turnos completados" */ "Turnos pasados",
+  },
+  {
+    value: BookingStatus.APPROVED,
+    label: /* "Turnos aprobados"  */ "Turnos futuros",
+  },
+  {
+    value: BookingStatus.PENDING,
+    label: "Turnos por aprobar",
+  },
+] as const;
+
+export const BookingTypeOptions = [
+  {
+    value: BookingType.VACCINE,
     label: "Vacuna",
   },
   {
-    value: InquirieType.DEWORMING,
+    value: BookingType.DEWORMING,
     label: "Desparasitacion",
   },
   {
-    value: InquirieType.GENERAL,
-    label: "General",
+    value: BookingType.GENERAL,
+    label: "Consulta General",
   },
-];
+  {
+    value: BookingType.CASTRATION,
+    label: "Castracion",
+  },
+] as const;
 
 export const TimeZoneOptions = [
   {
@@ -91,4 +111,4 @@ export const TimeZoneOptions = [
     value: TimeZone.EVENING,
     label: "Anochecer",
   },
-];
+] as const;

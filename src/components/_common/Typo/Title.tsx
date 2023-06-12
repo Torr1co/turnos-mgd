@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { hasKey } from "~/utils/language/objUtils";
 import { cn } from "~/utils/styleUtils";
 import { type FC, type Sizes } from "~/utils/language/types";
@@ -23,7 +23,7 @@ const sizeConvertion: { [key in HeadingTags]: Sizes } = {
   h6: "xxs",
 } as const;
 
-type TitleProps = {
+type TitleProps = HTMLAttributes<HTMLHeadElement> & {
   as?: HeadingTags;
   size?: Sizes | string;
   className?: string;
@@ -34,6 +34,7 @@ export default function Title({
   children,
   as = "h2",
   size,
+  ...props
 }: FC<TitleProps>) {
   const Tag = as;
   const sizeClassName = size
@@ -42,5 +43,9 @@ export default function Title({
       : size
     : sizeClassNames[sizeConvertion[as]];
 
-  return <Tag className={cn(sizeClassName, className)}>{children}</Tag>;
+  return (
+    <Tag className={cn(sizeClassName, className)} {...props}>
+      {children}
+    </Tag>
+  );
 }

@@ -8,7 +8,7 @@ import BookingForm from "~/components/Vet/Clients/ClientRegister/BookingForm";
 import Form from "~/components/_common/Form";
 import { useModal } from "~/context/ModalContex";
 import { z } from "zod";
-import { TimeZone, InquirieType } from "@prisma/client";
+import { TimeZone, BookingType } from "@prisma/client";
 import dayjs from "dayjs";
 import { useForm } from "~/utils/schemaUtils";
 
@@ -29,7 +29,7 @@ export default function BookingCreationModal() {
     defaultValues: {
       booking: {
         timeZone: TimeZone.MORNING,
-        type: InquirieType.GENERAL,
+        type: BookingType.GENERAL,
         date: dayjs().add(1, "d").toDate(),
       },
     },

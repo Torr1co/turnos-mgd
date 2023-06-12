@@ -1,71 +1,75 @@
-import React, { useState } from "react";
-import Title from "~/components/_common/Typo/Title";
-import BookingList from "./ClientBookingList";
-import DatePicker from "~/components/_common/Form/DatePicker";
-import { useModal } from "~/context/ModalContex";
-import Button from "~/components/_common/Button";
-import BookingCreation from "./BookingCreationModal";
+import React from "react";
 import dayjs from "dayjs";
 import { api } from "~/utils/api";
+import BookingList from "../../BookingList";
+import { useForm } from "react-hook-form";
+import { type BookingType, BookingStatus } from "@prisma/client";
+import Form from "~/components/_common/Form";
+import { BookingFilters } from "../../BookingActions";
+import Button from "~/components/_common/Button";
+import BookingCreationModal from "./BookingCreationModal";
+import { useModal } from "~/context/ModalContex";
+import { FieldSelectHeader } from "~/components/_common/Form/Select";
+import { BookingStatusOptions } from "~/schemas";
 
 type FilterProps = {
-  start?: Date;
-  end?: Date;
+  bookingType: BookingType | null;
+  bookingStatus: BookingStatus;
+  rangeDate?: [Date, Date];
 };
 
 export default function ClientBookings() {
-  const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery();
-  const [filters, setFilters] = useState<FilterProps>({
-    start: undefined,
-    end: undefined,
+  const methods = useForm<{ filters: FilterProps }>({
+    defaultValues: {
+      filters: {
+        rangeDate: undefined,
+        bookingType: null,
+        bookingStatus: BookingStatus.APPROVED,
+      },
+    },
   });
   const { handleModal } = useModal();
+  const filters = methods.watch("filters");
+  const { data: bookings = [], isLoading } = api.bookings.getAll.useQuery({
+    status: filters.bookingStatus,
+  });
   return (
     <section>
-      <header className="mb-14 flex items-center justify-between">
-        <Title>Mis Turnos</Title>
-        <div className="flex gap-4">
-          <DatePicker.RangePicker
-            disabledDate={(current) => {
-              return !current.isAfter(dayjs(), "d");
-            }}
-            onChange={(props) => {
-              if (props) {
-                const [start, end] = props;
-                setFilters((prev) => ({
-                  ...prev,
-                  start: start?.toDate(),
-                  end: end?.toDate(),
-                }));
-                return;
-              }
-              setFilters((prev) => ({
-                ...prev,
-                start: undefined,
-                end: undefined,
-              }));
-            }}
+      <Form methods={methods}>
+        <header className="mb-14 flex items-center justify-between">
+          <FieldSelectHeader
+            path="filters.bookingStatus"
+            values={BookingStatusOptions}
           />
-          <Button
-            kind={Button.KINDS.gray}
-            onClick={() => handleModal(<BookingCreation />)}
-            className="text-base"
-          >
-            Reservar Turno
-          </Button>
-        </div>
-      </header>
+          <div className="flex gap-4">
+            <BookingFilters />
+            <Button
+              kind={Button.KINDS.gray}
+              onClick={() => handleModal(<BookingCreationModal />)}
+              className="text-base"
+            >
+              Reservar Turno
+            </Button>
+          </div>
+        </header>
+      </Form>
       <div>
         {isLoading ? (
           <div>Cargando...</div>
         ) : (
           <BookingList
+            status={filters.bookingStatus}
             bookings={bookings.filter((booking) => {
-              if (!filters.start || !filters.end) return true;
-              return (
-                !dayjs(filters.start).isAfter(booking.date, "d") &&
-                !dayjs(booking.date).isAfter(filters.end, "d")
-              );
+              console.log(booking.date, filters.rangeDate);
+              const includesDate =
+                !filters.rangeDate ||
+                (!dayjs(filters.rangeDate[0]).isAfter(booking.date, "d") &&
+                  !dayjs(booking.date).isAfter(filters.rangeDate[1], "d"));
+
+              const includesType =
+                !filters.bookingType || filters.bookingType === booking.type;
+
+              return includesDate && includesType;
             })}
           />
         )}

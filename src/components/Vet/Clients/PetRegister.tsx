@@ -34,7 +34,7 @@ export default function PetRegister({ ownerId }: { ownerId: string }) {
       onSubmit={(data) => {
         createPet(data.dog, {
           onSuccess: () => {
-            toast.success("Mascota registrada");
+            toast.success("Perro registrado");
             methods.reset();
           },
           onError: (error) => toast.error(error.message),
@@ -43,11 +43,11 @@ export default function PetRegister({ ownerId }: { ownerId: string }) {
     >
       <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
         <Title as="h4" className="text-gray-500">
-          Sobre la <span className="text-primary">Mascota</span>
+          Sobre el <span className="text-primary">Perro</span>
         </Title>
         <div className="pl-auto">
           <Button type="submit" loading={isLoading} size="sm">
-            Registrar Mascota
+            Registrar Perro
           </Button>
         </div>
       </header>

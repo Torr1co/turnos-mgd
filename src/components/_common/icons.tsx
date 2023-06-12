@@ -2,6 +2,10 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { type Icon } from "~/utils/language/types";
 
+export const VerticalLine = () => {
+  return <div className="h-full border-r border-gray-700"></div>;
+};
+
 export const Blob = () => (
   <svg
     width="244"

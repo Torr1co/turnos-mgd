@@ -4,6 +4,7 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { cn } from "~/utils/styleUtils";
 import { type FC } from "~/utils/language/types";
+import Title from "../Typo/Title";
 
 export type SelectOption<T> = {
   value: T;
@@ -36,7 +37,7 @@ export default function Select<T extends string | number | undefined | null>({
             <div className="flex items-center justify-between">
               <div>
                 {(value !== undefined &&
-                  values.find((option) => option.value === value)?.label) ??
+                  values.find((option) => option.value === value)?.label) ||
                   children}
               </div>
               {open ? (
@@ -63,7 +64,7 @@ export default function Select<T extends string | number | undefined | null>({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Listbox.Options className="absolute w-max min-w-[16rem] divide-y divide-gray-100 rounded-md border bg-white py-2 text-gray-600 shadow-xl">
+          <Listbox.Options className="absolute max-h-52 w-max min-w-[16rem] divide-y divide-gray-100 overflow-auto rounded-md border bg-white py-2 text-gray-600 shadow-xl">
             {values.map((option, i) => (
               <Listbox.Option
                 key={i}
@@ -95,6 +96,56 @@ export function FieldSelect<T extends string | number | undefined | null>({
       name={path}
       render={({ field: { ref, ...field } }) => (
         <Select
+          {...props}
+          {...field}
+          onChange={(value: T) => {
+            field.onChange(value);
+            props.onChange?.(value);
+          }}
+        />
+      )}
+    />
+  );
+}
+
+export function SelectHeader<T extends string | number | undefined>({
+  values,
+  value,
+  onChange,
+  kind,
+}: SelectProps<T>) {
+  return (
+    <div className={cn("flex items-center divide-x divide-gray-500", kind)}>
+      {values.map((option, i) => {
+        return (
+          <Title
+            as="h2"
+            key={option.value}
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "cursor-pointer transition-colors duration-300 hover:text-primary",
+              value === option.value && "text-primary",
+              i !== values.length - 1 && "pr-6",
+              i !== 0 && "pl-6"
+            )}
+          >
+            {option.label}
+          </Title>
+        );
+      })}
+    </div>
+  );
+}
+
+export function FieldSelectHeader<T extends string | number | undefined>({
+  path,
+  ...props
+}: FieldSelectProps<T>) {
+  return (
+    <Controller
+      name={path}
+      render={({ field: { ref, ...field } }) => (
+        <SelectHeader
           {...props}
           {...field}
           onChange={(value: T) => {

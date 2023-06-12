@@ -3,11 +3,16 @@ import { toast } from "react-hot-toast";
 import ConfirmTooltip from "~/components/_common/ConfirmTooltip";
 import { api } from "~/utils/api";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { type Booking } from "@prisma/client";
+import { UserRoles, type Booking } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import Dropdown from "../_common/Dropdown";
 import Button from "../_common/Button";
 import Form from "../_common/Form";
-import { InquirieOptions } from "~/schemas/bookingSchema";
+import { BookingTypeOptions } from "~/schemas/bookingSchema";
+import { BookingStatus, type Pet, type User } from "@prisma/client";
+import { useModal } from "~/context/ModalContex";
+import BookingUpdateModal from "./ClientHome/ClientBookings/BookingUpdateModal";
+import { isVet } from "~/utils/schemas/usersUtils";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -46,34 +51,115 @@ export const CancelBooking = ({ booking }: { booking: Booking }) => {
   );
 };
 
-export const VetBookingFilters = () => (
-  <Dropdown
-    label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
-    placement={"bottomRight"}
-  >
-    <div className=" flex min-w-[320px] flex-col gap-4">
-      <Form.Toggle label="Turnos Pendientes" path="pending" />
+export const BookingFilters = () => {
+  const { data: session } = useSession();
+  return (
+    <Dropdown
+      label={<Button kind={Button.KINDS.gray}>Opciones</Button>}
+      placement={"bottomRight"}
+    >
+      <div className=" flex min-w-[320px] flex-col gap-4">
+        <Form.DateRange
+          path="filters.rangeDate"
+          label="Filtrar por rango de fechas"
+        />
+        <Form.Select
+          label="Filtrar por tipo de turno"
+          kind="bg-white"
+          path="filters.bookingType"
+          values={[
+            {
+              value: undefined,
+              label: "Todos los tipos",
+            },
+            ...BookingTypeOptions,
+          ]}
+        >
+          Todos los tipos
+        </Form.Select>
+        {session?.user.role === UserRoles.VET && (
+          <Form.Input
+            label="Filtrar por nombre o email de cliente"
+            path={"filters.text"}
+            placeholder="Buscar por nombre o email de cliente"
+          />
+        )}
+      </div>
+    </Dropdown>
+  );
+};
 
-      <Form.DateRange label="Filtrar por rango de fechas" path={"dateRange"} />
-      <Form.Select
-        label="Filtrar por tipo de turno"
-        kind="bg-white"
-        path="inquirieType"
-        values={[
-          {
-            value: null,
-            label: "Ver todos los tipos",
-          },
-          ...InquirieOptions,
-        ]}
-      >
-        Ver todos los tipos
-      </Form.Select>
-      <Form.Input
-        label="Filtrar por nombre de cliente o email"
-        path="text"
-        placeholder="Buscar por nombre de cliente o email"
-      />
+export const BookingActions = ({
+  booking,
+  status,
+}: {
+  booking: Booking & { dog: Pet; user: User };
+  status: BookingStatus; // TODO: remove
+}) => {
+  const { data: session } = useSession();
+  const { handleModal } = useModal();
+
+  const ClientActions = () => {
+    return (
+      <>
+        {status !== BookingStatus.COMPLETED && (
+          <Button
+            kind={Button.KINDS.gray}
+            onClick={() => {
+              handleModal(<BookingUpdateModal booking={booking} />);
+            }}
+          >
+            Editar
+          </Button>
+        )}
+      </>
+    );
+  };
+
+  const VetActions = () => {
+    const [visible, setVisible] = useState(false);
+    const utils = api.useContext();
+    const { mutate: approveBooking, isLoading } =
+      api.bookings.approve.useMutation({
+        onSuccess: async () => {
+          await utils.bookings.getAll.invalidate();
+        },
+      });
+
+    return (
+      <>
+        {status === BookingStatus.PENDING && (
+          <ConfirmTooltip
+            loading={isLoading}
+            open={visible}
+            onReject={() => setVisible(false)}
+            onConfirm={() => {
+              approveBooking(booking.id, {
+                onSuccess: () => {
+                  setVisible(false);
+                  toast.success("Turno aprobado con exito");
+                },
+                onError: (err) => {
+                  toast.error(err.message);
+                },
+              });
+            }}
+          >
+            <Button kind={Button.KINDS.gray} onClick={() => setVisible(true)}>
+              Aprobar
+            </Button>
+          </ConfirmTooltip>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <div className="flex gap-4">
+      {isVet(session?.user) ? <VetActions /> : <ClientActions />}
+      {status !== BookingStatus.COMPLETED && (
+        <CancelBooking booking={booking} />
+      )}
     </div>
-  </Dropdown>
-);
+  );
+};
