@@ -214,9 +214,9 @@ export const bookingsRouter = createTRPCRouter({
     .input(string()) //BookingSchema ID
     .mutation(async ({ input, ctx }) => {
       const booking = await getBooking(ctx.prisma, input);
-
-      BookingHandlers.date(dayjs(booking.date));
-      BookingHandlers.update(dayjs(booking.date));
+      const bookingDate = dayjs(booking.date);
+      BookingHandlers.date(bookingDate);
+      BookingHandlers.update(bookingDate);
 
       //Look for the user email
       const user = await ctx.prisma.user
@@ -241,7 +241,7 @@ export const bookingsRouter = createTRPCRouter({
         to,
         from: "v.ohmydog@gmail.com",
         subject: `Se ha cancelado el turno reservado por ${user.name}.`,
-        text: `El turno del día ${booking.date.getDate()}, horario ${
+        text: `El turno del día ${bookingDate.format("DD/MM/YYYY")}, horario ${
           TimeZoneOptions.find((option) => option.value === booking.timeZone)
             ?.label as string
         }. Ha sido cancelado. Por favor, contacte con el ${sender} para reprogramar el turno.`,
@@ -257,7 +257,8 @@ export const bookingsRouter = createTRPCRouter({
     .input(string()) //BookingSchema ID
     .mutation(async ({ input, ctx }) => {
       const booking = await getBooking(ctx.prisma, input);
-      BookingHandlers.date(dayjs(booking.date));
+      const bookingDate = dayjs(booking.date);
+      BookingHandlers.date(bookingDate);
 
       //Look for the user email
       const user = await ctx.prisma.user
@@ -279,7 +280,7 @@ export const bookingsRouter = createTRPCRouter({
         to,
         from: "v.ohmydog@gmail.com",
         subject: `Se ha aprobado el turno reservado por ${user.name}.`,
-        text: `El turno del día ${booking.date.getDate()}, horario ${
+        text: `El turno del día ${bookingDate.format("DD/MM/YYYY")}, horario ${
           TimeZoneOptions.find((option) => option.value === booking.timeZone)
             ?.label as string
         }. Ha sido aprobado. Muchas gracias por confiar en nosotros!`,
