@@ -19,6 +19,7 @@ export const clientsRouter = createTRPCRouter({
       const randomString = Math.random().toString(36).replace("0.", "");
       const hashedPassword = hashSync(randomString, 10);
 
+      BookingHandlers.alreadyCastrated(booking.type, dog.castrated);
       await BookingHandlers.maxBookings(ctx.prisma, booking);
       if (booking.type === "VACCINE" && booking.vaccine === "B") {
         BookingHandlers.puppy(dog.birth);

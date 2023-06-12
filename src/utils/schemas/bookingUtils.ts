@@ -1,5 +1,5 @@
 import { type BookingSchema } from "~/schemas/bookingSchema";
-import { type Pet, type PrismaClient } from "@prisma/client";
+import { type Pet, type PrismaClient, type BookingType } from "@prisma/client";
 import dayjs, { type Dayjs } from "dayjs";
 import { BookingStatus } from "@prisma/client";
 
@@ -12,6 +12,7 @@ export const BookingErrors = {
   LAST_DAY:
     "No puedes cancelar o modificar el turno con menos de 24 horas de anticipación!",
   ALREADY_BOOKED: "Ya tienes un turno ese día!",
+  ALREADY_CASTRATED: "El perro ya esta castrado!",
   PAST_DATE: "El turno se encuentra en el pasado!",
   SUNDAY: "No abrimos los domingos!",
   VACCINE_B_YOUNG:
@@ -49,6 +50,12 @@ function bookingUpdateHandler(date: Dayjs) {
 function isPuppyHandler(birthDate: Date) {
   if (dayjs(birthDate).isAfter(dayjs().subtract(4, "month"))) {
     throw new Error(BookingErrors.VACCINE_B_YOUNG);
+  }
+}
+
+function alreadyCastratedHandler(bookingType: BookingType, castrated: boolean) {
+  if (castrated && bookingType === "CASTRATION") {
+    throw new Error(BookingErrors.ALREADY_CASTRATED);
   }
 }
 async function alreadyBookedHandler(
@@ -158,6 +165,7 @@ export const BookingHandlers = {
   update: bookingUpdateHandler,
   puppy: isPuppyHandler,
   alreadyBooked: alreadyBookedHandler,
+  alreadyCastrated: alreadyCastratedHandler,
   maxBookings: maxBookingsHandler,
   vaccineB: vaccineBHandler,
 };
