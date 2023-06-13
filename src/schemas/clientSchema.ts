@@ -7,17 +7,18 @@ export const ClientCreationSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, "Mas de 3 caracteres")
+    .min(3, "Mínimo 3 caracteres")
+    .max(20, "Máximo 20 caracteres")
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
-  dni: z.string().trim().min(7, "Minimo 7 digitos ").max(8, "Maximo 8 digitos"),
+  dni: z.string().trim().min(7, "Mínimo 7 digitos ").max(8, "Máximo 8 digitos"),
   lastname: z
     .string()
     .trim()
-    .min(3, "Mas de 3 caracteres")
+    .min(3, "Ingresar mínimo 3 caracteres")
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
   email: z.string().email("Ingrese un mail valido"),
   role: z.optional(z.nativeEnum(UserRoles)),
-  telephoneNumber: z.optional(z.string().max(15, "Maximo 15 digitos")),
+  telephoneNumber: z.optional(z.string().max(15, "Máximo 15 digitos")),
   birth: z.date({
     required_error: "Requerido",
     invalid_type_error: "Requerido",

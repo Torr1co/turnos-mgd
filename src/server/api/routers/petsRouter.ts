@@ -31,7 +31,7 @@ export const petsRouter = createTRPCRouter({
         })
         .catch((err) => {
           const prismaHandler = prismaError(err, "No se pudo crear el perro");
-          prismaHandler("name", "Ya existe un perro con ese nombre");
+          prismaHandler("name", "Ya tienes un perro con ese nombre!");
         });
       return dog;
     }),

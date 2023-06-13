@@ -124,7 +124,7 @@ export const adoptPublicationRouter = createTRPCRouter({
   }),
 
   //Delete an adopt publication and its dog
-  delete: protectedProcedure
+  cancel: protectedProcedure
     .input(string())
     .mutation(async ({ ctx, input }) => {
       const id = input;
@@ -139,19 +139,19 @@ export const adoptPublicationRouter = createTRPCRouter({
       return adoptPublication;
     }),
 
-  //Cancel an adopt publication
-  cancel: protectedProcedure
-    .input(string()) //Adopt publication id
-    .mutation(async ({ ctx, input }) => {
-      const id = input;
-      const adoptPublication = await ctx.prisma.adoptPublication.update({
-        where: {
-          id,
-        },
-        data: {
-          active: false,
-        },
-      });
-      return adoptPublication;
-    }),
+  // //Cancel an adopt publication
+  // cancel: protectedProcedure
+  //   .input(string()) //Adopt publication id
+  //   .mutation(async ({ ctx, input }) => {
+  //     const id = input;
+  //     const adoptPublication = await ctx.prisma.adoptPublication.del({
+  //       where: {
+  //         id,
+  //       },
+  //       data: {
+  //         active: false,
+  //       },
+  //     });
+  //     return adoptPublication;
+  //   }),
 });
