@@ -50,7 +50,7 @@ export default function AdoptUpdateModal({
       onSubmit={(data) => {
         createPublication(data, {
           onSuccess: () => {
-            toast.success("Publicacion creada con exito");
+            toast.success("Publicacion actualizada con exito");
             handleModal();
           },
           onError: () => toast.error("Ha sucedido un error"),

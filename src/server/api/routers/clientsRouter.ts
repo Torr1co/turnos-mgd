@@ -41,8 +41,8 @@ export const clientsRouter = createTRPCRouter({
                 error,
                 "No se pudo crear el cliente"
               );
-              prismaHandler("email", "El email ya existe");
-              prismaHandler("dni", "El DNI ya existe");
+              prismaHandler("email", "El email ya se encuentra registrado");
+              prismaHandler("dni", "El DNI ya se encuentra registrado");
             })) as User;
 
           const dogCreation = await prisma.pet.create({

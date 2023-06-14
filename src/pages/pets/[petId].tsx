@@ -88,7 +88,7 @@ const PetPage = ({ petId }: { petId: string }) => {
             toast.success("Se actualizo correctamente");
           },
           onError: () => {
-            toast.error("Ocurrio un error");
+            toast.error("Ya tiene un perro con ese nombre!");
           },
         });
       }}

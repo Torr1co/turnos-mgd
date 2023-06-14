@@ -21,6 +21,7 @@ import {
   getBooking,
 } from "~/utils/schemas/bookingUtils";
 import { isVet } from "~/utils/schemas/usersUtils";
+// import ClientBookingList from "../../../components/Home/ClientHome/ClientBookings/ClientBookingList";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -111,8 +112,8 @@ export const bookingsRouter = createTRPCRouter({
   //Returns all future bookings
   getAll: publicProcedure
     .input(BookingGetAllSchema)
-    .query(({ ctx, input: { status } }) => {
-      return ctx.prisma.booking.findMany({
+    .query(async ({ ctx, input: { status } }) => {
+      const bookings = ctx.prisma.booking.findMany({
         where: {
           ...BookingStatusQueries[status],
           userId: isVet(ctx.session?.user) ? undefined : ctx.session?.user.id,
@@ -122,6 +123,24 @@ export const bookingsRouter = createTRPCRouter({
           user: true,
         },
       });
+
+      //Sort the bookings by date
+      await bookings.then((bookings) => {
+        bookings.sort((a, b) => {
+          const dateA = dayjs(a.date);
+          const dateB = dayjs(b.date);
+
+          if (dateA.isBefore(dateB)) {
+            return -1;
+          }
+          if (dateA.isAfter(dateB)) {
+            return 1;
+          }
+          return 0;
+        });
+      });
+
+      return bookings;
     }),
 
   // Update a booking

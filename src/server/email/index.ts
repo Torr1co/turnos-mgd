@@ -1,5 +1,5 @@
 import sgMail from "@sendgrid/mail";
-import { systemEmail } from "./nodeMailer";
+// import { systemEmail } from "./nodeMailer";
 // import { systemEmail } from "./nodeMailer";
 // import { systemEmail } from "./nodeMailer";
 
@@ -32,16 +32,14 @@ const sendEmail = ({ from: fromMsg = DEFAULT_EMAIL, ...msg }: SendEmail) => {
     typeof fromMsg === "string"
       ? { ...SYSTEM_ADDRESS, address: fromMsg, email: fromMsg }
       : fromMsg;
-  return (
-    process.env.NODE_ENV === "production"
-      ? sgMail.send({
-          from,
-          ...msg,
-        })
-      : systemEmail({ from, ...msg })
-  ).catch(() => {
-    throw new Error("Hubo un error al enviar el email");
-  });
+  return sgMail
+    .send({
+      from,
+      ...msg,
+    })
+    .catch(() => {
+      throw new Error("Hubo un error al enviar el email");
+    });
 };
 
 export default sendEmail;
