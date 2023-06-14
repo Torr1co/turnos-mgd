@@ -10,12 +10,7 @@ export default function AdoptPublicationForm() {
   return (
     <div className="grid grid-cols-2 gap-6">
       <div className="col-span-2 flex flex-col gap-6">
-        <Form.Input
-          path="email"
-          type="email"
-          label="Email de contacto"
-          required
-        />
+        <Form.Input path="email" label="Email de contacto" required />
         <hr />
       </div>
       <Form.Input

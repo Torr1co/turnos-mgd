@@ -16,7 +16,7 @@ export const ClientCreationSchema = z.object({
     .trim()
     .min(3, "Ingresar mínimo 3 caracteres")
     .regex(/^[a-zA-ZñÑ]+$/, "Solo se permiten letras"),
-  email: z.string().email("Ingrese un mail valido"),
+  email: z.string().trim().email("Ingrese un mail valido"),
   role: z.optional(z.nativeEnum(UserRoles)),
   telephoneNumber: z.optional(z.string().max(15, "Máximo 15 digitos")),
   birth: z.date({

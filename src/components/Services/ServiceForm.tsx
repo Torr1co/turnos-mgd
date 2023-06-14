@@ -34,12 +34,7 @@ export default function ServiceForm() {
         }}
         required
       />
-      <Form.Input
-        path="email"
-        label="Email del proveedor"
-        type="email"
-        required
-      />
+      <Form.Input path="email" label="Email del proveedor" required />
 
       <Form.Select path="type" label="Tipo" values={ServiceOptions} required />
 

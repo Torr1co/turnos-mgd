@@ -15,7 +15,7 @@ import { getServerAuthSession } from "~/server/auth";
 // import { useSession } from "next-auth/react";
 
 const AuthSchema = z.object({
-  email: z.string().email("Email invalido"),
+  email: z.string().trim().email("Email invalido"),
   password: z.string().min(8, "Minimo 8 caracteres"),
 });
 type Auth = z.infer<typeof AuthSchema>;
@@ -63,7 +63,6 @@ const SignIn: NextPage = () => {
           <Title>Bienvenido de vuelta!</Title>
           <Form.Input
             label="Email"
-            type="email"
             className="bg"
             path="email"
             placeholder="usuario@email.com"
