@@ -13,7 +13,7 @@ import Box from "../_common/Box";
 import { BookingIcon } from "../_common/icons";
 import Title from "../_common/Typo/Title";
 import { getOptionLabel } from "~/utils/schemaUtils";
-import { BookingTypeOptions } from "~/schemas/bookingSchema";
+import { BookingTypeOptions, TimeZoneOptions } from "~/schemas/bookingSchema";
 import Text from "../_common/Typo/Text";
 import { BookingActions } from "./BookingActions";
 import { useSession } from "next-auth/react";
@@ -59,6 +59,12 @@ export default function BookingList({
                         <span>({booking.vaccine})</span>
                       )}
                     </Title>
+                    <Text>
+                      Horario:{" "}
+                      <span className="capitalize">
+                        {getOptionLabel(TimeZoneOptions, booking.timeZone)}
+                      </span>
+                    </Text>
                     <Text>
                       Perro:{" "}
                       <span className="capitalize">{booking.dog.name}</span>

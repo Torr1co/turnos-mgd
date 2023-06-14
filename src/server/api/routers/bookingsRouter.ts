@@ -21,7 +21,7 @@ import {
   getBooking,
 } from "~/utils/schemas/bookingUtils";
 import { isVet } from "~/utils/schemas/usersUtils";
-import ClientBookingList from "../../../components/Home/ClientHome/ClientBookings/ClientBookingList";
+// import ClientBookingList from "../../../components/Home/ClientHome/ClientBookings/ClientBookingList";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -124,7 +124,7 @@ export const bookingsRouter = createTRPCRouter({
         },
       });
 
-      //I need to sort the bookings by date
+      //Sort the bookings by date
       await bookings.then((bookings) => {
         bookings.sort((a, b) => {
           const dateA = dayjs(a.date);
