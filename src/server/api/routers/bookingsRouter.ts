@@ -162,7 +162,9 @@ export const bookingsRouter = createTRPCRouter({
           throw new Error("El perro no existe!");
         });
 
-      BookingHandlers.update(dayjs(booking.date));
+      if (booking.status === BookingStatus.APPROVED) {
+        BookingHandlers.update(dayjs(booking.date));
+      }
       BookingHandlers.alreadyCastrated(booking.type, dogData.castrated);
       await BookingHandlers.alreadyBooked(ctx.prisma, newData, dog);
       await BookingHandlers.maxBookings(ctx.prisma, newData);
@@ -235,8 +237,10 @@ export const bookingsRouter = createTRPCRouter({
       const booking = await getBooking(ctx.prisma, input);
       const bookingDate = dayjs(booking.date);
       BookingHandlers.date(bookingDate);
-      BookingHandlers.update(bookingDate);
 
+      if (booking.status === BookingStatus.APPROVED) {
+        BookingHandlers.update(bookingDate);
+      }
       //Look for the user email
       const user = await ctx.prisma.user
         .findFirstOrThrow({
