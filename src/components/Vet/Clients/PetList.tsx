@@ -53,7 +53,7 @@ export default function PetList({ pets }: { pets: Pet[] }) {
         ))
       ) : (
         <li className="col-span-3">
-          <p className="text-center">No hay perros registrados</p>
+          <p className="text-center">No se encontraron perros</p>
         </li>
       )}
     </ul>
