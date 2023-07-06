@@ -87,18 +87,6 @@ const config = {
   },
   plugins: [
     function ({ addUtilities }) {
-      addUtilities(
-        {
-          ".truncate": {
-            overflow: "hidden",
-            display: "-webkit-box",
-            "-webkit-line-clamp": "1",
-            "-webkit-box-orient": "vertical",
-          },
-        },
-        ["responsive", "hover"]
-      );
-
       const lineClampUtilities = {
         // Usage: truncate-[3]
         ...Array.from(Array(10).keys()).reduce((acc, val) => {

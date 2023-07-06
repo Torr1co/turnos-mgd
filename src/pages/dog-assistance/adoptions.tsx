@@ -4,12 +4,12 @@ import { useModal } from "~/context/ModalContex";
 import Button from "~/components/_common/Button";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import AdoptList from "~/components/Adoptions/AdoptionList";
 import AdoptPublicationCreation from "~/components/Adoptions/AdoptPublication/AdoptCreationModal";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import Toggle from "~/components/_common/Form/Toggle";
 import AdoptSlider from "~/components/Adoptions/AdoptSlider";
+import AdoptionList from "~/components/Adoptions/AdoptionList";
 // import { Switch } from "@headlessui/react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -53,7 +53,7 @@ const Adoptions = () => {
       {isLoading ? (
         <div>Cargando...</div>
       ) : (
-        <AdoptList
+        <AdoptionList
           mine={mine}
           adoptions={adoptions.filter((adoption) =>
             mine

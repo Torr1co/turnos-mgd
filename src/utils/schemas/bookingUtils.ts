@@ -1,7 +1,11 @@
 import { type BookingSchema } from "~/schemas/bookingSchema";
-import { type Pet, type PrismaClient, type BookingType } from "@prisma/client";
+import {
+  type Pet,
+  type PrismaClient,
+  type BookingType,
+  BookingStatus,
+} from "@prisma/client";
 import dayjs, { type Dayjs } from "dayjs";
-import { BookingStatus } from "@prisma/client";
 
 const MAX_BOOKINGS_PER_DAY = 20;
 
@@ -21,8 +25,11 @@ export const BookingErrors = {
     "No se puede aplicar una antirrabica a un perro que ya tiene una en el ultimo año!",
 } as const;
 
-export function canUpdateBooking(date: Date | Dayjs) {
-  return dayjs(date).isAfter(dayjs().add(1, "day"), "day");
+export function bookingUpdateHandler(date: Date | Dayjs) {
+  return (
+    !dayjs(date).isAfter(dayjs().add(1, "day"), "day") &&
+    !dayjs(date).isBefore(dayjs(), "day")
+  );
 }
 
 export async function getBooking(prisma: PrismaClient, id: string) {
@@ -40,11 +47,6 @@ export async function getBooking(prisma: PrismaClient, id: string) {
 function bookingDateHandler(date: Dayjs) {
   if (date.isBefore(dayjs(), "day")) throw new Error(BookingErrors.PAST_DATE);
   if (date.day() === 0) throw new Error(BookingErrors.SUNDAY);
-}
-
-function bookingUpdateHandler(date: Dayjs) {
-  if (!canUpdateBooking(dayjs(date))) throw new Error(BookingErrors.LAST_DAY);
-  bookingDateHandler(dayjs(date));
 }
 
 function isPuppyHandler(birthDate: Date) {
@@ -110,7 +112,7 @@ async function vaccineBHandler(
       dog: {
         id: pet.id,
       },
-      vaccine: {
+      vaccineType: {
         equals: "B",
       },
       date: {
@@ -124,28 +126,15 @@ async function vaccineBHandler(
 }
 
 export const BookingStatusQueries = {
+  [BookingStatus.CANCELLED]: {}, // TODO: remove type casting
   [BookingStatus.COMPLETED]: {
-    /* 
-    TODO: ONLY THIS
-    status: {
-      equals: BookingStatus.COMPLETED,
-    }, */
-    date: {
-      lt: dayjs().startOf("day").toDate(),
-    },
-    status: {
-      in: [BookingStatus.APPROVED, BookingStatus.COMPLETED],
+    NOT: {
+      status: {
+        in: [BookingStatus.APPROVED, BookingStatus.PENDING],
+      },
     },
   },
   [BookingStatus.APPROVED]: {
-    /* 
-    TODO: ONLY THIS
-    status: {
-      equals: BookingStatus.APPROVED,
-    }, */
-    date: {
-      gte: dayjs().startOf("day").toDate(),
-    },
     status: {
       equals: BookingStatus.APPROVED,
     },
@@ -160,12 +149,12 @@ export const BookingStatusQueries = {
   },
 };
 
-export const BookingHandlers = {
-  date: bookingDateHandler,
-  update: bookingUpdateHandler,
-  puppy: isPuppyHandler,
-  alreadyBooked: alreadyBookedHandler,
-  alreadyCastrated: alreadyCastratedHandler,
-  maxBookings: maxBookingsHandler,
-  vaccineB: vaccineBHandler,
+export const BookingErrorHandlers = {
+  checkDate: bookingDateHandler,
+  canUpdate: bookingUpdateHandler,
+  isPuppy: isPuppyHandler,
+  isAlreadyBooked: alreadyBookedHandler,
+  isAlreadyCastrated: alreadyCastratedHandler,
+  checkMaxBookings: maxBookingsHandler,
+  checkVaccineB: vaccineBHandler,
 };

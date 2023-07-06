@@ -1,6 +1,26 @@
-import { BookingType, TimeZone, VaccineType } from "@prisma/client";
+import {
+  BookingType,
+  TimeZone,
+  VaccineType,
+  type Booking,
+  type Pet,
+  type Vaccine,
+  type Deworming,
+  type Castration,
+  type Inquirie,
+  type User,
+} from "@prisma/client";
 import { z } from "zod";
 import { BookingStatus } from "@prisma/client";
+
+export type BookingRelated = Booking & {
+  dog: Pet;
+  user: User;
+  vaccine?: Vaccine;
+  deworming?: Deworming;
+  castration?: Castration;
+  inquirie?: Inquirie;
+};
 
 export const BookingSchema = z.object({
   date: z.date({
@@ -13,7 +33,7 @@ export const BookingSchema = z.object({
       return { message: "Selecciona un horario valido" };
     },
   }),
-  vaccine: z.optional(
+  vaccineType: z.optional(
     z.nativeEnum(VaccineType, {
       errorMap: () => {
         return { message: "Selecciona una vacuna valida" };
@@ -48,6 +68,22 @@ export const BookingGetAllSchema = z
   )
   .default({ status: BookingStatus.APPROVED });
 
+export const CastrationCompletionSchema = z.object({
+  type: z.string().min(1, { message: "Requerido" }),
+});
+
+export const BookingCompletionSchema = z.object({
+  bookingId: z.string(),
+  castration: z.optional(CastrationCompletionSchema),
+  deworming: z.optional(CastrationCompletionSchema),
+  vaccine: z.optional(CastrationCompletionSchema),
+  general: z.optional(CastrationCompletionSchema),
+});
+
+export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;
+export type CastrationCompletionSchema = z.infer<
+  typeof CastrationCompletionSchema
+>;
 export type BookingSchema = z.infer<typeof BookingSchema>;
 export type BookingUpdateSchema = z.infer<typeof BookingUpdateSchema>;
 export type BookingCreationSchema = z.infer<typeof BookingCreationSchema>;
@@ -67,11 +103,11 @@ export const VaccineOptions = [
 export const BookingStatusOptions = [
   {
     value: BookingStatus.COMPLETED,
-    label: /* "Turnos completados" */ "Turnos pasados",
+    label: "Turnos pasados",
   },
   {
     value: BookingStatus.APPROVED,
-    label: /* "Turnos aprobados"  */ "Turnos futuros",
+    label: "Turnos aprobados",
   },
   {
     value: BookingStatus.PENDING,

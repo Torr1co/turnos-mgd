@@ -1,5 +1,4 @@
 import React from "react";
-import { type Booking, type Pet, type User } from "@prisma/client";
 import { api } from "~/utils/api";
 import { BookingUpdateSchema } from "~/schemas/bookingSchema";
 import { toast } from "react-hot-toast";
@@ -9,12 +8,10 @@ import BookingForm from "~/components/Vet/Clients/ClientRegister/BookingForm";
 import Form from "~/components/_common/Form";
 import { useModal } from "~/context/ModalContex";
 import { useForm } from "~/utils/schemaUtils";
+import { type BookingRelated } from "~/schemas/bookingSchema";
 
 type BookingUpdateProps = {
-  booking: Booking & {
-    user: User;
-    dog: Pet;
-  };
+  booking: BookingRelated;
 };
 export default function BookingUpdateModal({ booking }: BookingUpdateProps) {
   const { handleModal } = useModal();

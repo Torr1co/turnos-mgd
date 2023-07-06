@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { GenderOptions } from "~/schemas/petSchema";
 
-export default function PetInformation({ pet }: { pet: Pet }) {
+export default function PetInfo({ pet }: { pet: Pet }) {
   return (
     <dl className="grid grid-cols-2 gap-4">
       <dt>Nombre:</dt>

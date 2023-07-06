@@ -8,7 +8,7 @@ import React from "react";
 import Button from "~/components/_common/Button";
 import Text from "~/components/_common/Typo/Text";
 import Title from "~/components/_common/Typo/Title";
-import NAV_CONFIG from "~/utils/navConfig";
+import { LINKS } from "~/utils/navConfig";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -31,7 +31,7 @@ export default function UnregisteredHome() {
                 veterinarios profesionales hasta Encontrar perros en adopcion.
                 ¡Todo en un solo lugar!
               </Text>
-              <Link href={NAV_CONFIG.signin.href}>
+              <Link href={LINKS.signin}>
                 <Button>Iniciar Sesion</Button>
               </Link>
             </div>

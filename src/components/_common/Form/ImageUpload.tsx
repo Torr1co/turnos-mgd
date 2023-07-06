@@ -63,7 +63,9 @@ const ImageUploader = ({
         )}
         {...props}
       >
-        {fileName ?? (
+        {fileName ? (
+          <div className="max-w-xs truncate">{fileName}</div>
+        ) : (
           <div className="flex justify-between">
             <span className="truncate">{placeholder}</span>
             <CameraIcon className="h-5 w-5 text-gray-600 group-hover:text-primary" />
