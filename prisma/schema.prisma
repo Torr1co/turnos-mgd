@@ -23,6 +23,7 @@ enum BookingType {
     DEWORMING
     GENERAL
     CASTRATION
+    URGENCY
 }
 
 enum TimeZone {
@@ -35,6 +36,7 @@ enum BookingStatus {
     PENDING
     APPROVED
     COMPLETED
+    CANCELLED
 }
 
 //-----------------------------   USER     ---------------------------------
@@ -71,12 +73,18 @@ model Booking {
     status    BookingStatus @default(PENDING)
     date      DateTime
     type      BookingType
-    vaccine   VaccineType?
+    vaccineType   VaccineType?
     timeZone  TimeZone
     user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String       @db.ObjectId
     dog       Pet          @relation(fields: [dogId], references: [id], onDelete: Cascade)
     dogId     String       @db.ObjectId
+
+    urgency   Urgency?
+    inquirie Inquirie?
+    deworming Deworming?
+    vaccine Vaccine?
+    castration Castration?
 }
 
 // -------------------------------            ---------------------------------
@@ -97,25 +105,22 @@ model Pet {
     observations String
 
     booking      Booking[]
-    healthBook   HealthBook @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
-    healthBookId String     @unique @db.ObjectId
     owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId      String     @db.ObjectId
 
     @@unique([ownerId, name])
 }
 
-//------------------------------- HEALTH BOOK ---------------------------------
-model HealthBook {
+// ------------------------------            ---------------------------------
+model Urgency {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    vaccines     Vaccine[]
-    inquiries    Inquirie[]
-    dewormings   Deworming[]
     observations String?
-    dog          Pet?
+
+    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId    String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -124,12 +129,12 @@ model Inquirie {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    date         String
     observations String?
     height       Float?
     weight       Float?
-    healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
-    healthBookId String      @unique @db.ObjectId
+
+    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId    String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -138,11 +143,11 @@ model Deworming {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    date         DateTime
     product      String
     dosis        String
-    healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
-    healthBookId String      @unique @db.ObjectId
+
+    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId    String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -157,10 +162,22 @@ model Vaccine {
     updatedAt DateTime @updatedAt
 
     type         VaccineType
-    date         DateTime
     lab          String
-    healthBook   HealthBook? @relation(fields: [healthBookId], references: [id], onDelete: Cascade)
-    healthBookId String      @unique @db.ObjectId
+
+    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId    String  @unique @db.ObjectId
+}
+
+// ------------------------------            ---------------------------------
+model Castration {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    type         String
+
+    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId    String  @unique @db.ObjectId
 }
 
 // ------------------------------     ADOPTION       ---------------------------------
@@ -236,10 +253,12 @@ model DonationCampaign {
     id            String     @id @default(auto()) @map("_id") @db.ObjectId
     createdAt     DateTime   @default(now())
     updatedAt     DateTime   @updatedAt
+    title         String
     reason        String
-    desc          String
     amountGoal    Int
+    endDate       DateTime
     currentAmount Int        @default(0)
+    img           String?
     donations     Donation[]
 }
 

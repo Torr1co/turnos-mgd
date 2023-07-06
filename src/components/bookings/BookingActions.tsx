@@ -2,17 +2,21 @@ import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import ConfirmTooltip from "~/components/_common/ConfirmTooltip";
 import { api } from "~/utils/api";
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowSmallRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { UserRoles, type Booking } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Dropdown from "../_common/Dropdown";
 import Button from "../_common/Button";
 import Form from "../_common/Form";
-import { BookingTypeOptions } from "~/schemas/bookingSchema";
-import { BookingStatus, type Pet, type User } from "@prisma/client";
+import { BookingRelated, BookingTypeOptions } from "~/schemas/bookingSchema";
+import { BookingStatus } from "@prisma/client";
 import { useModal } from "~/context/ModalContex";
-import BookingUpdateModal from "./ClientHome/ClientBookings/BookingUpdateModal";
+import BookingUpdateModal from "../Home/ClientHome/ClientBookings/BookingUpdateModal";
 import { isVet } from "~/utils/schemas/usersUtils";
+import { cn } from "~/utils/styleUtils";
+import Link from "next/dist/client/link";
+import { LINKS } from "~/utils/navConfig";
+import BookingCompletionModal from "./BookingCompletion/BookingCompletionModal";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -93,7 +97,7 @@ export const BookingActions = ({
   booking,
   status,
 }: {
-  booking: Booking & { dog: Pet; user: User };
+  booking: BookingRelated;
   status: BookingStatus; // TODO: remove
 }) => {
   const { data: session } = useSession();
@@ -128,6 +132,36 @@ export const BookingActions = ({
 
     return (
       <>
+        {status === BookingStatus.COMPLETED && (
+          <Link href={LINKS.booking(booking.id)}>
+            <Button
+              kind={Button.KINDS.gray}
+              className="group flex items-center gap-2"
+            >
+              Ver mas
+              <ArrowSmallRightIcon
+                className={cn(
+                  "h-5 w-5 stroke-2 transition-opacity duration-300"
+                )}
+                style={{
+                  transform: "rotate(-45deg)",
+                }}
+              />
+            </Button>
+          </Link>
+        )}
+
+        {status === BookingStatus.APPROVED && (
+          <Button
+            kind={Button.KINDS.gray}
+            onClick={() =>
+              handleModal(<BookingCompletionModal booking={booking} />)
+            }
+          >
+            Completar
+          </Button>
+        )}
+
         {status === BookingStatus.PENDING && (
           <ConfirmTooltip
             loading={isLoading}

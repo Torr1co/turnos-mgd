@@ -10,18 +10,20 @@ import {
   BookingUpdateSchema,
   TimeZoneOptions,
   BookingGetAllSchema,
+  BookingCompletionSchema,
+  type CastrationCompletionSchema,
 } from "~/schemas/bookingSchema";
 import { BookingType, UserRoles, BookingStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import { string } from "zod";
 import sendEmail from "~/server/email";
 import {
-  BookingHandlers,
+  BookingErrors,
+  BookingErrorHandlers,
   BookingStatusQueries,
   getBooking,
 } from "~/utils/schemas/bookingUtils";
 import { isVet } from "~/utils/schemas/usersUtils";
-// import ClientBookingList from "../../../components/Home/ClientHome/ClientBookings/ClientBookingList";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -40,14 +42,18 @@ export const bookingsRouter = createTRPCRouter({
           throw new Error("El perro no existe!");
         });
 
-      BookingHandlers.date(bookingDate);
-      BookingHandlers.alreadyCastrated(booking.type, dogData.castrated);
-      await BookingHandlers.alreadyBooked(ctx.prisma, booking, dog);
-      await BookingHandlers.maxBookings(ctx.prisma, booking);
+      BookingErrorHandlers.checkDate(bookingDate);
+      BookingErrorHandlers.isAlreadyCastrated(booking.type, dogData.castrated);
+      await BookingErrorHandlers.isAlreadyBooked(ctx.prisma, booking, dog);
+      await BookingErrorHandlers.checkMaxBookings(ctx.prisma, booking);
 
       if (booking.type === BookingType.VACCINE) {
-        if (booking.vaccine === "B") {
-          await BookingHandlers.vaccineB(ctx.prisma, booking, dogData);
+        if (booking.vaccineType === "B") {
+          await BookingErrorHandlers.checkVaccineB(
+            ctx.prisma,
+            booking,
+            dogData
+          );
         }
         /* if (booking.vaccine === "A") {
           if (isPuppy) {
@@ -125,6 +131,7 @@ export const bookingsRouter = createTRPCRouter({
       });
 
       //Sort the bookings by date
+      // TODO: sort with database queries
       await bookings.then((bookings) => {
         bookings.sort((a, b) => {
           const dateA = dayjs(a.date);
@@ -163,15 +170,19 @@ export const bookingsRouter = createTRPCRouter({
         });
 
       if (booking.status === BookingStatus.APPROVED) {
-        BookingHandlers.update(dayjs(booking.date));
+        BookingErrorHandlers.canUpdate(dayjs(booking.date));
       }
-      BookingHandlers.alreadyCastrated(booking.type, dogData.castrated);
-      await BookingHandlers.alreadyBooked(ctx.prisma, newData, dog);
-      await BookingHandlers.maxBookings(ctx.prisma, newData);
+      BookingErrorHandlers.isAlreadyCastrated(booking.type, dogData.castrated);
+      await BookingErrorHandlers.isAlreadyBooked(ctx.prisma, newData, dog);
+      await BookingErrorHandlers.checkMaxBookings(ctx.prisma, newData);
 
       if (newData.type === BookingType.VACCINE) {
-        if (newData.vaccine === "B") {
-          await BookingHandlers.vaccineB(ctx.prisma, newData, dogData);
+        if (newData.vaccineType === "B") {
+          await BookingErrorHandlers.checkVaccineB(
+            ctx.prisma,
+            newData,
+            dogData
+          );
         }
         /* if (booking.vaccine === "A") {
           if (isPuppy(dogData.birth)) {
@@ -236,10 +247,10 @@ export const bookingsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const booking = await getBooking(ctx.prisma, input);
       const bookingDate = dayjs(booking.date);
-      BookingHandlers.date(bookingDate);
+      // BookingErrorHandlers.checkDate(bookingDate);
 
       if (booking.status === BookingStatus.APPROVED) {
-        BookingHandlers.update(bookingDate);
+        BookingErrorHandlers.canUpdate(bookingDate);
       }
       //Look for the user email
       const user = await ctx.prisma.user
@@ -269,9 +280,13 @@ export const bookingsRouter = createTRPCRouter({
             ?.label as string
         }. Ha sido cancelado. Por favor, contacte con el ${sender} para reprogramar el turno.`,
       });
-      return ctx.prisma.booking.delete({
+
+      return ctx.prisma.booking.update({
         where: {
           id: input,
+        },
+        data: {
+          status: BookingStatus.CANCELLED,
         },
       });
     }),
@@ -281,7 +296,7 @@ export const bookingsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const booking = await getBooking(ctx.prisma, input);
       const bookingDate = dayjs(booking.date);
-      BookingHandlers.date(bookingDate);
+      // BookingErrorHandlers.checkDate(bookingDate);
 
       //Look for the user email
       const user = await ctx.prisma.user
@@ -318,8 +333,54 @@ export const bookingsRouter = createTRPCRouter({
       });
     }),
 
-  get: vetProcedure.input(string()).query(async ({ input, ctx }) => {
-    const booking = await getBooking(ctx.prisma, input);
-    return booking;
+  get: publicProcedure.input(string()).query(async ({ input, ctx }) => {
+    return await ctx.prisma.booking
+      .findFirstOrThrow({
+        where: {
+          id: input,
+        },
+        include: {
+          dog: true,
+          user: true,
+          castration: true,
+          deworming: true,
+          vaccine: true,
+          inquirie: true,
+          urgency: true,
+        },
+      })
+      .catch(() => {
+        throw new Error(BookingErrors.NOT_FOUND);
+      });
   }),
+
+  complete: vetProcedure
+    .input(BookingCompletionSchema)
+    .mutation(async ({ input, ctx }) => {
+      const booking = await getBooking(ctx.prisma, input.bookingId);
+
+      switch (booking.type) {
+        case BookingType.CASTRATION:
+          const castration = input.castration as CastrationCompletionSchema;
+          await ctx.prisma.castration.create({
+            data: {
+              booking: {
+                connect: {
+                  id: input.bookingId,
+                },
+              },
+              type: castration.type,
+            },
+          });
+      }
+
+      return ctx.prisma.booking.update({
+        where: {
+          id: input.bookingId,
+        },
+        data: {
+          status: BookingStatus.COMPLETED,
+        },
+      });
+    }),
 });

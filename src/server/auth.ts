@@ -118,3 +118,13 @@ export const getServerAuthSession = async (ctx: {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   return session;
 };
+
+export const getTrpcProps = async (ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) => {
+  return {
+    session: await getServerAuthSession(ctx),
+    prisma,
+  };
+};

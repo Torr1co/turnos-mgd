@@ -6,8 +6,8 @@ import Form from "~/components/_common/Form";
 import { FieldSelectHeader } from "~/components/_common/Form/Select";
 import { BookingStatusOptions } from "~/schemas/bookingSchema";
 import { api } from "~/utils/api";
-import { BookingFilters } from "../BookingActions";
-import BookingList from "../BookingList";
+import { BookingFilters } from "../../bookings/BookingActions";
+import BookingList from "../../bookings/BookingList";
 
 type FilterProps = {
   bookingStatus: BookingStatus;

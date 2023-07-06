@@ -4,6 +4,7 @@ export const LINKS = {
   home: "/",
   me: "/me",
   services: "/services",
+  booking: (bookingId: string) => "/bookings/" + bookingId,
   clients: "/admin/clients",
   pets: "/pets",
   signin: "/auth/signin",
@@ -23,52 +24,51 @@ const NAV_CONFIG = {
     children: {
       clients: { label: "Clientes", href: LINKS.clients },
       services: { label: "Servicios", href: LINKS.services },
-    },
-  },
-  breedDogs: {
-    label: "Cuida tus mascotas",
-    roles: [UserRoles.CLIENT, null],
-    children: {
-      clientPets: {
-        label: "Mis perros",
-        href: LINKS.pets,
-        roles: [UserRoles.CLIENT],
-      },
-      services: {
-        label: "Servicios",
-        href: LINKS.services,
+      donation: {
+        label: "Campañas de donacion",
+        href: LINKS.donationCampaigns,
       },
     },
   },
   dogAssistance: {
     label: "Asistencia de perros",
     children: {
+      clientPets: {
+        label: "Mis perros",
+        href: LINKS.pets,
+        roles: [UserRoles.CLIENT],
+      },
       adoptions: {
         label: "Adopciones",
         href: LINKS.adoptions,
       },
-      /*  vetPets: {
-        label: "Perros",
-        href: LINKS.pets,
-        roles: [UserRoles.VET],
-      }, */
 
-      /*       crossBreeds: {
+      /*crossBreeds: {
         label: "Cruza",
         href: LINKS.crossBreeds,
         roles: ["Client"],
       },
-      donationCampaigns: {
-        label: "Campañas de donacion",
-        href: LINKS.donationCampaigns,
-      },
+      
       lostDogs: {
         label: "Busqueda de perros",
         href: LINKS.lostDogs,
       }, */
     },
   },
-  signin: { label: "Iniciar sesion", href: "/auth/signin" },
+  resources: {
+    label: "Recursos",
+    roles: [UserRoles.CLIENT, null],
+    children: {
+      services: {
+        label: "Servicios",
+        href: LINKS.services,
+      },
+      donationCampaigns: {
+        label: "Campañas de donacion",
+        href: LINKS.donationCampaigns,
+      },
+    },
+  },
 };
 
 /* export const adminLinks = Object.values(NAV_CONFIG.admin.children).map(

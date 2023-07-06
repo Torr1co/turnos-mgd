@@ -35,7 +35,8 @@
     "**/*.cjs",
     "**/*.mjs",
     "src/components/Vet/Clients/Pet",
-    "src/components/Adoptions"
+    "src/components/Adoptions",
+    "src/components/DonationCampaigns"
   ],
   "exclude": ["node_modules"]
 }

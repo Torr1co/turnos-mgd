@@ -2,23 +2,36 @@ import React from "react";
 import NavLink from "./NavLink";
 import NAV_CONFIG from "~/utils/navConfig";
 
-export type NavItem = {
+interface NavBaseItem {
   label: string;
-  href: string;
   roles?: Array<string | null>;
-  children?: NAV_CONFIG;
-};
+}
+
+interface NavWithHref extends NavBaseItem {
+  href: string;
+}
+
+interface NavWithChildren extends NavBaseItem {
+  children: {
+    [x: string]: NavWithHref;
+  };
+}
+
+export type NavItem = NavWithChildren | NavWithHref;
+
+export function isNavWithChildren(item: NavItem): item is NavWithChildren {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  return (item as NavWithChildren)?.children !== undefined;
+}
 export type NAV_CONFIG = Record<string, NavItem>;
 
 export default function Navbar() {
   return (
     <nav>
       <ul className="flex items-center gap-5 font-medium">
-        <NavLink link={NAV_CONFIG.home} />
-        {/* <NavLink link={NAV_CONFIG.services} /> */}
-        <NavLink link={NAV_CONFIG.breedDogs} />
-        <NavLink link={NAV_CONFIG.admin} />
-        <NavLink link={NAV_CONFIG.dogAssistance} />
+        {Object.values(NAV_CONFIG).map((navItem) => (
+          <NavLink key={navItem.label} link={navItem} />
+        ))}
       </ul>
     </nav>
   );

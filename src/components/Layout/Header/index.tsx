@@ -4,7 +4,7 @@ import Link from "next/link";
 import Button from "~/components/_common/Button";
 import { signOut, useSession } from "next-auth/react";
 import Navbar from "./Navbar";
-import NAV_CONFIG, { LINKS } from "~/utils/navConfig";
+import { LINKS } from "~/utils/navConfig";
 import { UserIcon } from "~/components/_common/icons";
 import Tooltip from "~/components/_common/Tooltip";
 import { useRouter } from "next/router";
@@ -44,7 +44,7 @@ export default function Header() {
           </Button>
         </div>
       ) : (
-        <Link href={NAV_CONFIG.signin.href}>
+        <Link href={LINKS.signin}>
           <Button>Iniciar Sesion</Button>
         </Link>
       )}

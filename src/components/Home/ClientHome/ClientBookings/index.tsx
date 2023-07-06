@@ -1,11 +1,11 @@
 import React from "react";
 import dayjs from "dayjs";
 import { api } from "~/utils/api";
-import BookingList from "../../BookingList";
+import BookingList from "../../../bookings/BookingList";
 import { useForm } from "react-hook-form";
 import { type BookingType, BookingStatus } from "@prisma/client";
 import Form from "~/components/_common/Form";
-import { BookingFilters } from "../../BookingActions";
+import { BookingFilters } from "../../../bookings/BookingActions";
 import Button from "~/components/_common/Button";
 import BookingCreationModal from "./BookingCreationModal";
 import { useModal } from "~/context/ModalContex";

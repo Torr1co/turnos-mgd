@@ -7,7 +7,7 @@ import {
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import sendEmail from "~/server/email";
 import { prismaError } from "~/utils/errors";
-import { BookingHandlers } from "~/utils/schemas/bookingUtils";
+import { BookingErrorHandlers } from "~/utils/schemas/bookingUtils";
 
 export const clientsRouter = createTRPCRouter({
   create: publicProcedure
@@ -19,10 +19,10 @@ export const clientsRouter = createTRPCRouter({
       const randomString = Math.random().toString(36).replace("0.", "");
       const hashedPassword = hashSync(randomString, 10);
 
-      BookingHandlers.alreadyCastrated(booking.type, dog.castrated);
-      await BookingHandlers.maxBookings(ctx.prisma, booking);
+      BookingErrorHandlers.isAlreadyCastrated(booking.type, dog.castrated);
+      await BookingErrorHandlers.checkMaxBookings(ctx.prisma, booking);
       if (booking.type === "VACCINE" && booking.vaccine === "B") {
-        BookingHandlers.puppy(dog.birth);
+        BookingErrorHandlers.isPuppy(dog.birth);
       }
 
       /*  try { */

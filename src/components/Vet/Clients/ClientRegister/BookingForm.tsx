@@ -28,15 +28,15 @@ export default function BookingForm() {
         values={BookingTypeOptions}
         onChange={() => {
           if (methods.watch("booking.type") === BookingType.VACCINE) {
-            methods.setValue("booking.vaccine", VaccineOptions[0].value);
+            methods.setValue("booking.vaccineType", VaccineOptions[0].value);
             return;
           }
-          methods.setValue("booking.vaccine", undefined);
+          methods.setValue("booking.vaccineType", undefined);
         }}
       />
       {methods.watch("booking.type") === BookingType.VACCINE && (
         <Form.Select
-          path="booking.vaccine"
+          path="booking.vaccineType"
           label="Tipo de vacuna"
           values={VaccineOptions}
         />

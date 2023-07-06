@@ -1,7 +1,7 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { type NavItem } from "./Navbar";
+import { type NavItem, isNavWithChildren } from "./Navbar";
 import { useRouter } from "next/router";
 import { cn } from "~/utils/styleUtils";
 import Text from "~/components/_common/Typo/Text";
@@ -14,7 +14,7 @@ export default function NavLink({ link }: { link: NavItem }) {
   const canAccess =
     !link.roles || link.roles.includes(session?.user.role ?? null);
 
-  const isActive = link.children
+  const isActive = isNavWithChildren(link)
     ? Object.values(link.children).some((child) => {
         return router.asPath.startsWith(child.href);
       })
@@ -27,7 +27,7 @@ export default function NavLink({ link }: { link: NavItem }) {
     return null;
   }
 
-  if (link.children) {
+  if (isNavWithChildren(link)) {
     return (
       <Dropdown className={cn(isActive && "text-primary")} label={link.label}>
         <div className="flex flex-col gap-1">
