@@ -24,6 +24,7 @@ import {
   getBooking,
 } from "~/utils/schemas/bookingUtils";
 import { isVet } from "~/utils/schemas/usersUtils";
+import { type InquirieCompletionSchema } from "~/schemas/inquirieSchema";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -372,6 +373,22 @@ export const bookingsRouter = createTRPCRouter({
               type: castration.type,
             },
           });
+          break;
+          case BookingType.GENERAL: {
+            const general = input.general as InquirieCompletionSchema;
+            await ctx.prisma.inquirie.create({
+              data: {
+                booking: {
+                  connect: {
+                    id: input.bookingId,
+                  },
+                },
+                height : general.height,
+                weight : general.weight,
+                observations : general.observations,
+              },
+            });
+          }
       }
 
       return ctx.prisma.booking.update({

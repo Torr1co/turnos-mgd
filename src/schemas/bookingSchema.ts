@@ -12,6 +12,7 @@ import {
 } from "@prisma/client";
 import { z } from "zod";
 import { BookingStatus } from "@prisma/client";
+import { InquirieCompletionSchema } from "./inquirieSchema";
 
 export type BookingRelated = Booking & {
   dog: Pet;
@@ -77,7 +78,7 @@ export const BookingCompletionSchema = z.object({
   castration: z.optional(CastrationCompletionSchema),
   deworming: z.optional(CastrationCompletionSchema),
   vaccine: z.optional(CastrationCompletionSchema),
-  general: z.optional(CastrationCompletionSchema),
+  general: z.optional(InquirieCompletionSchema),
 });
 
 export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;

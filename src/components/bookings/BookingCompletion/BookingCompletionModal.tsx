@@ -12,11 +12,12 @@ import { BookingType } from "@prisma/client";
 import { BookingCompletionSchema, BookingTypeOptions } from "~/schemas";
 import CastrationCompletionForm from "./CastrationCompletionForm";
 import { getOptionLabel } from "~/utils/schemaUtils";
+import GeneralCompletionForm from "./GeneralCompletionForm";
 
 const BookingTypeConvertion = {
   [BookingType.CASTRATION]: CastrationCompletionForm,
   [BookingType.DEWORMING]: CastrationCompletionForm,
-  [BookingType.GENERAL]: CastrationCompletionForm,
+  [BookingType.GENERAL]: GeneralCompletionForm,
   [BookingType.VACCINE]: CastrationCompletionForm,
   [BookingType.URGENCY]: CastrationCompletionForm,
 } as const;

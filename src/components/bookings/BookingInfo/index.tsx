@@ -43,3 +43,4 @@ export default function BookingInfo({ booking }: { booking: BookingRelated }) {
     </dl>
   );
 }
+
