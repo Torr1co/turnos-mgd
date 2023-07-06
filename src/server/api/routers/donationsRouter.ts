@@ -1,25 +1,27 @@
+import { z } from "zod";
 import {
   DonateSchema,
   DonationCampaignCreationSchema,
+  DonationCampaignGetAllSchema,
   DonationCampaignUpdateSchema,
 } from "~/schemas/donationSchema";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  vetProcedure,
 } from "~/server/api/trpc";
 import { mp } from "~/server/payments/mercadoPago";
 import { getBaseUrl } from "~/utils/api";
+import { DonationCampaignStatus } from "@prisma/client";
+import { isVet } from "~/utils/schemas/usersUtils";
 
 export const donationCampaignsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(DonationCampaignCreationSchema)
     .mutation(async ({ input: data, ctx }) => {
       const donationCampaign = await ctx.prisma.donationCampaign.create({
-        data: {
-          ...data,
-          currentAmount: data.amountGoal,
-        },
+        data,
       });
       return donationCampaign;
     }),
@@ -29,7 +31,6 @@ export const donationCampaignsRouter = createTRPCRouter({
     .input(DonationCampaignUpdateSchema)
     .mutation(async ({ input, ctx }) => {
       const { id, ...data } = input;
-
       const donationCampaign = await ctx.prisma.donationCampaign.update({
         where: {
           id,
@@ -39,27 +40,24 @@ export const donationCampaignsRouter = createTRPCRouter({
       return donationCampaign;
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const donationCampaigns = await ctx.prisma.donationCampaign.findMany();
-    return donationCampaigns;
-  }),
+  getAll: publicProcedure
+    .input(DonationCampaignGetAllSchema)
+    .query(async ({ ctx, input: { status } }) => {
+      const donationCampaigns = await ctx.prisma.donationCampaign.findMany({
+        where: {
+          status,
+        },
+      });
+      return donationCampaigns;
+    }),
 
-  //Returns all the adopt publications that are finished
-  getCompleted: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.donationCampaign.findMany({
+  finish: vetProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+    return await ctx.prisma.donationCampaign.update({
       where: {
-        OR: [
-          {
-            currentAmount: {
-              lte: 0,
-            },
-          },
-          {
-            endDate: {
-              lte: new Date(),
-            },
-          },
-        ],
+        id: input,
+      },
+      data: {
+        status: DonationCampaignStatus.FINISHED,
       },
     });
   }),
@@ -104,4 +102,45 @@ export const donationCampaignsRouter = createTRPCRouter({
           throw new Error("Error al crear la preferencia");
         });
     }),
+
+  finishDonation: publicProcedure
+    .input(DonateSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user;
+      return await ctx.prisma.donation.create({
+        data: {
+          amount: input.amount,
+          user: {
+            connect: {
+              id: user?.id,
+            },
+          },
+          campaign: {
+            connect: {
+              id: input.donationCampaignId,
+            },
+          },
+        },
+      });
+    }),
+
+  getById: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const user = ctx.session?.user;
+    return await ctx.prisma.donationCampaign.findFirst({
+      where: {
+        id: input,
+      },
+      include: {
+        donations: !user
+          ? false
+          : isVet(user)
+          ? true
+          : {
+              where: {
+                userId: user.id,
+              },
+            },
+      },
+    });
+  }),
 });

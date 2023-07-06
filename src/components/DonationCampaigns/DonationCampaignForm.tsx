@@ -22,7 +22,6 @@ export default function DonationCampaignForm() {
       <Form.ImageUploader path="img" label="Imagen" />
       <div className="col-span-2 flex flex-col gap-6">
         <Form.TextArea path="reason" label="Razon de la campaña" required />
-        <Form.TextArea path="desc" label="Descripcion" />
       </div>
     </div>
   );

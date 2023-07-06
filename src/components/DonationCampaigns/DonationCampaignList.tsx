@@ -1,90 +1,61 @@
 import React from "react";
-import { useModal } from "~/context/ModalContex";
 import Box from "~/components/_common/Box";
-import Button from "~/components/_common/Button";
 import Text from "~/components/_common/Typo/Text";
 import { cn } from "~/utils/styleUtils";
 import { type DonationCampaign } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import { isVet } from "~/utils/schemas/usersUtils";
 import Image from "next/image";
 import Title from "../_common/Typo/Title";
 import dayjs from "dayjs";
-import DonateModal from "./DonateModal";
-// import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
-// initMercadoPago("YOUR_PUBLIC_KEY");
+import Link from "next/link";
+import { LINKS } from "~/utils/navConfig";
+import { ArrowSmallRightIcon } from "@heroicons/react/24/solid";
 
 export function DonationCampaignItem({
   donationCampaign,
 }: {
   donationCampaign: DonationCampaign;
 }) {
-  const { handleModal } = useModal();
-  const { data: session } = useSession();
-
   return (
-    <Box className="flex h-full flex-col gap-8 bg-white">
-      <div className="flex flex-col gap-8 bg-white">
-        {donationCampaign.img ? (
-          <div className="relative h-[200px] w-full">
-            <Image
-              src={donationCampaign.img}
-              alt="donation Campaign photo"
-              fill={true}
-              className="rounded-md object-cover"
-            />
-          </div>
-        ) : (
-          <div></div>
-        )}
-        <div className="flex flex-col gap-4">
-          <Title as="h3">{donationCampaign.title}</Title>
-          <Text
-            className={cn(
-              "truncate-2",
-              "text-gray-500 transition-colors duration-200 group-hover:text-primary"
-            )}
-          >
-            <span className="font-semibold"> Razon de la publicacion: </span>
-            {donationCampaign.reason}
-          </Text>
-          <Text
-            className={cn(
-              "text-gray-500 transition-colors duration-200 group-hover:text-primary"
-            )}
-          >
-            <span className="font-semibold"> Progreso: </span>$
-            {donationCampaign.amountGoal - donationCampaign.currentAmount} pesos
-            donados de ${donationCampaign.amountGoal} pesos objetivo
-          </Text>
-          <Text
-            className={cn(
-              "text-gray-500 transition-colors duration-200 group-hover:text-primary"
-            )}
-          >
-            <span className="font-semibold"> Fecha de fin: </span>
-            {dayjs(donationCampaign.endDate).format("MMMM D, YYYY ")}
-          </Text>
+    <div>
+      {donationCampaign.img ? (
+        <div className="relative h-[200px] w-full">
+          <Image
+            src={donationCampaign.img}
+            alt="donation Campaign photo"
+            fill={true}
+            className="rounded-md object-cover"
+          />
         </div>
-      </div>
-      <div className="mt-auto grid gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
-        {/* <Wallet initialization={{ preferenceId: "<PREFERENCE_ID>" }} />
-        <div id="wallet_container"></div> */}
-        <Button
-          kind={Button.KINDS.gray}
-          onClick={() =>
-            handleModal(<DonateModal donationCampaign={donationCampaign} />)
-          }
+      ) : (
+        <div></div>
+      )}
+      <div className="flex flex-col gap-4">
+        <Title
+          as="h3"
+          className="transition-colors duration-300 group-hover:text-primary"
         >
-          Donar
-        </Button>
-        {isVet(session?.user) && (
-          <>
-            <Button kind={Button.KINDS.gray}>Editar</Button>
-          </>
-        )}
+          {donationCampaign.title}
+        </Title>
+        <Text
+          className={cn(
+            "truncate-2",
+            "text-gray-500 transition-colors duration-200 "
+          )}
+        >
+          <span className="font-semibold"> Razon de la publicacion: </span>
+          {donationCampaign.reason}
+        </Text>
+        <Text className={cn("text-gray-500 transition-colors duration-200 ")}>
+          <span className="font-semibold"> Progreso: </span>$
+          {donationCampaign.amountGoal - donationCampaign.currentAmount} pesos
+          donados de ${donationCampaign.amountGoal} pesos objetivo
+        </Text>
+        <Text className={cn("text-gray-500 transition-colors duration-200 ")}>
+          <span className="font-semibold"> Fecha de fin: </span>
+          {dayjs(donationCampaign.endDate).format("MMMM D, YYYY ")}
+        </Text>
       </div>
-    </Box>
+    </div>
   );
 }
 
@@ -100,7 +71,29 @@ export default function DonationCampaignList({
       {donationCampaigns.map((donationCampaign) => {
         return (
           <li key={donationCampaign.id} className="h-full">
-            <DonationCampaignItem donationCampaign={donationCampaign} />
+            <Link href={LINKS.donationCampaign(donationCampaign.id)}>
+              <Box className="group flex h-full flex-col gap-8 bg-white transition-all duration-300 hover:-translate-y-2 hover:border-primary">
+                <DonationCampaignItem donationCampaign={donationCampaign} />
+
+                <div
+                  className={cn(
+                    "group-hover:translate-x-2 group-hover:text-primary",
+                    "flex items-center gap-1 transition-all duration-300"
+                  )}
+                >
+                  Ver mas
+                  <ArrowSmallRightIcon
+                    className={cn(
+                      "opacity-0 group-hover:opacity-100",
+                      "h-5 w-5 stroke-2 transition-opacity duration-300"
+                    )}
+                    style={{
+                      transform: "rotate(-45deg)",
+                    }}
+                  />
+                </div>
+              </Box>
+            </Link>
           </li>
         );
       })}

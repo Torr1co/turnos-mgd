@@ -4,7 +4,7 @@ export const LINKS = {
   home: "/",
   me: "/me",
   services: "/services",
-  booking: (bookingId: string) => "/bookings/" + bookingId,
+  bookings: "/bookings",
   clients: "/admin/clients",
   pets: "/pets",
   signin: "/auth/signin",
@@ -14,6 +14,12 @@ export const LINKS = {
   crossBreeds: "/dog-assistance/cross-breeds",
   donationCampaigns: "/dog-assistance/donation-campaigns",
   lostDogs: "/dog-assistance/lost-dogs",
+  donationCampaign(donationCampaignId: string) {
+    return this.donationCampaigns + "/" + donationCampaignId;
+  },
+  booking(bookingId: string) {
+    return this.bookings + "/" + bookingId;
+  },
 } as const;
 
 const NAV_CONFIG = {
