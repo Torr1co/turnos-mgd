@@ -10,15 +10,15 @@ import { useModal } from "~/context/ModalContex";
 import { type BookingRelated } from "~/schemas/bookingSchema";
 import { BookingType } from "@prisma/client";
 import { BookingCompletionSchema, BookingTypeOptions } from "~/schemas";
-import CompleteCastrationForm from "./CastrationCompletionForm";
+import CastrationCompletionForm from "./CastrationCompletionForm";
 import { getOptionLabel } from "~/utils/schemaUtils";
 
 const BookingTypeConvertion = {
-  [BookingType.CASTRATION]: CompleteCastrationForm,
-  [BookingType.DEWORMING]: CompleteCastrationForm,
-  [BookingType.GENERAL]: CompleteCastrationForm,
-  [BookingType.VACCINE]: CompleteCastrationForm,
-  [BookingType.URGENCY]: CompleteCastrationForm,
+  [BookingType.CASTRATION]: CastrationCompletionForm,
+  [BookingType.DEWORMING]: CastrationCompletionForm,
+  [BookingType.GENERAL]: CastrationCompletionForm,
+  [BookingType.VACCINE]: CastrationCompletionForm,
+  [BookingType.URGENCY]: CastrationCompletionForm,
 } as const;
 
 export default function BookingCompletionModal({
