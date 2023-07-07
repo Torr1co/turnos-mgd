@@ -30,7 +30,7 @@ export const DonationCampaignUpdateSchema =
       invalid_type_error: "Requerido",
     }),
     currentAmount: z.number(),
-  }).refine((data) => data.amountGoal <= data.currentAmount, {
+  }).refine((data) => data.amountGoal >= data.currentAmount, {
     message: "No se puede reducir el monto actual",
     path: ["amountGoal"],
   });

@@ -50,7 +50,6 @@ export default function VetBookings() {
         <div>Cargando...</div>
       ) : (
         <BookingList
-          status={filters.bookingStatus} // TODO: remove
           bookings={bookings.filter((booking) => {
             const includesText =
               !filters.text ||

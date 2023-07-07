@@ -30,7 +30,7 @@ const DonationCampaigns = () => {
         <div className="flex gap-4">
           {session && (
             <Toggle
-              label="Campañas finalizadas"
+              label="Ver campañas finalizadas"
               checked={finished}
               onChange={() => setFinished((prev) => !prev)}
             />

@@ -50,7 +50,7 @@ export default function ClientList({
                         "capitalize transition-colors duration-300"
                       )}
                     >
-                      {user.name}
+                      {user.name} {user.lastname}
                     </Title>
                     <Text>{user.email}</Text>
                   </div>

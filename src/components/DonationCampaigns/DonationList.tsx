@@ -18,7 +18,7 @@ export function DonationItem({ donation }: { donation: DonationRelated }) {
         </Text>
         {isVet(session?.user) && (
           <Text className={cn("text-gray-500 transition-colors duration-200 ")}>
-            <span className="font-semibold"> Usuario que dono: </span>
+            <span className="font-semibold"> Usuario donante: </span>
             {donation.user
               ? `${donation.user.name} ${donation.user.lastname}`
               : "Anonimo"}
@@ -45,7 +45,7 @@ export default function DonationList({
       {donations.map((Donation) => {
         return (
           <li key={Donation.id} className="h-full">
-            <Box className="group flex h-full flex-col gap-8 bg-white transition-all duration-300 hover:-translate-y-2 hover:border-primary">
+            <Box className="group flex h-full flex-col gap-8 bg-white">
               <DonationItem donation={Donation} />
             </Box>
           </li>

@@ -17,6 +17,7 @@ import { cn } from "~/utils/styleUtils";
 import Link from "next/dist/client/link";
 import { LINKS } from "~/utils/navConfig";
 import BookingCompletionModal from "./BookingCompletion/BookingCompletionModal";
+import Text from "../_common/Typo/Text";
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);
@@ -93,15 +94,10 @@ export const BookingFilters = () => {
   );
 };
 
-export const BookingActions = ({
-  booking,
-  status,
-}: {
-  booking: BookingRelated;
-  status: BookingStatus; // TODO: remove
-}) => {
+export const BookingActions = ({ booking }: { booking: BookingRelated }) => {
   const { data: session } = useSession();
   const { handleModal } = useModal();
+  const status = booking.status;
 
   const ClientActions = () => {
     return (
@@ -162,6 +158,10 @@ export const BookingActions = ({
           </Button>
         )}
 
+        {status === BookingStatus.CANCELLED && (
+          <Text className="font-semibold text-red-400">TURNO CANCELADO</Text>
+        )}
+
         {status === BookingStatus.PENDING && (
           <ConfirmTooltip
             loading={isLoading}
@@ -191,7 +191,8 @@ export const BookingActions = ({
   return (
     <div className="flex gap-4">
       {isVet(session?.user) ? <VetActions /> : <ClientActions />}
-      {status !== BookingStatus.COMPLETED && (
+      {(status === BookingStatus.APPROVED ||
+        status === BookingStatus.PENDING) && (
         <CancelBooking booking={booking} />
       )}
     </div>

@@ -10,6 +10,9 @@ import DonationCampaignActions from "~/components/DonationCampaigns/DonationCamp
 import Title from "~/components/_common/Typo/Title";
 import DonateModal from "~/components/DonationCampaigns/DonateModal";
 import DonationList from "~/components/DonationCampaigns/DonationList";
+import { useSession } from "next-auth/react";
+import { isVet } from "~/utils/schemas/usersUtils";
+import { DonationCampaignStatus } from "@prisma/client";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -43,11 +46,12 @@ interface CampaignPageProps {
   campaign: string;
 }
 
-// TODO: convert to context
+// TODO: convert donation campaign to context
 export default function CampaignPage(props: CampaignPageProps) {
   const campaign = JSON.parse(props.campaign) as DonationCampaign & {
     donations: Donation[];
   };
+  const { data: session } = useSession();
   return (
     <div>
       <header className="mb-14 flex items-center justify-between">
@@ -56,8 +60,13 @@ export default function CampaignPage(props: CampaignPageProps) {
       <div className="grid grid-cols-2 gap-8">
         <Box className=" bg-white">
           <DonationCampaignItem donationCampaign={campaign} />
-          <hr className="mt-4 py-4" />
-          <DonationCampaignActions donationCampaign={campaign} />
+          {isVet(session?.user) &&
+            campaign.status === DonationCampaignStatus.ACTIVE && (
+              <>
+                <hr className="mt-4 py-4" />
+                <DonationCampaignActions donationCampaign={campaign} />
+              </>
+            )}
         </Box>
         <Box className=" bg-white">
           <DonateModal donationCampaign={campaign} />
