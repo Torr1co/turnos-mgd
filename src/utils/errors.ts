@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { type FormState } from "react-hook-form/dist/types";
 
 export function prismaError(error: unknown, errorMessage: string) {
   if (
@@ -13,4 +14,8 @@ export function prismaError(error: unknown, errorMessage: string) {
     };
   }
   throw new Error(errorMessage);
+}
+
+export function hasFormErrors(formState: FormState<any>) {
+  return Object.keys(formState.errors).length > 0;
 }

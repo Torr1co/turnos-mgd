@@ -9,7 +9,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint && npx prisma validate",
     "start": "next start",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "ngrok": "npx ngrok tunnel --region us --label edge=edghts_2SE1tb3ERKx9fEH4PKRGwP6H1G9 http://localhost:3000 "
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",

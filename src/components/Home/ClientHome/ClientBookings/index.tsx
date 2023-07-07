@@ -58,9 +58,7 @@ export default function ClientBookings() {
           <div>Cargando...</div>
         ) : (
           <BookingList
-            status={filters.bookingStatus}
             bookings={bookings.filter((booking) => {
-              console.log(booking.date, filters.rangeDate);
               const includesDate =
                 !filters.rangeDate ||
                 (!dayjs(filters.rangeDate[0]).isAfter(booking.date, "d") &&

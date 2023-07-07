@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const PetPage = (props: { pet: string }) => {
-  const { owner, healthBook, ...pet } = JSON.parse(props.pet) as PetRelated;
+  const { owner, ...pet } = JSON.parse(props.pet) as PetRelated;
   const { img, id, ...petData } = pet;
   const { data: session } = useSession();
   const methods = useForm<PetUpdateSchema>({
