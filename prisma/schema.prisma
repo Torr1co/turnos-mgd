@@ -269,6 +269,7 @@ model DonationCampaign {
 
 model Donation {
     id         String           @id @default(auto()) @map("_id") @db.ObjectId
+    paymentId  String           @unique
     createdAt  DateTime         @default(now())
     updatedAt  DateTime         @updatedAt
     amount     Int

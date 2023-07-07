@@ -47,8 +47,8 @@ export function DonationCampaignItem({
         </Text>
         <Text className={cn("text-gray-500 transition-colors duration-200 ")}>
           <span className="font-semibold"> Progreso: </span>$
-          {donationCampaign.amountGoal - donationCampaign.currentAmount} pesos
-          donados de ${donationCampaign.amountGoal} pesos objetivo
+          {donationCampaign.currentAmount} pesos donados de $
+          {donationCampaign.amountGoal} pesos objetivo
         </Text>
         <Text className={cn("text-gray-500 transition-colors duration-200 ")}>
           <span className="font-semibold"> Fecha de fin: </span>

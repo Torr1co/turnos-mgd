@@ -21,6 +21,7 @@ export default function DonationCampaignUpdateModal({
     api.donationCampaigns.update.useMutation({
       onSuccess: async () => {
         await utils.donationCampaigns.getAll.invalidate();
+        await utils.donationCampaigns.getById.invalidate();
       },
     });
   const methods = useForm<DonationCampaignUpdateSchema>({
@@ -29,6 +30,7 @@ export default function DonationCampaignUpdateModal({
       ...donationCampaign,
       id: donationCampaign.id,
       img: donationCampaign.img ?? undefined,
+      endDate: new Date(donationCampaign.endDate),
     },
   });
 

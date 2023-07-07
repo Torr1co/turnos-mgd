@@ -76,6 +76,13 @@ export const donationCampaignsRouter = createTRPCRouter({
           throw new Error("Campaña de donacion no encontrada");
         });
       const backUrl = `${getBaseUrl()}/dog-assistance/donation-campaigns/${id}`;
+      const notificationUrl = `${
+        process.env.NODE_ENV === "development"
+          ? "https://c9a45d59d5aa-7158303734866948717.ngrok-free.app"
+          : getBaseUrl()
+      }/api/donations/notification?campaignId=${id}&amount=${amount}&userId=${
+        ctx.session?.user.id ?? ""
+      }`;
       const preference = {
         items: [
           {
@@ -89,6 +96,7 @@ export const donationCampaignsRouter = createTRPCRouter({
           success: backUrl,
           failure: backUrl,
         },
+        notification_url: notificationUrl,
         statement_descriptor: "Veterinaria ¡Oh my dog!",
         auto_return: "approved",
       } satisfies Parameters<typeof mp.preferences.create>[0];
@@ -134,7 +142,11 @@ export const donationCampaignsRouter = createTRPCRouter({
         donations: !user
           ? false
           : isVet(user)
-          ? true
+          ? {
+              include: {
+                user: true,
+              },
+            }
           : {
               where: {
                 userId: user.id,
