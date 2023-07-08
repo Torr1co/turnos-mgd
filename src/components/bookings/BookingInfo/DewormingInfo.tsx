@@ -11,12 +11,12 @@ export default function DewormingInfo({
   const deworming = booking.deworming as Deworming;
   return (
     <dl className="grid grid-cols-2 gap-4">
-      <dt>Peso: </dt>
-      <dd>{booking.weight}</dd>
       <dt>Producto : </dt>
       <dd>{deworming ? deworming.product : ""}</dd>
       <dt>Dosis Aplicada: </dt>
       <dd>{deworming ? deworming.dosis : ""}</dd>
+      <dt>Peso: </dt>
+      <dd>{booking.weight}</dd>
     </dl>
   );
 }

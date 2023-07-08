@@ -10,12 +10,12 @@ export default function InquirieInfo({
   const inquirie = booking.inquirie as Inquirie;
   return (
     <dl className="grid grid-cols-2 gap-4">
-      <dt>Peso: </dt>
-      <dd>{booking.weight}</dd>
       <dt>Altura: </dt>
       <dd>{inquirie.height}</dd>
       <dt>Observaciones: </dt>
       <dd>{inquirie.observations}</dd>
+      <dt>Peso: </dt>
+      <dd>{booking.weight}</dd>
     </dl>
   );
 }

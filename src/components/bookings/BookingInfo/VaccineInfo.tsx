@@ -10,12 +10,12 @@ export default function VaccineInfo({
   const vaccine = booking.vaccine as Vaccine;
   return (
     <dl className="grid grid-cols-2 gap-4">
-      <dt>Peso: </dt>
-      <dd>{booking.weight}</dd>
       <dt>Tipo: </dt>
       <dd>{booking.vaccineType}</dd> 
       <dt>Dosis Aplicada : </dt>
       <dd>{vaccine.dosis}</dd>
+      <dt>Peso: </dt>
+      <dd>{booking.weight}</dd>
     </dl>
   );
 }
