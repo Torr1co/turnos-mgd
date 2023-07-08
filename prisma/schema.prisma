@@ -68,20 +68,22 @@ model Booking {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    status    BookingStatus @default(PENDING)
-    date      DateTime
-    type      BookingType
-    vaccineType   VaccineType?
-    timeZone  TimeZone
-    user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String       @db.ObjectId
-    dog       Pet          @relation(fields: [dogId], references: [id], onDelete: Cascade)
-    dogId     String       @db.ObjectId
+    status      BookingStatus @default(PENDING)
+    date        DateTime
+    type        BookingType
+    vaccineType VaccineType?
+    timeZone    TimeZone
+    user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String        @db.ObjectId
+    dog         Pet           @relation(fields: [dogId], references: [id], onDelete: Cascade)
+    dogId       String        @db.ObjectId
 
-    urgency   Urgency?
-    inquirie Inquirie?
-    deworming Deworming?
-    vaccine Vaccine?
+    weight Float?
+
+    urgency    Urgency?
+    inquirie   Inquirie?
+    deworming  Deworming?
+    vaccine    Vaccine?
     castration Castration?
 }
 
@@ -118,8 +120,8 @@ model Urgency {
 
     observations String?
 
-    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId    String  @unique @db.ObjectId
+    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -130,10 +132,9 @@ model Inquirie {
 
     observations String?
     height       Float?
-    weight       Float?
 
-    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId    String  @unique @db.ObjectId
+    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -142,11 +143,11 @@ model Deworming {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    product      String
-    dosis        String
+    product String
+    dosis   Float
 
-    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId    String  @unique @db.ObjectId
+    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -160,11 +161,10 @@ model Vaccine {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    type         VaccineType
-    lab          String
+    dosis Float
 
-    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId    String  @unique @db.ObjectId
+    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId String  @unique @db.ObjectId
 }
 
 // ------------------------------            ---------------------------------
@@ -173,10 +173,10 @@ model Castration {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    type         String
-
-    booking      Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId    String  @unique @db.ObjectId
+    succesful Boolean 
+    
+    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+    bookingId String  @unique @db.ObjectId
 }
 
 // ------------------------------     ADOPTION       ---------------------------------
@@ -188,10 +188,10 @@ model AdoptPublication {
     info      String?
     active    Boolean  @default(true)
     reason    String
-    dog       Dog     @relation(fields: [dogId], references: [id], onDelete: Cascade)
-    dogId     String  @unique @db.ObjectId
-    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String  @db.ObjectId
+    dog       Dog      @relation(fields: [dogId], references: [id], onDelete: Cascade)
+    dogId     String   @unique @db.ObjectId
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String   @db.ObjectId
 }
 
 model Dog {
@@ -199,15 +199,15 @@ model Dog {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    name          String?
-    birth         DateTime?
-    gender        String?
-    color         String?
-    height        Float?
-    weight        Float?
-    race          String?
-    castrated     Boolean?
-    adoption      AdoptPublication?
+    name      String?
+    birth     DateTime?
+    gender    String?
+    color     String?
+    height    Float?
+    weight    Float?
+    race      String?
+    castrated Boolean?
+    adoption  AdoptPublication?
 }
 
 // ------------------------------     SERVICES       ---------------------------------
@@ -250,16 +250,17 @@ enum DonationCampaignStatus {
     ACTIVE
     FINISHED
 }
+
 model DonationCampaign {
-    id            String     @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt     DateTime   @default(now())
-    updatedAt     DateTime   @updatedAt
+    id            String                 @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt     DateTime               @default(now())
+    updatedAt     DateTime               @updatedAt
     status        DonationCampaignStatus @default(ACTIVE)
     title         String
     reason        String
     amountGoal    Int
     endDate       DateTime
-    currentAmount Int        @default(0)
+    currentAmount Int                    @default(0)
     img           String?
     donations     Donation[]
 }
@@ -270,8 +271,8 @@ model Donation {
     createdAt  DateTime         @default(now())
     updatedAt  DateTime         @updatedAt
     amount     Int
-    user       User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId     String?           @db.ObjectId
+    user       User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId     String?          @db.ObjectId
     campaign   DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
     campaignId String           @db.ObjectId
 }

@@ -24,6 +24,9 @@ import {
   getBooking,
 } from "~/utils/schemas/bookingUtils";
 import { isVet } from "~/utils/schemas/usersUtils";
+import { type InquirieCompletionSchema } from "~/schemas/inquirieSchema";
+import { type DewormingCompletionSchema } from "~/schemas/dewormingSchema";
+import { type VaccineCompletionSchema } from "~/schemas/vaccineSchema";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -369,9 +372,54 @@ export const bookingsRouter = createTRPCRouter({
                   id: input.bookingId,
                 },
               },
-              type: castration.type,
+              succesful: castration.succesful,
             },
           });
+          break;
+          case BookingType.GENERAL: 
+        
+            const general = input.general as InquirieCompletionSchema;
+            await ctx.prisma.inquirie.create({
+              data: {
+                booking: {
+                  connect: {
+                    id: input.bookingId,
+                  },
+                },
+                height : general.height,
+                observations : general.observations,
+              },
+            });
+          break;
+          case BookingType.DEWORMING: 
+            const deworming = input.deworming as unknown as DewormingCompletionSchema;
+            await ctx.prisma.deworming.create({
+              data: {
+                booking: {
+                  connect: {
+                    id: input.bookingId,
+                  },
+                },
+                product: deworming.product,
+                dosis : deworming.dosis,
+              },
+            });
+            break;
+            case BookingType.VACCINE: 
+            const vaccine = input.vaccine as unknown as VaccineCompletionSchema;
+            await ctx.prisma.vaccine.create({
+              data: {
+                booking: {
+                  connect: {
+                    id: input.bookingId,
+                  },
+                },
+                dosis : vaccine.dosis,
+              },
+            });
+            break;
+          
+
       }
 
       return ctx.prisma.booking.update({
@@ -380,6 +428,7 @@ export const bookingsRouter = createTRPCRouter({
         },
         data: {
           status: BookingStatus.COMPLETED,
+          weight : input.weight,
         },
       });
     }),

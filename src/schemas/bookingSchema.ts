@@ -12,6 +12,10 @@ import {
 } from "@prisma/client";
 import { z } from "zod";
 import { BookingStatus } from "@prisma/client";
+import { DewormingCompletionSchema } from "./dewormingSchema";
+import { CastrationCompletionSchema } from "./castrationSchema";
+import { VaccineCompletionSchema } from "./vaccineSchema";
+import { InquirieCompletionSchema } from "./inquirieSchema";
 
 export type BookingRelated = Booking & {
   dog: Pet;
@@ -68,16 +72,20 @@ export const BookingGetAllSchema = z
   )
   .default({ status: BookingStatus.APPROVED });
 
-export const CastrationCompletionSchema = z.object({
-  type: z.string().min(1, { message: "Requerido" }),
-});
+
 
 export const BookingCompletionSchema = z.object({
   bookingId: z.string(),
   castration: z.optional(CastrationCompletionSchema),
-  deworming: z.optional(CastrationCompletionSchema),
-  vaccine: z.optional(CastrationCompletionSchema),
-  general: z.optional(CastrationCompletionSchema),
+  deworming: z.optional(DewormingCompletionSchema),
+  vaccine: z.optional(VaccineCompletionSchema),
+  general: z.optional(InquirieCompletionSchema),
+  weight: z
+        .number({
+        required_error: "Requerido",
+        invalid_type_error: "Requerido",
+        })
+        .max(150, "No puede pesar mas de 150"),
 });
 
 export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;

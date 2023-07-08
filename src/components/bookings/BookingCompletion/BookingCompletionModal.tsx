@@ -12,12 +12,15 @@ import { BookingType } from "@prisma/client";
 import { BookingCompletionSchema, BookingTypeOptions } from "~/schemas";
 import CastrationCompletionForm from "./CastrationCompletionForm";
 import { getOptionLabel } from "~/utils/schemaUtils";
+import GeneralCompletionForm from "./GeneralCompletionForm";
+import DewormingCompletionForm from "./DewormingCompletionForm";
+import VaccineCompletionForm from "./VaccineCompletionForm";
 
 const BookingTypeConvertion = {
   [BookingType.CASTRATION]: CastrationCompletionForm,
-  [BookingType.DEWORMING]: CastrationCompletionForm,
-  [BookingType.GENERAL]: CastrationCompletionForm,
-  [BookingType.VACCINE]: CastrationCompletionForm,
+  [BookingType.DEWORMING]: DewormingCompletionForm,
+  [BookingType.GENERAL]: GeneralCompletionForm,
+  [BookingType.VACCINE]: VaccineCompletionForm,
   [BookingType.URGENCY]: CastrationCompletionForm,
 } as const;
 
@@ -79,6 +82,18 @@ export default function BookingCompletionModal({
         </div>
       </header>
       <BookingTypeForm />
+      <Form.Number
+        path="weight"
+        label="Peso (kg)"
+        min={0}
+        onChange={(e) => {
+          methods.setValue(
+            "weight",
+            +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+          );
+        }}
+        required
+      />
     </Form>
   );
 }

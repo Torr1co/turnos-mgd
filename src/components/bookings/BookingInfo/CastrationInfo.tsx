@@ -10,8 +10,10 @@ export default function CastrationInfo({
   const castration = booking.castration as Castration;
   return (
     <dl className="grid grid-cols-2 gap-4">
-      <dt>Tipo de castracion:</dt>
-      <dd>{castration.type}</dd>
+      <dt>Se concreto la castracion ?:</dt>
+      <dd>{castration.succesful ?'Si' : 'No'}</dd>
+      <dt> Peso :</dt>
+      <dd>{booking.weight }</dd>
     </dl>
   );
 }

@@ -20,6 +20,8 @@ export const petsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { owner, ...dogData } = input;
 
+      
+
       const dog = await ctx.prisma.pet
         .create({
           data: {
