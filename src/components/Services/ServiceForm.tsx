@@ -6,7 +6,13 @@ import {
 import Form from "../_common/Form";
 import { useFormContext } from "react-hook-form";
 import Image from "next/image";
-export default function ServiceForm() {
+
+export type ServiceFormTypes = "CREATION" | "UPDATE";
+export default function ServiceForm({
+  type = "CREATION",
+}: {
+  type?: ServiceFormTypes;
+}) {
   const methods = useFormContext<ServiceCreationSchema>();
   const photo = methods.watch("photo");
   return (
@@ -36,7 +42,23 @@ export default function ServiceForm() {
       />
       <Form.Input path="email" label="Email del proveedor" required />
 
-      <Form.Select path="type" label="Tipo" values={ServiceOptions} required />
+      {type === "CREATION" ? (
+        <Form.Select
+          path="types"
+          label="Tipo"
+          values={ServiceOptions}
+          multiple
+          required
+        />
+      ) : (
+        <Form.Select
+          path="type"
+          label="Tipo"
+          disabled
+          values={ServiceOptions}
+          required
+        />
+      )}
 
       <Form.ImageUploader path="photo" label="Foto " />
       <div className="md:col-span-2">

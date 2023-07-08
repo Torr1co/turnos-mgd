@@ -60,8 +60,6 @@ model User {
     adoptPublications AdoptPublication[]
     lostPublications  LostPublication[]
     donations         Donation[]
-    servicesIds       String[]           @db.ObjectId
-    servicesHired     Service[]          @relation(fields: [servicesIds], references: [id])
 }
 
 // ------------------------------    RESERVATIONS       ----------------------------
@@ -103,7 +101,8 @@ model Pet {
     castrated    Boolean
     letsCross    Boolean  @default(false)
     observations String
-
+    disabled     Boolean?  @default(false)
+    
     booking      Booking[]
     owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId      String     @db.ObjectId
@@ -221,16 +220,14 @@ enum ServiceTypes {
 model Service {
     id           String       @id @default(auto()) @map("_id") @db.ObjectId
     createdAt    DateTime     @default(now())
-    updatedAt    DateTime     @updatedAt
-    name         String
-    email        String
     availability Boolean      @default(true)
     zone         String
     hour         String
-    photo        String?
     type         ServiceTypes
-    clientsIds   String[]     @db.ObjectId
-    clients      User[]       @relation(fields: [clientsIds], references: [id])
+    name         String
+    email        String   
+    photo        String?
+    @@unique([type, email])
 }
 
 // ------------------------------     LOST PUBLICATIONS       ---------------------------------

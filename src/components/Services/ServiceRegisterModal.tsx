@@ -15,7 +15,7 @@ export default function ServiceRegisterModal() {
   const methods = useForm<ServiceCreationSchema>({
     schema: ServiceCreationSchema,
     defaultValues: {
-      type: ServiceTypes.DOGWALKER,
+      types: [ServiceTypes.DOGWALKER],
     },
   });
   const utils = api.useContext();
@@ -26,6 +26,7 @@ export default function ServiceRegisterModal() {
       },
     });
 
+  console.log(methods.watch());
   return (
     <Form
       className="flex flex-col gap-6"
