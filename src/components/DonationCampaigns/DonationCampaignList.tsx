@@ -2,7 +2,7 @@ import React from "react";
 import Box from "~/components/_common/Box";
 import Text from "~/components/_common/Typo/Text";
 import { cn } from "~/utils/styleUtils";
-import { type DonationCampaign } from "@prisma/client";
+import { DonationCampaignStatus, type DonationCampaign } from "@prisma/client";
 import Image from "next/image";
 import Title from "../_common/Typo/Title";
 import dayjs from "dayjs";
@@ -11,9 +11,11 @@ import { LINKS } from "~/utils/navConfig";
 import { ArrowSmallRightIcon } from "@heroicons/react/24/solid";
 
 export function DonationCampaignItem({
+  truncate = true,
   donationCampaign,
 }: {
   donationCampaign: DonationCampaign;
+  truncate?: boolean;
 }) {
   return (
     <div>
@@ -34,11 +36,13 @@ export function DonationCampaignItem({
           as="h3"
           className="transition-colors duration-300 group-hover:text-primary"
         >
-          {donationCampaign.title}
+          {donationCampaign.title}{" "}
+          {donationCampaign.status === DonationCampaignStatus.FINISHED &&
+            "(Finalizada)"}
         </Title>
         <Text
           className={cn(
-            "truncate-2",
+            truncate && "truncate-2",
             "text-gray-500 transition-colors duration-200 "
           )}
         >
@@ -65,7 +69,7 @@ export default function DonationCampaignList({
   donationCampaigns: DonationCampaign[];
 }) {
   return donationCampaigns.length === 0 ? (
-    <div>No se encontraron publicaciones de adopcion</div>
+    <div>No se encontraron campañas de donacion</div>
   ) : (
     <ul className="grid  gap-12 md:grid-cols-2">
       {donationCampaigns.map((donationCampaign) => {
@@ -78,7 +82,7 @@ export default function DonationCampaignList({
                 <div
                   className={cn(
                     "group-hover:translate-x-2 group-hover:text-primary",
-                    "flex items-center gap-1 transition-all duration-300"
+                    "flex items-center gap-1 font-semibold transition-all duration-300"
                   )}
                 >
                   Ver mas

@@ -1,8 +1,17 @@
-import { UserRoles } from ".prisma/client";
+import { UserRoles, BookingStatus } from ".prisma/client";
 import { z } from "zod";
-import { PetCreationSchema, PetUpdateSchema } from "~/schemas/petSchema";
+import {
+  PetCreationSchema,
+  PetDisableSchema,
+  PetUpdateSchema,
+} from "~/schemas/petSchema";
 // import { get } from 'react-hook-form';
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  vetProcedure,
+} from "~/server/api/trpc";
+import sendEmail from "~/server/email";
 import { prismaError } from "~/utils/errors";
 
 export const petsRouter = createTRPCRouter({
@@ -29,6 +38,52 @@ export const petsRouter = createTRPCRouter({
       return dog;
     }),
 
+  disable: vetProcedure
+    .input(PetDisableSchema)
+    .mutation(async ({ input: { petId }, ctx }) => {
+      const pet = await ctx.prisma.pet
+        .findFirstOrThrow({
+          where: {
+            id: petId,
+          },
+          include: {
+            owner: true,
+          },
+        })
+        .catch(() => {
+          throw new Error("El perro no esta habilitado");
+        });
+
+      await ctx.prisma.$transaction(async (prisma) => {
+        await prisma.booking.updateMany({
+          where: {
+            dogId: petId,
+            status: {
+              in: [BookingStatus.APPROVED, BookingStatus.PENDING],
+            },
+          },
+          data: {
+            status: BookingStatus.CANCELLED,
+          },
+        });
+        await prisma.pet.update({
+          where: {
+            id: petId,
+          },
+          data: {
+            disabled: true,
+          },
+        });
+      });
+
+      await sendEmail({
+        to: pet.owner.email,
+        from: "v.ohmydog@gmail.com",
+        subject: `Se ha deshabilitado su perro ${pet.name} en ohMyDog!`,
+        text: `Su perro ha sido deshabilitado de la aplicacion, junto a sus turnos.
+        Si cree que esto fuer un error, contacte con su veterinario`,
+      });
+    }),
   //Update pet
   update: protectedProcedure
     .input(PetUpdateSchema)

@@ -19,7 +19,7 @@ const DonationCampaignActions = ({
   const { mutate: finishCampaign, isLoading } =
     api.donationCampaigns.finish.useMutation({
       onSuccess: async () => {
-        await utils.donationCampaigns.getAll.invalidate();
+        await utils.donationCampaigns.getById.invalidate();
       },
     });
   return (

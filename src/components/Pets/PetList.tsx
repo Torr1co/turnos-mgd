@@ -10,14 +10,23 @@ export default function PetList({ pets }: { pets: Pet[] }) {
       {pets.length > 0 ? (
         pets.map((pet) => (
           <li key={pet.id} className="group">
-            <Link href={"/pets/" + pet.id}>
+            {pet.disabled ? (
               <Box
-                size="p-10 rounded-lg"
-                className="bg-white transition-colors duration-300 group-hover:border-primary"
+                size="p-10 rounded-lg cursor-not-allowed"
+                className="bg-white "
               >
                 <PetItem pet={pet} />
               </Box>
-            </Link>
+            ) : (
+              <Link href={"/pets/" + pet.id}>
+                <Box
+                  size="p-10 rounded-lg"
+                  className="bg-white transition-colors duration-300 group-hover:border-primary"
+                >
+                  <PetItem pet={pet} />
+                </Box>
+              </Link>
+            )}
           </li>
         ))
       ) : (

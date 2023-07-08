@@ -124,8 +124,8 @@ export const bookingsRouter = createTRPCRouter({
     .query(async ({ ctx, input: { status } }) => {
       const bookings = ctx.prisma.booking.findMany({
         where: {
-          ...BookingStatusQueries[status],
           userId: isVet(ctx.session?.user) ? undefined : ctx.session?.user.id,
+          ...BookingStatusQueries[status],
         },
         include: {
           dog: true,

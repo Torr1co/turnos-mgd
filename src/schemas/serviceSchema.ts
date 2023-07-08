@@ -29,12 +29,19 @@ export const ServiceCreationSchema = z.object({
     .min(10, "Minimo 10 caracteres")
     .max(50, "Maximo 50 caracteres"),
   photo: z.string().nullish(),
-  type: z.nativeEnum(ServiceTypes),
+  types: z.array(z.nativeEnum(ServiceTypes)).min(1, "Requerido"),
 });
 
-export const ServiceUpdateSchema = ServiceCreationSchema.partial().extend({
-  id: z.string(),
-});
+export const ServiceUpdateSchema = ServiceCreationSchema.omit({
+  types: true,
+})
+  .partial()
+  .extend({
+    id: z.string(),
+    availability: z.optional(z.boolean()),
+    type: z.optional(z.nativeEnum(ServiceTypes)),
+  });
+
 export const ServiceGetAllSchema = z
   .optional(
     z.object({
@@ -42,6 +49,7 @@ export const ServiceGetAllSchema = z
     })
   )
   .default({ enabled: true });
+
 export type ServiceCreationSchema = z.infer<typeof ServiceCreationSchema>;
 export type ServiceUpdateSchema = z.infer<typeof ServiceUpdateSchema>;
 

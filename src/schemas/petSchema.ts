@@ -41,11 +41,16 @@ export const PetUpdateSchema = z.object({
   dog: PetSchema.partial(),
 });
 
+export const PetDisableSchema = z.object({
+  petId: z.string(),
+});
+
 export type PetRelated = Pet & {
   owner: User;
 };
 export type PetSchema = z.infer<typeof PetSchema>;
 export type PetUpdateSchema = z.infer<typeof PetUpdateSchema>;
+export type PetDisableSchema = z.infer<typeof PetDisableSchema>;
 export type PetCreationSchema = z.infer<typeof PetCreationSchema>;
 
 export const GenderOptions = [

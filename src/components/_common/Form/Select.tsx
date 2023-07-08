@@ -11,24 +11,70 @@ export type SelectOption<T> = {
   label: string;
 };
 
-export interface SelectProps<T> extends FC {
+export interface BaseSelectProps<T> extends FC {
   values: SelectOption<T>[] | readonly SelectOption<T>[];
-  value: SelectOption<T>["value"];
-  onChange: (value: SelectOption<T>["value"]) => void;
   kind?: string;
+  multiple?: boolean;
+  disabled?: boolean;
 }
-export default function Select<T extends string | number | undefined | null>({
-  values,
-  children,
-  value,
-  onChange,
-  kind,
-}: SelectProps<T>) {
+
+export interface MultipleSelectProps<T> extends BaseSelectProps<T> {
+  value: T[];
+  onChange: (value: T[]) => void;
+}
+
+export interface SingleSelectProps<T> extends BaseSelectProps<T> {
+  value: T;
+  onChange: (value: T) => void;
+}
+
+export type SelectProps<T> = MultipleSelectProps<T> | SingleSelectProps<T>;
+
+const isMultiple = <T extends string | number | undefined | null>(
+  props: SelectProps<T>
+): props is MultipleSelectProps<T> => {
+  return !!props.multiple;
+};
+
+export default function Select<T extends number | string | undefined | null>(
+  props: SelectProps<T>
+) {
+  const { values, children, value, onChange, kind, disabled, multiple } = props;
+
+  function Label(props: SelectProps<T>) {
+    if (isMultiple(props)) {
+      return (
+        <div className="flex flex-wrap">
+          {props.value
+            .map(
+              (v) => props.values.find((option) => option.value === v)?.label
+            )
+            .join(", ")}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {value === undefined
+          ? children
+          : props.values.find((option) => option.value === value)?.label}
+      </>
+    );
+  }
+
   return (
-    <Listbox as={"div"} value={value} onChange={onChange}>
+    <Listbox
+      as={"div"}
+      value={value}
+      onChange={onChange}
+      multiple={multiple}
+      disabled={disabled}
+    >
       <Listbox.Button
         className={cn(
-          "font-regular w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1",
+          "font-regular  w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 focus:ring-1 disabled:cursor-not-allowed disabled:bg-gray-300",
+          !disabled && "hover:border-primary",
           kind
         )}
       >
@@ -36,9 +82,7 @@ export default function Select<T extends string | number | undefined | null>({
           return (
             <div className="flex items-center justify-between">
               <div>
-                {(value !== undefined &&
-                  values.find((option) => option.value === value)?.label) ||
-                  children}
+                <Label {...props} />
               </div>
               {open ? (
                 <ChevronUpIcon
@@ -83,8 +127,9 @@ export default function Select<T extends string | number | undefined | null>({
 
 interface FieldSelectProps<T>
   extends Omit<SelectProps<T>, "value" | "onChange"> {
-  onChange?: (value: SelectOption<T>["value"]) => void;
+  onChange?: (value: T | T[]) => void;
   path: string;
+  multiple?: boolean;
 }
 
 export function FieldSelect<T extends string | number | undefined | null>({
@@ -98,7 +143,7 @@ export function FieldSelect<T extends string | number | undefined | null>({
         <Select
           {...props}
           {...field}
-          onChange={(value: T) => {
+          onChange={(value: T | T[]) => {
             field.onChange(value);
             props.onChange?.(value);
           }}
@@ -113,7 +158,7 @@ export function SelectHeader<T extends string | number | undefined>({
   value,
   onChange,
   kind,
-}: SelectProps<T>) {
+}: SingleSelectProps<T>) {
   return (
     <div className={cn("flex items-center divide-x divide-gray-500", kind)}>
       {values.map((option, i) => {

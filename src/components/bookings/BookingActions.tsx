@@ -102,7 +102,8 @@ export const BookingActions = ({ booking }: { booking: BookingRelated }) => {
   const ClientActions = () => {
     return (
       <>
-        {status !== BookingStatus.COMPLETED && (
+        {(status === BookingStatus.PENDING ||
+          status === BookingStatus.APPROVED) && (
           <Button
             kind={Button.KINDS.gray}
             onClick={() => {
@@ -128,25 +129,6 @@ export const BookingActions = ({ booking }: { booking: BookingRelated }) => {
 
     return (
       <>
-        {status === BookingStatus.COMPLETED && (
-          <Link href={LINKS.booking(booking.id)}>
-            <Button
-              kind={Button.KINDS.gray}
-              className="group flex items-center gap-2"
-            >
-              Ver mas
-              <ArrowSmallRightIcon
-                className={cn(
-                  "h-5 w-5 stroke-2 transition-opacity duration-300"
-                )}
-                style={{
-                  transform: "rotate(-45deg)",
-                }}
-              />
-            </Button>
-          </Link>
-        )}
-
         {status === BookingStatus.APPROVED && (
           <Button
             kind={Button.KINDS.gray}
@@ -156,10 +138,6 @@ export const BookingActions = ({ booking }: { booking: BookingRelated }) => {
           >
             Completar
           </Button>
-        )}
-
-        {status === BookingStatus.CANCELLED && (
-          <Text className="font-semibold text-red-400">TURNO CANCELADO</Text>
         )}
 
         {status === BookingStatus.PENDING && (
@@ -191,6 +169,25 @@ export const BookingActions = ({ booking }: { booking: BookingRelated }) => {
   return (
     <div className="flex gap-4">
       {isVet(session?.user) ? <VetActions /> : <ClientActions />}
+      {status === BookingStatus.COMPLETED && (
+        <Link href={LINKS.booking(booking.id)}>
+          <Button
+            kind={Button.KINDS.gray}
+            className="group flex items-center gap-2"
+          >
+            Ver mas
+            <ArrowSmallRightIcon
+              className={cn("h-5 w-5 stroke-2 transition-opacity duration-300")}
+              style={{
+                transform: "rotate(-45deg)",
+              }}
+            />
+          </Button>
+        </Link>
+      )}
+      {status === BookingStatus.CANCELLED && (
+        <Text className="font-semibold text-red-400">TURNO CANCELADO</Text>
+      )}
       {(status === BookingStatus.APPROVED ||
         status === BookingStatus.PENDING) && (
         <CancelBooking booking={booking} />

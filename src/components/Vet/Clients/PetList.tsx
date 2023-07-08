@@ -4,14 +4,20 @@ import Title from "~/components/_common/Typo/Title";
 import Link from "next/link";
 import Text from "~/components/_common/Typo/Text";
 import Image from "next/image";
-import { getDogIcon } from "~/utils/styleUtils";
+import { cn, getDogIcon } from "~/utils/styleUtils";
+import { ArrowSmallRightIcon } from "@heroicons/react/24/solid";
 
 export function PetItem({ pet }: { pet: Pet }) {
   const PetIcon = getDogIcon(pet.id);
   return (
-    <div className="items group flex gap-8">
+    <div
+      className={cn(
+        "items group flex gap-8",
+        pet.disabled && "cursor-not-allowed grayscale"
+      )}
+    >
       {pet.img ? (
-        <div className="relative h-[76px] w-full max-w-[76px]">
+        <div className={cn("relative h-[76px] w-full max-w-[76px]")}>
           <Image
             src={pet.img}
             alt="pet photo"
@@ -28,9 +34,26 @@ export function PetItem({ pet }: { pet: Pet }) {
         <Title
           as="h4"
           size="font-semibold"
-          className=" capitalize transition-colors duration-200 group-hover:text-primary"
+          className={cn(
+            "flex items-center gap-2 capitalize",
+            !pet.disabled &&
+              " transition-colors duration-200 group-hover:text-primary"
+          )}
         >
-          {pet.name}
+          {pet.name}{" "}
+          {pet.disabled ? (
+            "(Deshabilitado)"
+          ) : (
+            <ArrowSmallRightIcon
+              className={cn(
+                "opacity-0 group-hover:opacity-100",
+                "h-5 w-5 stroke-2 transition-opacity duration-300 "
+              )}
+              style={{
+                transform: "rotate(-45deg)",
+              }}
+            />
+          )}
         </Title>
         <Text className="text-gray-500 transition-colors duration-200 truncate-2 group-hover:text-primary">
           {pet.observations}
@@ -46,9 +69,13 @@ export default function PetList({ pets }: { pets: Pet[] }) {
       {pets.length > 0 ? (
         pets.map((pet) => (
           <li key={pet.id} className="">
-            <Link href={"/pets/" + pet.id}>
+            {pet.disabled ? (
               <PetItem pet={pet} />
-            </Link>
+            ) : (
+              <Link href={"/pets/" + pet.id}>
+                <PetItem pet={pet} />
+              </Link>
+            )}
           </li>
         ))
       ) : (

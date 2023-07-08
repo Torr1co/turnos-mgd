@@ -48,7 +48,7 @@ export default function ServiceUpdateModal({ service }: { service: Service }) {
           </Button>
         </div>
       </header>
-      <ServiceForm />
+      <ServiceForm type="UPDATE" />
     </Form>
   );
 }
