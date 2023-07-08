@@ -18,7 +18,7 @@ export default function BookingInfo({ booking }: { booking: BookingRelated }) {
       {booking.type === BookingType.VACCINE && (
         <>
           <dt>Tipo de vacuna:</dt>
-          <dd>{booking.vaccine}</dd>
+          <dd>{booking.vaccineType}</dd>
         </>
       )}
       <dt>Horario:</dt>

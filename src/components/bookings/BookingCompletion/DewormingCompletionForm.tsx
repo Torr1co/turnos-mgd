@@ -3,25 +3,26 @@ import Form from "~/components/_common/Form";
 import { useFormContext } from "react-hook-form";
 import { type BookingCompletionSchema } from "~/schemas";
 
-export default function GeneralCompletionForm() {
+export default function DewormingCompletionForm() {
   const methods = useFormContext< BookingCompletionSchema >();
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    
+    <div className="grid gap-6">
+      
+      <Form.Input path="deworming.product" label="Producto Aplicado" required />
       <Form.Number
-        path="general.height"
-        label="Altura (cm)"
+        path="deworming.dosis"
+        label="Dosis de antiparasitario (ml)"
         min={0}
         onChange={(e) => {
           methods.setValue(
-            "general.height",
+            "deworming.dosis",
             +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
           );
         }}
         required
       />
-      <div className="md:col-span-2">
-        <Form.TextArea path="general.observations" label="Observaciones" />
-      </div>
+      
     </div>
   );
 }
