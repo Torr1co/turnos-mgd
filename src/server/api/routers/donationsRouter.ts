@@ -111,27 +111,6 @@ export const donationCampaignsRouter = createTRPCRouter({
         });
     }),
 
-  finishDonation: publicProcedure
-    .input(DonateSchema)
-    .mutation(async ({ input, ctx }) => {
-      const user = ctx.session?.user;
-      return await ctx.prisma.donation.create({
-        data: {
-          amount: input.amount,
-          user: {
-            connect: {
-              id: user?.id,
-            },
-          },
-          campaign: {
-            connect: {
-              id: input.donationCampaignId,
-            },
-          },
-        },
-      });
-    }),
-
   getById: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
     const user = ctx.session?.user;
     return await ctx.prisma.donationCampaign.findFirst({

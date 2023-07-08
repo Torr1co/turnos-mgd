@@ -46,22 +46,24 @@ export const ServicesFilters = () => {
   );
 };
 
-const DisableService = ({ service }: { service: Service }) => {
+const EnableService = ({ service }: { service: Service }) => {
   const utils = api.useContext();
-  const { mutate: DisableService, isLoading } =
-    api.services.disable.useMutation({
-      onSuccess: async () => {
-        await utils.services.getAll.invalidate();
-      },
-    });
+  const { mutate: updateService, isLoading } = api.services.update.useMutation({
+    onSuccess: async () => {
+      await utils.services.getAll.invalidate();
+    },
+  });
   return (
     <ConfirmTooltip
       onConfirm={() => {
-        DisableService(service.id);
+        updateService({
+          id: service.id,
+          availability: !service.availability,
+        });
       }}
     >
       <Button kind={Button.KINDS.gray} loading={isLoading}>
-        Deshabilitar
+        {service.availability ? "Deshabilitar" : "Habilitar"}
       </Button>
     </ConfirmTooltip>
   );
@@ -81,7 +83,7 @@ export const ServiceActions = ({ service }: { service: Service }) => {
       >
         Editar
       </Button>
-      <DisableService service={service} />
+      <EnableService service={service} />
     </div>
   ) : (
     <div className="flex gap-4">

@@ -38,7 +38,12 @@ const Services = () => {
     <div>
       <header className="mb-14 flex items-center justify-between">
         <Title>
-          Servicios {filters.enabled ? "habilitados" : "deshabilitados"}
+          Servicios{" "}
+          {isVet(session?.user)
+            ? filters.enabled
+              ? "habilitados"
+              : "deshabilitados"
+            : ""}
         </Title>
         <div className="flex gap-4">
           <Form methods={methods}>

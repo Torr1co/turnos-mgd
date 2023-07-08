@@ -95,7 +95,6 @@ export default function PetForm() {
       <div className="md:col-span-2">
         <Form.Toggle path="dog.castrated" label="Se encuentra castrado?" />
       </div>
-      {/* <Form.Input path="dog.img" label="Foto" type="file" /> */}
     </div>
   );
 }

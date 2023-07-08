@@ -63,10 +63,12 @@ export default function BookingCreationModal() {
       <Form.Select
         label="Perro"
         path="booking.dog"
-        values={dogs.map((dog) => ({
-          value: dog.id,
-          label: dog.name,
-        }))}
+        values={dogs
+          .filter((dog) => !dog.disabled)
+          .map((dog) => ({
+            value: dog.id,
+            label: dog.name,
+          }))}
         required
       />
     </Form>

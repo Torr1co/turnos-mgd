@@ -31,6 +31,35 @@ export default async function handler(
         },
       },
     });
+    const campaign = await prisma.donationCampaign.findUnique({
+      where: {
+        id: campaignId,
+      },
+      select: {
+        currentAmount: true,
+        amountGoal: true,
+      },
+    });
+    if (!campaign) {
+      return res.status(404).json({
+        error: "Campaña no encontrada",
+      });
+    }
+
+    await prisma.donationCampaign.update({
+      where: {
+        id: campaignId,
+      },
+      data: {
+        currentAmount: {
+          increment: parseInt(amount),
+        },
+        status:
+          campaign.currentAmount + parseInt(amount) >= campaign.amountGoal
+            ? "FINISHED"
+            : "ACTIVE",
+      },
+    });
 
     return res.status(200).json({});
   }

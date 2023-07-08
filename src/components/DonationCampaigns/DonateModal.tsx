@@ -5,7 +5,7 @@ import Button from "~/components/_common/Button";
 import Form from "~/components/_common/Form";
 import { DonateSchema } from "~/schemas/donationSchema";
 import { useForm } from "~/utils/schemaUtils";
-import { type DonationCampaign } from "@prisma/client";
+import { DonationCampaignStatus, type DonationCampaign } from "@prisma/client";
 // import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { toast } from "react-hot-toast";
 import { hasFormErrors } from "~/utils/errors";
@@ -45,52 +45,56 @@ export default function DonateModal({
   });
 
   return (
-    <Form methods={methods} className="flex h-full flex-col justify-between">
+    <Form methods={methods} className="flex  flex-col justify-between">
       <header className="z-30 flex items-center justify-between bg-white pb-4">
         <Title as="h4" className="text-gray-500">
           Donacion en{" "}
           <span className="text-primary">{donationCampaign.title}</span>
         </Title>
       </header>
-      <div className="flex flex-col gap-6">
-        <Form.Number
-          path="amount"
-          step={0.1}
-          label="Dinero a donar (pesos argentinos)"
-        />
-        <div className="flex gap-4">
-          <div>
-            <Button
-              type="button"
-              loading={isLoading}
-              disabled={hasFormErrors(methods.formState)}
-              onClick={() => {
-                const handleSubmit = methods.handleSubmit(() => {
-                  console.log("here2");
-                  startDonation(
-                    {
-                      ...methods.getValues(),
-                    },
-                    {
-                      onSuccess: () => {
-                        toast.success("Se ha creado la pasarela de pago");
+      {donationCampaign.status === DonationCampaignStatus.ACTIVE ? (
+        <div className="flex flex-col gap-6">
+          <Form.Number
+            path="amount"
+            step={0.1}
+            label="Dinero a donar (pesos argentinos)"
+          />
+          <div className="flex gap-4">
+            <div>
+              <Button
+                type="button"
+                loading={isLoading}
+                disabled={hasFormErrors(methods.formState)}
+                onClick={() => {
+                  const handleSubmit = methods.handleSubmit(() => {
+                    console.log("here2");
+                    startDonation(
+                      {
+                        ...methods.getValues(),
                       },
-                      onError: (err) => {
-                        toast.error(err.message);
-                      },
-                    }
-                  );
-                });
-                void handleSubmit();
-                console.log("here");
-              }}
-            >
-              Confirmar donacion
-            </Button>
+                      {
+                        onSuccess: () => {
+                          toast.success("Se ha creado la pasarela de pago");
+                        },
+                        onError: (err) => {
+                          toast.error(err.message);
+                        },
+                      }
+                    );
+                  });
+                  void handleSubmit();
+                  console.log("here");
+                }}
+              >
+                Confirmar donacion
+              </Button>
+            </div>
+            <div className="-my-4 w-min">{Component}</div>
           </div>
-          <div className="-my-4 w-min">{Component}</div>
         </div>
-      </div>
+      ) : (
+        "Esta campaña ha finalizado"
+      )}
     </Form>
   );
 }
