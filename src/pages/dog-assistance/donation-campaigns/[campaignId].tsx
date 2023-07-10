@@ -75,10 +75,14 @@ export default function CampaignPage(props: CampaignPageProps) {
           <DonateModal donationCampaign={campaign} />
         </Box>
       </div>
-      <header className="my-14 flex items-center justify-between">
-        <Title>Donaciones realizadas</Title>
-      </header>
-      <DonationList donations={campaign.donations} />
+      {!!session?.user && (
+        <>
+          <header className="my-14 flex items-center justify-between">
+            <Title>Donaciones realizadas</Title>
+          </header>
+          <DonationList donations={campaign.donations} />
+        </>
+      )}
     </div>
   );
 }
