@@ -4,12 +4,14 @@ import { useFormContext } from "react-hook-form";
 import { type BookingCompletionSchema } from "~/schemas";
 
 export default function DewormingCompletionForm() {
-  const methods = useFormContext< BookingCompletionSchema >();
+  const methods = useFormContext<BookingCompletionSchema>();
   return (
-    
     <div className="grid gap-6">
-      
-      <Form.Input path="deworming.product" label="Producto Aplicado" required />
+      <Form.Input
+        path="deworming.product"
+        label="Producto antiparasitario"
+        required
+      />
       <Form.Number
         path="deworming.dosis"
         label="Dosis de antiparasitario (ml)"
@@ -22,7 +24,6 @@ export default function DewormingCompletionForm() {
         }}
         required
       />
-      
     </div>
   );
 }

@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import Dropdown from "../_common/Dropdown";
 import Button from "../_common/Button";
 import Form from "../_common/Form";
-import { BookingRelated, BookingTypeOptions } from "~/schemas/bookingSchema";
 import { BookingStatus } from "@prisma/client";
 import { useModal } from "~/context/ModalContex";
 import BookingUpdateModal from "../Home/ClientHome/ClientBookings/BookingUpdateModal";
@@ -18,6 +17,22 @@ import Link from "next/dist/client/link";
 import { LINKS } from "~/utils/navConfig";
 import BookingCompletionModal from "./BookingCompletion/BookingCompletionModal";
 import Text from "../_common/Typo/Text";
+import CreateUrgencyModal from "./BookingCompletion/CreateUrgencyModal";
+import { BookingTypeOptions, type BookingRelated } from "~/schemas";
+
+export const RegisterUrgency = () => {
+  const { handleModal } = useModal();
+
+  return (
+    <Button
+      kind={Button.KINDS.danger}
+      onClick={() => handleModal(<CreateUrgencyModal />)}
+      type="button"
+    >
+      Urgencia
+    </Button>
+  );
+};
 
 export const CancelBooking = ({ booking }: { booking: Booking }) => {
   const [visible, setVisible] = useState(false);

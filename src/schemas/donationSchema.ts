@@ -6,7 +6,7 @@ import {
 } from "@prisma/client";
 
 export type DonationRelated = Donation & {
-  user?: User;
+  user?: User | null;
 };
 export const DonationCampaignCreationSchema = z.object({
   reason: z.string().trim().min(10, "Minimo 10 caracteres"),

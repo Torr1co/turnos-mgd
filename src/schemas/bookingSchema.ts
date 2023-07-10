@@ -72,8 +72,6 @@ export const BookingGetAllSchema = z
   )
   .default({ status: BookingStatus.APPROVED });
 
-
-
 export const BookingCompletionSchema = z.object({
   bookingId: z.string(),
   castration: z.optional(CastrationCompletionSchema),
@@ -81,11 +79,11 @@ export const BookingCompletionSchema = z.object({
   vaccine: z.optional(VaccineCompletionSchema),
   general: z.optional(InquirieCompletionSchema),
   weight: z
-        .number({
-        required_error: "Requerido",
-        invalid_type_error: "Requerido",
-        })
-        .max(150, "No puede pesar mas de 150"),
+    .number({
+      required_error: "Requerido",
+      invalid_type_error: "Requerido",
+    })
+    .max(150, "No puede pesar mas de 150"),
 });
 
 export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;
