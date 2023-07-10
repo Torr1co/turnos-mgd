@@ -27,6 +27,7 @@ import { isVet } from "~/utils/schemas/usersUtils";
 import { type InquirieCompletionSchema } from "~/schemas/inquirieSchema";
 import { type DewormingCompletionSchema } from "~/schemas/dewormingSchema";
 import { type VaccineCompletionSchema } from "~/schemas/vaccineSchema";
+import { UrgencySchema } from "~/schemas/urgencySchema";
 
 export const bookingsRouter = createTRPCRouter({
   create: clientProcedure
@@ -259,7 +260,7 @@ export const bookingsRouter = createTRPCRouter({
       const user = await ctx.prisma.user
         .findFirstOrThrow({
           where: {
-            id: booking.userId,
+            id: booking.userId ?? "",
           },
         })
         .catch(() => {
@@ -305,7 +306,7 @@ export const bookingsRouter = createTRPCRouter({
       const user = await ctx.prisma.user
         .findFirstOrThrow({
           where: {
-            id: booking.userId,
+            id: booking.userId ?? "",
           },
         })
         .catch(() => {
@@ -349,13 +350,99 @@ export const bookingsRouter = createTRPCRouter({
           deworming: true,
           vaccine: true,
           inquirie: true,
-          urgency: true,
         },
       })
       .catch(() => {
         throw new Error(BookingErrors.NOT_FOUND);
       });
   }),
+
+  createUrgency: vetProcedure
+    .input(UrgencySchema)
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.$transaction(
+        async (prisma) => {
+          const booking = await prisma.booking.create({
+            data: {
+              date: new Date(),
+              timeZone: input.timeZone,
+              status: BookingStatus.COMPLETED,
+              type: BookingType.URGENCY,
+              user: {
+                connect: {
+                  id: input.urgency.clientId ?? undefined,
+                },
+              },
+              dog: {
+                connect: {
+                  id: input.urgency.petId,
+                },
+              },
+              weight: input.weight,
+            },
+          });
+          const connectBooking = {
+            booking: {
+              connect: {
+                id: booking.id,
+              },
+            },
+          };
+
+          if (input.castration) {
+            await prisma.castration.create({
+              data: {
+                ...connectBooking,
+                ...input.castration,
+              },
+            });
+          }
+
+          if (input.deworming) {
+            await prisma.deworming.create({
+              data: {
+                ...connectBooking,
+                ...input.deworming,
+              },
+            });
+          }
+
+          if (input.vaccine) {
+            await prisma.vaccine.create({
+              data: {
+                ...connectBooking,
+                ...input.vaccine,
+              },
+            });
+          }
+
+          if (input.general) {
+            await prisma.inquirie.create({
+              data: {
+                ...connectBooking,
+                ...input.general,
+              },
+            });
+          }
+          if (input.urgency.petId) {
+            await prisma.pet.update({
+              where: {
+                id: input.urgency.petId,
+              },
+              data: {
+                weight: input.weight,
+                height: input.general?.height,
+                castrated: input.castration?.succesful,
+              },
+            });
+          }
+        },
+        {
+          maxWait: 15000,
+          timeout: 25000,
+        }
+      );
+    }),
 
   complete: vetProcedure
     .input(BookingCompletionSchema)
@@ -376,59 +463,66 @@ export const bookingsRouter = createTRPCRouter({
             },
           });
           break;
-          case BookingType.GENERAL: 
-        
-            const general = input.general as InquirieCompletionSchema;
-            await ctx.prisma.inquirie.create({
-              data: {
-                booking: {
-                  connect: {
-                    id: input.bookingId,
-                  },
+        case BookingType.GENERAL:
+          const general = input.general as InquirieCompletionSchema;
+          await ctx.prisma.inquirie.create({
+            data: {
+              booking: {
+                connect: {
+                  id: input.bookingId,
                 },
-                height : general.height,
-                observations : general.observations,
               },
-            });
+              height: general.height,
+              observations: general.observations,
+            },
+          });
           break;
-          case BookingType.DEWORMING: 
-            const deworming = input.deworming as unknown as DewormingCompletionSchema;
-            await ctx.prisma.deworming.create({
-              data: {
-                booking: {
-                  connect: {
-                    id: input.bookingId,
-                  },
+        case BookingType.DEWORMING:
+          const deworming =
+            input.deworming as unknown as DewormingCompletionSchema;
+          await ctx.prisma.deworming.create({
+            data: {
+              booking: {
+                connect: {
+                  id: input.bookingId,
                 },
-                product: deworming.product,
-                dosis : deworming.dosis,
               },
-            });
-            break;
-            case BookingType.VACCINE: 
-            const vaccine = input.vaccine as unknown as VaccineCompletionSchema;
-            await ctx.prisma.vaccine.create({
-              data: {
-                booking: {
-                  connect: {
-                    id: input.bookingId,
-                  },
+              product: deworming.product,
+              dosis: deworming.dosis,
+            },
+          });
+          break;
+        case BookingType.VACCINE:
+          const vaccine = input.vaccine as unknown as VaccineCompletionSchema;
+          await ctx.prisma.vaccine.create({
+            data: {
+              booking: {
+                connect: {
+                  id: input.bookingId,
                 },
-                dosis : vaccine.dosis,
               },
-            });
-            break;
-          
-
+              dosis: vaccine.dosis,
+            },
+          });
+          break;
       }
-
+      await ctx.prisma.pet.update({
+        where: {
+          id: booking.dogId ?? "",
+        },
+        data: {
+          weight: input.weight,
+          height: input.general?.height,
+          castrated: input.castration?.succesful,
+        },
+      });
       return ctx.prisma.booking.update({
         where: {
           id: input.bookingId,
         },
         data: {
           status: BookingStatus.COMPLETED,
-          weight : input.weight,
+          weight: input.weight,
         },
       });
     }),

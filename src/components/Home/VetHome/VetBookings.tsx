@@ -6,7 +6,7 @@ import Form from "~/components/_common/Form";
 import { FieldSelectHeader } from "~/components/_common/Form/Select";
 import { BookingStatusOptions } from "~/schemas/bookingSchema";
 import { api } from "~/utils/api";
-import { BookingFilters } from "../../bookings/BookingActions";
+import { BookingFilters, RegisterUrgency } from "../../bookings/BookingActions";
 import BookingList from "../../bookings/BookingList";
 
 type FilterProps = {
@@ -43,7 +43,10 @@ export default function VetBookings() {
             values={BookingStatusOptions}
             path="filters.bookingStatus"
           />
-          <BookingFilters />
+          <div className="flex items-center gap-4">
+            <RegisterUrgency />
+            <BookingFilters />
+          </div>
         </header>
       </Form>
       {isLoading ? (

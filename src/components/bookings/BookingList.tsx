@@ -31,7 +31,16 @@ const BookingItem = ({ booking }: { booking: BookingRelated }) => {
           )}
         >
           {dayjs(booking.date).format("MMMM D, YYYY ")} -{" "}
-          {getOptionLabel(BookingTypeOptions, booking.type)}
+          {getOptionLabel(
+            [
+              ...BookingTypeOptions,
+              {
+                label: "Urgencia",
+                value: BookingType.URGENCY,
+              },
+            ],
+            booking.type
+          )}
           {booking.type === BookingType.VACCINE && (
             <span>({booking.vaccineType})</span>
           )}

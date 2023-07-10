@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type Pet, type User } from "@prisma/client";
+import { BookingRelated } from "./bookingSchema";
 export const PetSchema = z.object({
   name: z
     .string()
@@ -47,6 +48,7 @@ export const PetDisableSchema = z.object({
 
 export type PetRelated = Pet & {
   owner: User;
+  bookings: BookingRelated[];
 };
 export type PetSchema = z.infer<typeof PetSchema>;
 export type PetUpdateSchema = z.infer<typeof PetUpdateSchema>;

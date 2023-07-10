@@ -20,8 +20,6 @@ export const petsRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { owner, ...dogData } = input;
 
-      
-
       const dog = await ctx.prisma.pet
         .create({
           data: {
@@ -54,27 +52,33 @@ export const petsRouter = createTRPCRouter({
           throw new Error("El perro no esta habilitado");
         });
 
-      await ctx.prisma.$transaction(async (prisma) => {
-        await prisma.booking.updateMany({
-          where: {
-            dogId: petId,
-            status: {
-              in: [BookingStatus.APPROVED, BookingStatus.PENDING],
+      await ctx.prisma.$transaction(
+        async (prisma) => {
+          await prisma.booking.updateMany({
+            where: {
+              dogId: petId,
+              status: {
+                in: [BookingStatus.APPROVED, BookingStatus.PENDING],
+              },
             },
-          },
-          data: {
-            status: BookingStatus.CANCELLED,
-          },
-        });
-        await prisma.pet.update({
-          where: {
-            id: petId,
-          },
-          data: {
-            disabled: true,
-          },
-        });
-      });
+            data: {
+              status: BookingStatus.CANCELLED,
+            },
+          });
+          await prisma.pet.update({
+            where: {
+              id: petId,
+            },
+            data: {
+              disabled: true,
+            },
+          });
+        },
+        {
+          maxWait: 10000,
+          timeout: 20000,
+        }
+      );
 
       await sendEmail({
         to: pet.owner.email,
@@ -137,6 +141,16 @@ export const petsRouter = createTRPCRouter({
       },
       include: {
         owner: true,
+        bookings: {
+          include: {
+            user: true,
+            dog: true,
+            castration: true,
+            vaccine: true,
+            deworming: true,
+            inquirie: true,
+          },
+        },
       },
     });
 

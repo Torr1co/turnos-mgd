@@ -18,6 +18,7 @@ import { prisma } from "~/server/db";
 import ConfirmTooltip from "~/components/_common/ConfirmTooltip";
 import { useRouter } from "next/router";
 import { isVet } from "~/utils/schemas/usersUtils";
+import BookingInfoList from "~/components/bookings/BookingInfo/BookingInfoList";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -71,76 +72,84 @@ const PetPage = (props: { pet: string }) => {
 
   if (!session) return <></>;
   return (
-    <Form
-      methods={methods}
-      className="flex flex-col gap-12"
-      onSubmit={(data) => {
-        updatePet(data, {
-          onSuccess: () => {
-            toast.success("Se actualizo correctamente");
-          },
-          onError: () => {
-            toast.error("Ya tiene un perro con ese nombre!");
-          },
-        });
-      }}
-    >
-      <section>
-        <header className="mb-14 flex items-center justify-between">
-          <Title>
-            Datos del <span className="capitalize">Perro</span>
-          </Title>
-        </header>
-        <Box className=" bg-white">
-          {isVet(session.user) ? (
-            <div>
-              <PetForm />
-              <div className="mt-6 flex gap-4">
-                <Button type="submit" loading={isUpdating}>
-                  Actualizar
-                </Button>
-                <div>
-                  <ConfirmTooltip
-                    open={disableVisible}
-                    onReject={() => setDisableVisible(false)}
-                    onConfirm={() => {
-                      disablePet(
-                        {
-                          petId: id,
-                        },
-                        {
-                          onSuccess: () => {
-                            toast.success(
-                              "Se deshabilito el perro correctamente"
-                            );
-                            void router.push("/admin/clients");
+    <div>
+      <Form
+        methods={methods}
+        className="flex flex-col gap-12"
+        onSubmit={(data) => {
+          updatePet(data, {
+            onSuccess: () => {
+              toast.success("Se actualizo correctamente");
+            },
+            onError: () => {
+              toast.error("Ya tiene un perro con ese nombre!");
+            },
+          });
+        }}
+      >
+        <section>
+          <header className="mb-14 flex items-center justify-between">
+            <Title>
+              Datos del <span className="capitalize">Perro</span>
+            </Title>
+          </header>
+          <Box className=" bg-white">
+            {isVet(session.user) ? (
+              <div>
+                <PetForm />
+                <div className="mt-6 flex gap-4">
+                  <Button type="submit" loading={isUpdating}>
+                    Actualizar
+                  </Button>
+                  <div>
+                    <ConfirmTooltip
+                      open={disableVisible}
+                      onReject={() => setDisableVisible(false)}
+                      onConfirm={() => {
+                        disablePet(
+                          {
+                            petId: id,
                           },
-                          onError: () => {
-                            toast.error("Ha sucedido un error");
-                          },
-                        }
-                      );
-                    }}
-                  >
-                    <Button
-                      kind={Button.KINDS.danger}
-                      onClick={() => setDisableVisible(true)}
-                      loading={isDisabling}
+                          {
+                            onSuccess: () => {
+                              toast.success(
+                                "Se deshabilito el perro correctamente"
+                              );
+                              void router.push("/admin/clients");
+                            },
+                            onError: () => {
+                              toast.error("Ha sucedido un error");
+                            },
+                          }
+                        );
+                      }}
                     >
-                      Deshabilitar
-                    </Button>
-                  </ConfirmTooltip>
+                      <Button
+                        kind={Button.KINDS.danger}
+                        onClick={() => setDisableVisible(true)}
+                        loading={isDisabling}
+                      >
+                        Deshabilitar
+                      </Button>
+                    </ConfirmTooltip>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div>
-              <PetInfo pet={pet} />
-            </div>
-          )}
-        </Box>
+            ) : (
+              <div>
+                <PetInfo pet={pet} />
+              </div>
+            )}
+          </Box>
+        </section>
+      </Form>
+      <section>
+        <header className="my-14 flex items-center justify-between">
+          <Title>Historial medico</Title>
+        </header>
+        <BookingInfoList bookings={pet.bookings} />
       </section>
-    </Form>
+    </div>
   );
 };
 

@@ -63,16 +63,7 @@ export default function BookingCompletionModal({
         <Title as="h4" className="text-gray-500">
           Completa la{" "}
           <span className="text-primary">
-            {getOptionLabel(
-              [
-                ...BookingTypeOptions,
-                {
-                  label: "Urgencia",
-                  value: BookingType.URGENCY,
-                },
-              ],
-              booking.type
-            )}
+            {getOptionLabel(BookingTypeOptions, booking.type)}
           </span>
         </Title>
         <div className="pl-auto">

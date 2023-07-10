@@ -11,6 +11,7 @@ import CastrationInfo from "~/components/bookings/BookingInfo/CastrationInfo";
 import InquirieInfo from "~/components/bookings/BookingInfo/InquirieInfo";
 import DewormingInfo from "~/components/bookings/BookingInfo/DewormingInfo";
 import VaccineInfo from "~/components/bookings/BookingInfo/VaccineInfo";
+import Title from "~/components/_common/Typo/Title";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -44,15 +45,17 @@ const BookingTypeConvertion = {
 
 export default function BookingPage(props: BookingPageProps) {
   const booking = JSON.parse(props.booking) as BookingRelated;
-  const BookingTypeInfo = BookingTypeConvertion[booking.type];
   return (
-    <div className="grid grid-cols-2 gap-8">
-      <Box className=" bg-white">
-        <BookingInfo booking={booking} />
-      </Box>
-      <Box className=" bg-white">
-        <BookingTypeInfo booking={booking} />
-      </Box>
+    <div>
+      <header className="mb-14 flex items-center justify-between">
+        <Title>Informacion del turno</Title>
+      </header>
+
+      <section className="grid  place-items-center">
+        <Box className=" w-full max-w-4xl bg-white">
+          <BookingInfo booking={booking} />
+        </Box>
+      </section>
     </div>
   );
 }

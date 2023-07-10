@@ -99,7 +99,7 @@ export default function Select<T extends number | string | undefined | null>(
           );
         }}
       </Listbox.Button>
-      <div className="relative">
+      <div className="relative z-30">
         <Transition
           enter="transition ease-out duration-200"
           enterFrom="transform opacity-0 scale-95"

@@ -1,0 +1,112 @@
+import React from "react";
+import { useFormContext } from "react-hook-form";
+import Form from "~/components/_common/Form";
+import { TimeZoneOptions, VaccineOptions } from "~/schemas";
+import { type UrgencySchema } from "~/schemas/urgencySchema";
+import { api } from "~/utils/api";
+import CastrationCompletionForm from "./CastrationCompletionForm";
+import DewormingCompletionForm from "./DewormingCompletionForm";
+/* import CastrationInfo from "../BookingInfo/CastrationInfo";
+import DewormingInfo from "../BookingInfo/DewormingInfo";
+import VaccineInfo from "../BookingInfo/VaccineInfo"; */
+import GeneralCompletionForm from "./GeneralCompletionForm";
+import VaccineCompletionForm from "./VaccineCompletionForm";
+
+export default function UrgencyForm() {
+  const methods = useFormContext<UrgencySchema>();
+  const { data: clients = [] } = api.clients.getAll.useQuery();
+  const clientId = methods.watch("urgency.clientId");
+  const petId = methods.watch("urgency.petId");
+  const { data: pets = [] } = api.pets.getAll.useQuery(clientId ?? undefined);
+  return (
+    <div className="grid gap-6">
+      <Form.Select
+        path="timeZone"
+        label="Zona horaria"
+        values={TimeZoneOptions}
+      />
+      <Form.Select
+        path="urgency.clientId"
+        label="Cliente de la urgencia"
+        values={[
+          {
+            label: "Ninguno",
+            value: null,
+          },
+          ...clients.map((client) => ({
+            value: client.id,
+            label: `${client.name} ${client.lastname}`,
+          })),
+        ]}
+        onChange={(value) => {
+          if (!value) {
+            methods.setValue("urgency.petId", undefined);
+          }
+        }}
+      />
+      {clientId && (
+        <Form.Select
+          path="urgency.petId"
+          label="Perro de la urgencia"
+          values={pets.map((pet) => ({
+            value: pet.id,
+            label: pet.name,
+          }))}
+        />
+      )}
+      {(!petId ||
+        (petId && !pets.find((pet) => pet.id === petId)?.castrated)) && (
+        <Form.Toggle
+          path="urgency.enableCastration"
+          label="Sucedio una castracion"
+          required
+        />
+      )}
+      <Form.Toggle
+        path="urgency.enableVaccine"
+        label="Sucedio una vacunacion"
+        required
+      />
+      <Form.Toggle
+        path="urgency.enableDeworming"
+        label="Sucedio una desparasitacion"
+        required
+      />
+
+      {!!petId ? (
+        <>
+          <GeneralCompletionForm />
+          <Form.Number
+            path="weight"
+            label="Peso (kg)"
+            min={0}
+            onChange={(e) => {
+              methods.setValue(
+                "weight",
+                +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+              );
+            }}
+            required
+          />
+        </>
+      ) : (
+        <Form.TextArea path="general.observations" label="Observaciones" />
+      )}
+      <hr />
+      {methods.watch("urgency.enableCastration") && (
+        <CastrationCompletionForm />
+      )}
+      {methods.watch("urgency.enableVaccine") && (
+        <>
+          <VaccineCompletionForm />
+          <Form.Select
+            path="vaccineType"
+            label="Tipo de Vacuna"
+            values={VaccineOptions}
+          />
+        </>
+      )}
+      {methods.watch("urgency.enableDeworming") && <DewormingCompletionForm />}
+    </div>
+  );
+}
