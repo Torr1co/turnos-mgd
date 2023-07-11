@@ -18,8 +18,8 @@ import { VaccineCompletionSchema } from "./vaccineSchema";
 import { InquirieCompletionSchema } from "./inquirieSchema";
 
 export type BookingRelated = Booking & {
-  dog: Pet;
-  user: User;
+  dog?: Pet | null;
+  user?: User | null;
   vaccine?: Vaccine;
   deworming?: Deworming;
   castration?: Castration;

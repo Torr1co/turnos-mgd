@@ -1,4 +1,4 @@
-import { BookingType, UserRoles, BookingStatus } from "@prisma/client";
+import { BookingType, BookingStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import React from "react";
 import { cn } from "~/utils/styleUtils";
@@ -11,6 +11,7 @@ import Text from "../_common/Typo/Text";
 import { BookingActions } from "./BookingActions";
 import { useSession } from "next-auth/react";
 import { type BookingRelated } from "~/schemas/bookingSchema";
+import { isVet } from "~/utils/schemas/usersUtils";
 
 const BookingItem = ({ booking }: { booking: BookingRelated }) => {
   const { data: session } = useSession();
@@ -51,14 +52,18 @@ const BookingItem = ({ booking }: { booking: BookingRelated }) => {
             {getOptionLabel(TimeZoneOptions, booking.timeZone)}
           </span>
         </Text>
-        <Text>
-          Perro: <span className="capitalize">{booking.dog.name}</span>
-        </Text>
-        {session?.user.role === UserRoles.VET && (
+        {booking.dog && (
+          <Text>
+            Perro: <span className="capitalize">{booking.dog.name}</span>
+          </Text>
+        )}
+        {isVet(session?.user) && (
           <Text>
             Cliente:{" "}
             <span className="capitalize">
-              {booking.user.name} {booking.user.lastname}
+              {booking.user
+                ? `${booking.user.name} ${booking.user.lastname}`
+                : "Anonimo"}
             </span>
           </Text>
         )}

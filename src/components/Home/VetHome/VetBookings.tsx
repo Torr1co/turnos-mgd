@@ -56,12 +56,14 @@ export default function VetBookings() {
           bookings={bookings.filter((booking) => {
             const includesText =
               !filters.text ||
-              booking.user.email
-                .toLowerCase()
-                .startsWith(filters.text.toLowerCase()) ||
-              booking.user.name
-                .toLowerCase()
-                .includes(filters.text.toLowerCase());
+              !!(
+                booking.user?.email
+                  .toLowerCase()
+                  .startsWith(filters.text.toLowerCase()) ??
+                booking.user?.name
+                  .toLowerCase()
+                  .includes(filters.text.toLowerCase())
+              );
 
             const includesDate =
               !filters.rangeDate ||
