@@ -31,7 +31,7 @@ export default function ServiceUpdateModal({ service }: { service: Service }) {
       onSubmit={(data) => {
         registerServices(data, {
           onSuccess: () => {
-            toast.success("Servicio registrado exitosamente");
+            toast.success("Servicio actualizado exitosamente");
             handleModal();
           },
           onError: (error) => toast.error(error.message),

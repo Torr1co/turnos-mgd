@@ -31,7 +31,7 @@ export const servicesRouter = createTRPCRouter({
             );
             prismaHandler(
               "email",
-              `El email ya se encuentra registrado para el tipo de turno ${getOptionLabel(
+              `El email ya se encuentra registrado para el tipo de servicio ${getOptionLabel(
                 ServiceOptions,
                 type
               )}`

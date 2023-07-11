@@ -287,6 +287,7 @@ export const bookingsRouter = createTRPCRouter({
               timeZone: input.timeZone,
               status: BookingStatus.COMPLETED,
               type: BookingType.URGENCY,
+              vaccineType: input.vaccineType,
               payAmount: input.payAmount,
               ...(input.urgency.clientId
                 ? {

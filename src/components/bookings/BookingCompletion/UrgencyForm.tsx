@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import Form from "~/components/_common/Form";
 import { TimeZoneOptions, VaccineOptions } from "~/schemas";
@@ -11,6 +11,7 @@ import DewormingInfo from "../BookingInfo/DewormingInfo";
 import VaccineInfo from "../BookingInfo/VaccineInfo"; */
 import GeneralCompletionForm from "./GeneralCompletionForm";
 import VaccineCompletionForm from "./VaccineCompletionForm";
+import { VaccineType } from "@prisma/client";
 
 export default function UrgencyForm() {
   const methods = useFormContext<UrgencySchema>();
@@ -25,6 +26,13 @@ export default function UrgencyForm() {
     payAmount - discountAmount <= payAmount / 2
       ? payAmount / 2
       : payAmount - discountAmount;
+
+  useEffect(() => {
+    if (!petId || !clientId) {
+      methods.setValue("general.height", undefined);
+      methods.setValue("weight", undefined);
+    }
+  }, [petId, clientId]);
   return (
     <div className="grid gap-6">
       <Form.Select
@@ -55,10 +63,12 @@ export default function UrgencyForm() {
         <Form.Select
           path="urgency.petId"
           label="Perro de la urgencia"
-          values={pets.map((pet) => ({
-            value: pet.id,
-            label: pet.name,
-          }))}
+          values={pets
+            .filter((pet) => !pet.disabled)
+            .map((pet) => ({
+              value: pet.id,
+              label: pet.name,
+            }))}
         />
       )}
       {(!petId ||
@@ -67,17 +77,35 @@ export default function UrgencyForm() {
           path="urgency.enableCastration"
           label="Sucedio una castracion"
           required
+          onChange={(value) => {
+            if (!value) {
+              methods.setValue("castration", undefined);
+            }
+          }}
         />
       )}
       <Form.Toggle
         path="urgency.enableVaccine"
         label="Sucedio una vacunacion"
         required
+        onChange={(value) => {
+          if (!value) {
+            methods.setValue("vaccine", undefined);
+            methods.setValue("vaccineType", undefined);
+          } else {
+            methods.setValue("vaccineType", VaccineType.A);
+          }
+        }}
       />
       <Form.Toggle
         path="urgency.enableDeworming"
         label="Sucedio una desparasitacion"
         required
+        onChange={(value) => {
+          if (!value) {
+            methods.setValue("deworming", undefined);
+          }
+        }}
       />
       <Form.Number
         path="payAmount"
