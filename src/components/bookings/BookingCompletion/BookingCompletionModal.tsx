@@ -44,7 +44,7 @@ export default function BookingCompletionModal({
       bookingId: booking.id,
     },
   });
-  const payAmount = (methods.watch("payAmount") as number | undefined) ?? 0;
+  const payAmount = isNaN(methods.watch("payAmount")) ? 0 : methods.watch("payAmount");
   const payWithDiscount =
     payAmount - (booking.user.discountAmount ?? 0) <= payAmount / 2
       ? payAmount / 2

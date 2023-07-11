@@ -90,7 +90,7 @@ export const BookingCompletionSchema = z.object({
       required_error: "Requerido",
       invalid_type_error: "Requerido",
     })
-    .min(1,"Minimo Coste 1"),
+    .min(0,"Minimo Coste 0"),
 });
 
 export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;
