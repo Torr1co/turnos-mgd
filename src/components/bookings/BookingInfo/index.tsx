@@ -55,20 +55,32 @@ export default function BookingInfo({ booking }: { booking: BookingRelated }) {
           </span>
         </dd>
 
-        <dt>Nombre del perro:</dt>
-        <dd>
-          <span className="capitalize">{booking.dog.name}</span>
-        </dd>
+        {booking.dog && (
+          <>
+            <dt>Nombre del perro:</dt>
+            <dd>
+              <span className="capitalize">{booking.dog.name}</span>
+            </dd>
+          </>
+        )}
         {isVet(session?.user) && (
           <>
             <dt>Nombre del cliente:</dt>
             <dd>
-              <span className="capitalize">{booking.user.name}</span>
+              <span className="capitalize">
+                {booking.user
+                  ? `${booking.user.name} ${booking.user.lastname}`
+                  : "Anonimo"}
+              </span>
             </dd>
           </>
         )}
-        <dt>Peso registrado del perro: </dt>
-        <dd>{booking.weight}</dd>
+        {booking.weight && (
+          <>
+            <dt>Peso registrado del perro: </dt>
+            <dd>{booking.weight}</dd>
+          </>
+        )}
         <dt>Costo del turno: </dt>
         <dd>{booking.payAmount}</dd>
       </dl>

@@ -9,6 +9,7 @@ import Form from "~/components/_common/Form";
 import { useModal } from "~/context/ModalContex";
 import UrgencyForm from "./UrgencyForm";
 import { UrgencySchema } from "~/schemas/urgencySchema";
+import { TimeZone } from "@prisma/client";
 
 export default function CreateUrgencyModal() {
   const { handleModal } = useModal();
@@ -25,6 +26,7 @@ export default function CreateUrgencyModal() {
       urgency: {
         clientId: null,
       },
+      timeZone: TimeZone.MORNING,
     },
   });
   const clientId = methods.watch("urgency.clientId");
@@ -35,6 +37,7 @@ export default function CreateUrgencyModal() {
     payAmount - discountAmount <= payAmount / 2
       ? payAmount / 2
       : payAmount - discountAmount;
+  console.log(methods.formState);
   return (
     <Form
       methods={methods}
@@ -44,18 +47,6 @@ export default function CreateUrgencyModal() {
           {
             ...data,
             payAmount: payWithDiscount,
-            weight: data.urgency.petId ? data.weight : undefined,
-            vaccine: data.urgency.enableVaccine ? data.vaccine : undefined,
-            general: {
-              ...data.general,
-              height: data.urgency.petId ? data.general?.height : undefined,
-            },
-            castration: data.urgency.enableCastration
-              ? data.castration
-              : undefined,
-            deworming: data.urgency.enableDeworming
-              ? data.deworming
-              : undefined,
           },
           {
             onSuccess: () => {

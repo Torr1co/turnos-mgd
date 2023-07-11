@@ -45,7 +45,16 @@ export function FieldToggle({
     <Controller
       name={path}
       render={({ field }) => (
-        <Toggle {...props} {...field} label={label} checked={!!field.value} />
+        <Toggle
+          {...props}
+          {...field}
+          label={label}
+          checked={!!field.value}
+          onChange={(value: boolean) => {
+            field.onChange(value);
+            props.onChange?.(value);
+          }}
+        />
       )}
     />
   );

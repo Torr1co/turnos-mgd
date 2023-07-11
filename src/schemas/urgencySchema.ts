@@ -1,10 +1,11 @@
-import { TimeZone } from "@prisma/client";
+import { TimeZone, VaccineType } from "@prisma/client";
 import { z } from "zod";
 import { BookingCompletionSchema } from "./bookingSchema";
 
 export const UrgencySchema = BookingCompletionSchema.omit({
   bookingId: true,
 }).extend({
+  vaccineType: z.optional(z.nativeEnum(VaccineType)),
   weight: z.optional(
     z
       .number({
