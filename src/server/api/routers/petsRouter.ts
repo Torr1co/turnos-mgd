@@ -142,6 +142,9 @@ export const petsRouter = createTRPCRouter({
       include: {
         owner: true,
         bookings: {
+          where: {
+            status: BookingStatus.COMPLETED,
+          },
           include: {
             user: true,
             dog: true,
