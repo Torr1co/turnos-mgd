@@ -15,7 +15,6 @@ import { getOptionLabel } from "~/utils/schemaUtils";
 import GeneralCompletionForm from "./GeneralCompletionForm";
 import DewormingCompletionForm from "./DewormingCompletionForm";
 import VaccineCompletionForm from "./VaccineCompletionForm";
-import { useSession } from "next-auth/react";
 
 const BookingTypeConvertion = {
   [BookingType.CASTRATION]: CastrationCompletionForm,
@@ -45,7 +44,7 @@ export default function BookingCompletionModal({
       bookingId: booking.id,
     },
   });
-  const payAmount = methods.watch("payAmount") ?? 0;
+  const payAmount = (methods.watch("payAmount") as number | undefined) ?? 0;
   const payWithDiscount =
     payAmount - (booking.user.discountAmount ?? 0) <= payAmount / 2
       ? payAmount / 2

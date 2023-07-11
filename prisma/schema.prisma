@@ -54,7 +54,7 @@ model User {
     passwordVerified  DateTime?
     telephoneNumber   String?
     hasDiscount       Boolean            @default(false)
-    discountAmount    Int               @default(0)
+    discountAmount    Int?               @default(0)
     dogs              Pet[]
     bookings          Booking[]
     adoptPublications AdoptPublication[]
