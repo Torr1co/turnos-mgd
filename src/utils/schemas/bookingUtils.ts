@@ -25,11 +25,15 @@ export const BookingErrors = {
     "No se puede aplicar una antirrabica a un perro que ya tiene una en el ultimo año!",
 } as const;
 
-export function bookingUpdateHandler(date: Date | Dayjs) {
+export function canUpdate(date: Date | Dayjs) {
   return (
     !dayjs(date).isAfter(dayjs().add(1, "day"), "day") &&
     !dayjs(date).isBefore(dayjs(), "day")
   );
+}
+
+export function bookingUpdateHandler(date: Date | Dayjs) {
+  if (!canUpdate(date)) throw new Error(BookingErrors.LAST_DAY);
 }
 
 export async function getBooking(prisma: PrismaClient, id: string) {
