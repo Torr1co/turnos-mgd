@@ -54,7 +54,7 @@ model User {
     passwordVerified  DateTime?
     telephoneNumber   String?
     hasDiscount       Boolean            @default(false)
-    discountAmount    Int?               @default(0)
+    discountAmount    Int               @default(0)
     dogs              Pet[]
     bookings          Booking[]
     adoptPublications AdoptPublication[]
@@ -78,8 +78,8 @@ model Booking {
     dog         Pet?           @relation(fields: [dogId], references: [id], onDelete: Cascade)
     dogId       String?        @db.ObjectId
 
-    weight Float?
-
+    weight     Float?
+    payAmount  Float?           @default(0)
     inquirie   Inquirie?
     deworming  Deworming?
     vaccine    Vaccine?

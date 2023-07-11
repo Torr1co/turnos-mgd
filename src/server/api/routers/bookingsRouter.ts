@@ -368,6 +368,7 @@ export const bookingsRouter = createTRPCRouter({
               timeZone: input.timeZone,
               status: BookingStatus.COMPLETED,
               type: BookingType.URGENCY,
+              payAmount: input.payAmount,
               user: {
                 connect: {
                   id: input.urgency.clientId ?? undefined,
@@ -506,16 +507,29 @@ export const bookingsRouter = createTRPCRouter({
           });
           break;
       }
-      await ctx.prisma.pet.update({
-        where: {
-          id: booking.dogId ?? "",
-        },
-        data: {
-          weight: input.weight,
-          height: input.general?.height,
-          castrated: input.castration?.succesful,
-        },
-      });
+      if (booking.dogId) {
+        await ctx.prisma.pet.update({
+          where: {
+            id: booking.dogId,
+          },
+          data: {
+            weight: input.weight,
+            height: input.general?.height,
+            castrated: input.castration?.succesful,
+          },
+        });
+      }
+      if (booking.userId) {
+        await ctx.prisma.user.update({
+          where: {
+            id: booking.userId,
+          },
+          data: {
+            discountAmount: 0,
+          },
+        });
+      }
+
       return ctx.prisma.booking.update({
         where: {
           id: input.bookingId,
@@ -523,6 +537,7 @@ export const bookingsRouter = createTRPCRouter({
         data: {
           status: BookingStatus.COMPLETED,
           weight: input.weight,
+          payAmount: input.payAmount,
         },
       });
     }),

@@ -30,7 +30,18 @@ export default function BookingInfo({ booking }: { booking: BookingRelated }) {
         <dt>Fecha:</dt>
         <dd>{dayjs(booking.date).format("MMMM D, YYYY ")}</dd>
         <dt>Tipo de turno:</dt>
-        <dd>{getOptionLabel(BookingTypeOptions, booking.type)}</dd>
+        <dd>
+          {getOptionLabel(
+            [
+              ...BookingTypeOptions,
+              {
+                label: "Urgencia",
+                value: BookingType.URGENCY,
+              },
+            ],
+            booking.type
+          )}
+        </dd>
         {booking.type === BookingType.VACCINE && (
           <>
             <dt>Tipo de vacuna:</dt>
@@ -58,6 +69,8 @@ export default function BookingInfo({ booking }: { booking: BookingRelated }) {
         )}
         <dt>Peso registrado del perro: </dt>
         <dd>{booking.weight}</dd>
+        <dt>Costo del turno: </dt>
+        <dd>{booking.payAmount}</dd>
       </dl>
       <BookingTypeInfo booking={booking} />
     </div>

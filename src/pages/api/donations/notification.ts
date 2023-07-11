@@ -61,6 +61,17 @@ export default async function handler(
       },
     });
 
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        discountAmount: {
+          increment: parseInt(amount),
+        },
+      },
+    });
+
     return res.status(200).json({});
   }
 }

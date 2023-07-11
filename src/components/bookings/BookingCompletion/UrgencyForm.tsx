@@ -16,8 +16,15 @@ export default function UrgencyForm() {
   const methods = useFormContext<UrgencySchema>();
   const { data: clients = [] } = api.clients.getAll.useQuery();
   const clientId = methods.watch("urgency.clientId");
+  const { data: client } = api.clients.getById.useQuery({ id: clientId });
+  const pets = client?.dogs ?? [];
   const petId = methods.watch("urgency.petId");
-  const { data: pets = [] } = api.pets.getAll.useQuery(clientId ?? undefined);
+  const payAmount = (methods.watch("payAmount") as number | undefined) ?? 0;
+  const discountAmount = client?.discountAmount ?? 0;
+  const payWithDiscount =
+    payAmount - discountAmount <= payAmount / 2
+      ? payAmount / 2
+      : payAmount - discountAmount;
   return (
     <div className="grid gap-6">
       <Form.Select
@@ -72,6 +79,20 @@ export default function UrgencyForm() {
         label="Sucedio una desparasitacion"
         required
       />
+      <Form.Number
+        path="payAmount"
+        label="Costo del turno"
+        min={0}
+        onChange={(e) => {
+          methods.setValue(
+            "payAmount",
+            +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+          );
+        }}
+        required
+      />
+      {!!client?.discountAmount &&
+        `El monto con descuento es de $${payWithDiscount}`}
 
       {!!petId ? (
         <>

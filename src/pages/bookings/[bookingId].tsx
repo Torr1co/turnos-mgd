@@ -6,11 +6,6 @@ import { getServerAuthSession } from "~/server/auth";
 import { type BookingRelated } from "~/schemas/bookingSchema";
 import BookingInfo from "~/components/bookings/BookingInfo";
 import Box from "~/components/_common/Box";
-import { BookingType } from "@prisma/client";
-import CastrationInfo from "~/components/bookings/BookingInfo/CastrationInfo";
-import InquirieInfo from "~/components/bookings/BookingInfo/InquirieInfo";
-import DewormingInfo from "~/components/bookings/BookingInfo/DewormingInfo";
-import VaccineInfo from "~/components/bookings/BookingInfo/VaccineInfo";
 import Title from "~/components/_common/Typo/Title";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -34,14 +29,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 type BookingPageProps = {
   booking: string;
 };
-
-const BookingTypeConvertion = {
-  [BookingType.CASTRATION]: CastrationInfo,
-  [BookingType.DEWORMING]: DewormingInfo,
-  [BookingType.GENERAL]: InquirieInfo,
-  [BookingType.VACCINE]: VaccineInfo,
-  [BookingType.URGENCY]: BookingInfo,
-} as const;
 
 export default function BookingPage(props: BookingPageProps) {
   const booking = JSON.parse(props.booking) as BookingRelated;
