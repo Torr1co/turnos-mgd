@@ -27,6 +27,14 @@ export default function CreateUrgencyModal() {
       },
     },
   });
+  const clientId = methods.watch("urgency.clientId");
+  const { data: client } = api.clients.getById.useQuery({ id: clientId });
+  const payAmount = (methods.watch("payAmount") as number | undefined) ?? 0;
+  const discountAmount = client?.discountAmount ?? 0;
+  const payWithDiscount =
+    payAmount - discountAmount <= payAmount / 2
+      ? payAmount / 2
+      : payAmount - discountAmount;
   return (
     <Form
       methods={methods}
@@ -35,6 +43,7 @@ export default function CreateUrgencyModal() {
         createUrgency(
           {
             ...data,
+            payAmount: payWithDiscount,
             weight: data.urgency.petId ? data.weight : undefined,
             vaccine: data.urgency.enableVaccine ? data.vaccine : undefined,
             general: {

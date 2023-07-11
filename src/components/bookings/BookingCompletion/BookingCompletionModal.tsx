@@ -44,19 +44,26 @@ export default function BookingCompletionModal({
       bookingId: booking.id,
     },
   });
-
+  const payAmount = (methods.watch("payAmount") as number | undefined) ?? 0;
+  const payWithDiscount =
+    payAmount - (booking.user.discountAmount ?? 0) <= payAmount / 2
+      ? payAmount / 2
+      : payAmount - (booking.user.discountAmount ?? 0);
   return (
     <Form
       methods={methods}
       className="flex flex-col gap-6"
       onSubmit={(data) => {
-        completeBooking(data, {
-          onSuccess: () => {
-            toast.success("Turno completado con exito");
-            handleModal();
-          },
-          onError: () => toast.error("Ha sucedido un error"),
-        });
+        completeBooking(
+          { ...data, payAmount: payWithDiscount },
+          {
+            onSuccess: () => {
+              toast.success("Turno completado con exito");
+              handleModal();
+            },
+            onError: () => toast.error("Ha sucedido un error"),
+          }
+        );
       }}
     >
       <header className="sticky top-10 z-30 -mx-4 flex items-center justify-between bg-white p-4 pb-4">
@@ -85,6 +92,20 @@ export default function BookingCompletionModal({
         }}
         required
       />
+      <Form.Number
+        path="payAmount"
+        label="Costo del turno"
+        min={0}
+        onChange={(e) => {
+          methods.setValue(
+            "payAmount",
+            +parseFloat(e.target.value.replace(/[^\d.\s]/g, "")).toFixed(2)
+          );
+        }}
+        required
+      />
+      {booking.user.discountAmount &&
+        `El monto con descuento es de $${payWithDiscount}`}
     </Form>
   );
 }

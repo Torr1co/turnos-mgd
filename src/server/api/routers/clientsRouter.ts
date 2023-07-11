@@ -1,10 +1,15 @@
 import { type User, UserRoles, BookingStatus } from "@prisma/client";
 import { hashSync } from "bcryptjs";
+import { z } from "zod";
 import {
   ClientCreationSchema,
   UpdateClientSchema,
 } from "~/schemas/clientSchema";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+  vetProcedure,
+} from "~/server/api/trpc";
 import sendEmail from "~/server/email";
 import { prismaError } from "~/utils/errors";
 import { BookingErrorHandlers } from "~/utils/schemas/bookingUtils";
@@ -120,5 +125,16 @@ export const clientsRouter = createTRPCRouter({
       });
 
       return updatedClient;
+    }),
+
+  getById: vetProcedure
+    .input(z.object({ id: z.nullable(z.string()) }))
+    .query(({ input, ctx }) => {
+      return input.id
+        ? ctx.prisma.user.findUnique({
+            where: { id: input.id },
+            include: { dogs: true },
+          })
+        : null;
     }),
 });

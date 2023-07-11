@@ -78,8 +78,8 @@ model Booking {
     dog         Pet?           @relation(fields: [dogId], references: [id], onDelete: Cascade)
     dogId       String?        @db.ObjectId
 
-    weight Float?
-
+    weight     Float?
+    payAmount  Float?           @default(0)
     inquirie   Inquirie?
     deworming  Deworming?
     vaccine    Vaccine?

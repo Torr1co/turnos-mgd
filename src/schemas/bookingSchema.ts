@@ -83,7 +83,14 @@ export const BookingCompletionSchema = z.object({
       required_error: "Requerido",
       invalid_type_error: "Requerido",
     })
+    .min(1)
     .max(150, "No puede pesar mas de 150"),
+  payAmount: z
+    .number({
+      required_error: "Requerido",
+      invalid_type_error: "Requerido",
+    })
+    .min(1),
 });
 
 export type BookingCompletionSchema = z.infer<typeof BookingCompletionSchema>;
