@@ -89,7 +89,7 @@ export const BookingFilters = () => {
           path="filters.bookingType"
           values={[
             {
-              value: undefined,
+              value: null,
               label: "Todos los tipos",
             },
             ...BookingTypeOptions,

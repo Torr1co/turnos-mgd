@@ -288,16 +288,24 @@ export const bookingsRouter = createTRPCRouter({
               status: BookingStatus.COMPLETED,
               type: BookingType.URGENCY,
               payAmount: input.payAmount,
-              user: {
-                connect: {
-                  id: input.urgency.clientId ?? undefined,
-                },
-              },
-              dog: {
-                connect: {
-                  id: input.urgency.petId,
-                },
-              },
+              ...(input.urgency.clientId
+                ? {
+                    user: {
+                      connect: {
+                        id: input.urgency.clientId,
+                      },
+                    },
+                  }
+                : {}),
+              ...(input.urgency.petId
+                ? {
+                    dog: {
+                      connect: {
+                        id: input.urgency.petId,
+                      },
+                    },
+                  }
+                : {}),
               weight: input.weight,
             },
           });
@@ -341,6 +349,16 @@ export const bookingsRouter = createTRPCRouter({
               data: {
                 ...connectBooking,
                 ...input.general,
+              },
+            });
+          }
+          if (input.urgency.clientId) {
+            await prisma.user.update({
+              where: {
+                id: input.urgency.clientId,
+              },
+              data: {
+                discountAmount: 0,
               },
             });
           }
