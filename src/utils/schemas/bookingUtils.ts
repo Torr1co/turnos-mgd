@@ -27,8 +27,8 @@ export const BookingErrors = {
 
 export function canUpdate(date: Date | Dayjs) {
   return (
-    !dayjs(date).isAfter(dayjs().add(1, "day"), "day") &&
-    !dayjs(date).isBefore(dayjs(), "day")
+    dayjs(date).isAfter(dayjs().add(1, "day"), "day") ||
+    dayjs(date).isBefore(dayjs(), "day")
   );
 }
 

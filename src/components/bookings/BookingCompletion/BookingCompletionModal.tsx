@@ -104,7 +104,7 @@ export default function BookingCompletionModal({
         }}
         required
       />
-      {booking.user.discountAmount &&
+      {!!booking.user.discountAmount &&
         `El monto con descuento es de $${payWithDiscount}`}
     </Form>
   );
