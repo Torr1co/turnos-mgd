@@ -7,8 +7,12 @@ export default function InquirieInfo({ booking }: { booking: BookingRelated }) {
   console.log(booking);
   return (
     <dl className="grid grid-cols-2 gap-4">
-      <dt>Altura: </dt>
-      <dd>{inquirie.height}</dd>
+      {!!inquirie.height && (
+        <>
+          {" "}
+          <dt>Altura: </dt> <dd>{inquirie.height}</dd>{" "}
+        </>
+      )}
       <dt>Observaciones: </dt>
       <dd>{inquirie.observations}</dd>
     </dl>
