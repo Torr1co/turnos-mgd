@@ -32,3 +32,16 @@ export function nullToUndefined<T extends Record<string, unknown | null>>(
     ])
   ) as T;
 }
+
+export function createObjectIfKeyExists<
+  T extends Record<string, unknown>,
+  K extends keyof T
+>(obj: T, key: K): T[K] extends undefined ? object : { [key in K]: T[K] } {
+  if (hasKey(obj, key)) {
+    return {
+      [key]: obj[key],
+    } as { [key in K]: T[K] };
+  } else {
+    return {} as T[K] extends undefined ? object : { [key in K]: T[K] };
+  }
+}

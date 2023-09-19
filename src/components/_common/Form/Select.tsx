@@ -9,6 +9,7 @@ import Title from "../Typo/Title";
 export type SelectOption<T> = {
   value: T;
   label: string;
+  disabled?: boolean;
 };
 
 export interface BaseSelectProps<T> extends FC {
@@ -73,7 +74,7 @@ export default function Select<T extends number | string | undefined | null>(
     >
       <Listbox.Button
         className={cn(
-          "font-regular  w-full rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 focus:ring-1 disabled:cursor-not-allowed disabled:bg-gray-300",
+          "font-regular  w-full border-2 border-gray-400 py-3.5  px-5 outline-none transition-colors duration-300 focus:ring-1 disabled:cursor-not-allowed disabled:bg-gray-300",
           !disabled && "hover:border-primary",
           kind
         )}
@@ -108,12 +109,18 @@ export default function Select<T extends number | string | undefined | null>(
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Listbox.Options className="absolute max-h-52 w-max min-w-[16rem] divide-y divide-gray-100 overflow-auto rounded-md border bg-white py-2 text-gray-600 shadow-xl">
+          <Listbox.Options className="absolute max-h-52 w-max min-w-[16rem] divide-y divide-gray-100 overflow-auto border bg-white py-2 text-gray-600 shadow-xl">
             {values.map((option, i) => (
               <Listbox.Option
+                disabled={option.disabled}
                 key={i}
                 value={option.value}
-                className="cursor-pointer py-2 px-5 hover:bg-gray-100"
+                className={cn(
+                  "py-2 px-5 ",
+                  option.disabled
+                    ? "cursor-not-allowed text-gray-400"
+                    : "cursor-pointer hover:bg-gray-100"
+                )}
               >
                 {option.label}
               </Listbox.Option>

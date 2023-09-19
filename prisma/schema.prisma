@@ -1,265 +1,148 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
-
-//-----------------------  --- DOCUMENTATION --- ---------------------------
-//https://www.prisma.io/docs/concepts/components/prisma-schema/relations
-//https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
-
-//----------------------------- ENUMS USED ---------------------------------
 
 enum UserRoles {
-    VET
-    CLIENT
-}
-
-enum BookingType {
-    VACCINE
-    DEWORMING
-    GENERAL
-    CASTRATION
-    URGENCY
-}
-
-enum TimeZone {
-    MORNING
-    AFTERNOON
-    EVENING
+  ADMIN
+  OWNER
+  CLIENT
 }
 
 enum BookingStatus {
-    PENDING
-    APPROVED
-    COMPLETED
-    CANCELLED
+  PENDING
+  APPROVED
+  COMPLETED
 }
 
 //-----------------------------   USER     ---------------------------------
 model User {
-    id                String             @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt         DateTime           @default(now())
-    updatedAt         DateTime           @updatedAt
-    birth             DateTime?
-    email             String             @unique
-    dni               String             @unique
-    name              String
-    lastname          String
-    role              UserRoles
-    password          String
-    passwordVerified  DateTime?
-    telephoneNumber   String?
-    hasDiscount       Boolean            @default(false)
-    discountAmount    Int?               @default(0)
-    dogs              Pet[]
-    bookings          Booking[]
-    adoptPublications AdoptPublication[]
-    lostPublications  LostPublication[]
-    donations         Donation[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email            String    @unique
+  dni              String    @unique
+  firstname        String
+  lastname         String
+  role             UserRoles @default(OWNER)
+  password         String
+  passwordVerified DateTime?
+  phoneNumber      String?
+  
+  mpCredentials    MercadoPagoCredentials?
+  bookings Booking[]
+  business Business[]
+  subscriptionPayments Subscription[]
 }
 
+model MercadoPagoCredentials {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  token String
+  key   String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId @unique
+}
+
+model Subscription {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  paymentId String? @unique
+  amount Float
+  expirationDate   DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+}
 // ------------------------------    RESERVATIONS       ----------------------------
 model Booking {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    status      BookingStatus @default(PENDING)
-    date        DateTime
-    type        BookingType
-    vaccineType VaccineType?
-    timeZone    TimeZone
-    user        User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId      String?        @db.ObjectId
-    dog         Pet?           @relation(fields: [dogId], references: [id], onDelete: Cascade)
-    dogId       String?        @db.ObjectId
-
-    weight     Float?
-    payAmount  Float?           @default(0)
-    inquirie   Inquirie?
-    deworming  Deworming?
-    vaccine    Vaccine?
-    castration Castration?
+  
+  status    BookingStatus @default(PENDING)
+  date      DateTime
+  cancelled Boolean       @default(false)
+  schedule  String
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?   @db.ObjectId
+  totalAmount Float? @default(0)
+  username String?
+  
+  payment   BookingPayment?
+  
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId String   @db.ObjectId
 }
 
-// -------------------------------            ---------------------------------
-model Pet {
-    id           String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    name         String
-    birth        DateTime
-    gender       String
-    img          String?
-    color        String
-    height       Float
-    weight       Float
-    race         String
-    castrated    Boolean
-    letsCross    Boolean  @default(false)
-    observations String
-    disabled     Boolean?  @default(false)
-    
-    bookings      Booking[]
-    owner        User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-    ownerId      String     @db.ObjectId
+model BookingPayment {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([ownerId, name])
+  paymentId String @unique
+  amount    Float  @default(0)
+
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId String  @unique @db.ObjectId
 }
 
-// ------------------------------            ---------------------------------
-model Inquirie {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    observations String?
-    height       Float?
-
-    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId String  @unique @db.ObjectId
-}
-
-// ------------------------------            ---------------------------------
-model Deworming {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    product String
-    dosis   Float
-
-    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId String  @unique @db.ObjectId
-}
-
-// ------------------------------            ---------------------------------
-enum VaccineType {
-    A
-    B
-}
-
-model Vaccine {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    dosis Float
-
-    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId String  @unique @db.ObjectId
-}
-
-// ------------------------------            ---------------------------------
-model Castration {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    succesful Boolean 
-    
-    booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-    bookingId String  @unique @db.ObjectId
-}
-
-// ------------------------------     ADOPTION       ---------------------------------
-model AdoptPublication {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    email     String
-    info      String?
-    active    Boolean  @default(true)
-    reason    String
-    dog       Dog      @relation(fields: [dogId], references: [id], onDelete: Cascade)
-    dogId     String   @unique @db.ObjectId
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String   @db.ObjectId
-}
-
-model Dog {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    name      String?
-    birth     DateTime?
-    gender    String?
-    color     String?
-    height    Float?
-    weight    Float?
-    race      String?
-    castrated Boolean?
-    adoption  AdoptPublication?
-}
-
-// ------------------------------     SERVICES       ---------------------------------
-
-enum ServiceTypes {
-    DOGWATCHER
-    DOGWALKER
+enum BusinessLabels {
+  RESTAURANT
+  CAFE
+  BAR
+  HOTEL
+  BANK
+  GROCERY
+  PHARMACY
+  FASHION
+  FITNESS
+  ENTERTAINMENT
+  CULTURE
 }
 
 model Service {
-    id           String       @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt    DateTime     @default(now())
-    availability Boolean      @default(true)
-    zone         String
-    hour         String
-    type         ServiceTypes
-    name         String
-    email        String   
-    photo        String?
-    @@unique([type, email])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+  price Float
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String @db.ObjectId
+
+  bookings Booking[]
 }
 
-// ------------------------------     LOST PUBLICATIONS       ---------------------------------
-model LostPublication {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    email     String
-    lastSeen  DateTime
-    message   String
-    photo     String?
+model Business {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    active Boolean @default(true)
-    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String  @unique @db.ObjectId
-}
+  title               String   @unique
+  desc               String
+  image              String?
+  address            String?
+  addressDesc        String?
+  website            String?
+  disabled           Boolean @default(false)
 
-// ------------------------------     DONATION CAMPAIGN       ---------------------------------
-enum DonationCampaignStatus {
-    ACTIVE
-    FINISHED
-}
+  labels   String[] 
+  schedule String[]  @default([])
+  days     Boolean[] @default([true, true, true, true, true, true, false])
+  services Service[]
 
-model DonationCampaign {
-    id            String                 @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt     DateTime               @default(now())
-    updatedAt     DateTime               @updatedAt
-    status        DonationCampaignStatus @default(ACTIVE)
-    title         String
-    reason        String
-    amountGoal    Float
-    endDate       DateTime
-    currentAmount Float                    @default(0)
-    img           String?
-    donations     Donation[]
-}
-
-model Donation {
-    id         String           @id @default(auto()) @map("_id") @db.ObjectId
-    paymentId  String           @unique
-    createdAt  DateTime         @default(now())
-    updatedAt  DateTime         @updatedAt
-    amount     Int
-    user       User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId     String?          @db.ObjectId
-    campaign   DonationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-    campaignId String           @db.ObjectId
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String? @db.ObjectId
 }

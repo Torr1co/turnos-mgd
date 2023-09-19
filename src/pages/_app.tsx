@@ -5,12 +5,13 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout";
 import { ModalProvider } from "~/context/ModalContex";
-import "~/styles/globals.css";
 import dayjs from "dayjs";
-import "dayjs/locale/es";
 import relative from "dayjs/plugin/relativeTime";
 import { ConfigProvider } from "antd";
 import esEs from "antd/locale/es_ES";
+import "dayjs/locale/es";
+import "~/styles/globals.css";
+import "leaflet/dist/leaflet.css";
 
 dayjs.extend(relative);
 dayjs.locale("es");
@@ -28,8 +29,9 @@ const MyApp = ({
         locale={esEs}
         theme={{
           token: {
-            colorPrimary: "#F97561",
+            colorPrimary: "#315F95",
             colorTextPlaceholder: "#817D7D",
+            fontSize: 10,
           },
         }}
       >

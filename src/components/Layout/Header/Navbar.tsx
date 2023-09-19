@@ -1,6 +1,6 @@
 import React from "react";
 import NavLink from "./NavLink";
-import NAV_CONFIG from "~/utils/navConfig";
+import NAV_CONFIG from "~/utils/navUtils";
 
 interface NavBaseItem {
   label: string;

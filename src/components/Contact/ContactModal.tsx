@@ -27,9 +27,9 @@ export default function ContactModal(props: ContactModalProps) {
       to: props.to,
       subject: props.subject,
       reason: props.reason,
-      name: session?.user.name,
+      name: session?.user.firstname,
       lastname: session?.user.lastname,
-      telephone: session?.user.telephoneNumber ?? undefined,
+      telephone: session?.user.phoneNumber ?? undefined,
       from: session?.user.email,
     },
   });

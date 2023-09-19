@@ -1,482 +1,286 @@
+import dayjs from "dayjs";
+import mercadopago from "mercadopago";
+import { z } from "zod";
+import { BookingCreationSchema, StartBookingSchema } from "~/schemas";
 import {
-  clientProcedure,
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-  vetProcedure,
 } from "~/server/api/trpc";
-import {
-  BookingCreationSchema,
-  BookingUpdateSchema,
-  TimeZoneOptions,
-  BookingGetAllSchema,
-  BookingCompletionSchema,
-  type CastrationCompletionSchema,
-} from "~/schemas/bookingSchema";
-import { BookingType, UserRoles, BookingStatus } from "@prisma/client";
-import dayjs from "dayjs";
-import { string } from "zod";
-import sendEmail from "~/server/email";
-import {
-  BookingErrors,
-  BookingErrorHandlers,
-  BookingStatusQueries,
-  getBooking,
-} from "~/utils/schemas/bookingUtils";
-import { isVet } from "~/utils/schemas/usersUtils";
-import { type InquirieCompletionSchema } from "~/schemas/inquirieSchema";
-import { type DewormingCompletionSchema } from "~/schemas/dewormingSchema";
-import { type VaccineCompletionSchema } from "~/schemas/vaccineSchema";
-import { UrgencySchema } from "~/schemas/urgencySchema";
+import { mp } from "~/server/payments/mercadoPago";
+import { getBaseUrl } from "~/utils/api";
+import { getBookingQueryParams } from "~/utils/bookingUtils";
 
 export const bookingsRouter = createTRPCRouter({
-  create: clientProcedure
+  startBooking: publicProcedure
+    .input(StartBookingSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user;
+
+      const service = await ctx.prisma.service
+        .findFirstOrThrow({
+          where: {
+            id: input.serviceId,
+          },
+        })
+        .catch(() => {
+          throw new Error("Servicio no encontrado");
+        });
+
+      const successUrl = `${getBaseUrl()}/bookings/payment/success`;
+      const failureUrl = `${getBaseUrl()}/bookings/payment/failure`;
+      const notificationUrl = `${
+        process.env.NODE_ENV === "development"
+          ? "https://c9a45d59d5aa-7158303734866948717.ngrok-free.app"
+          : getBaseUrl()
+      }/api/mercadopago/createBooking?${getBookingQueryParams({
+        ...input,
+        amount: input.payment.amount,
+        date: input.date.toString(),
+        userId: user?.id ?? "",
+      })}`;
+
+      const preference = {
+        items: [
+          {
+            title: `Reserva del servicio: ${service.title}`,
+            unit_price: input.payment.amount,
+            currency_id: "ARS",
+            quantity: 1,
+          },
+        ],
+        back_urls: {
+          success: successUrl,
+          failure: failureUrl,
+        },
+        notification_url: notificationUrl,
+        statement_descriptor: "Magdalena Digital",
+        auto_return: "approved",
+      } satisfies Parameters<typeof mercadopago.preferences.create>[0];
+
+      return await mp()
+        .preferences.create(preference)
+        .then((response) => {
+          return (response.body as { id: string }).id;
+        })
+        .catch(() => {
+          throw new Error("Error al crear la pasarela de pago");
+        });
+    }),
+
+  create: publicProcedure
     .input(BookingCreationSchema)
     .mutation(async ({ input, ctx }) => {
-      const { dog, user, ...booking } = input;
-      const bookingDate = dayjs(booking.date);
-
-      const dogData = await ctx.prisma.pet
-        .findFirstOrThrow({
-          where: {
-            id: dog,
-          },
-        })
-        .catch(() => {
-          throw new Error("El perro no existe!");
-        });
-
-      BookingErrorHandlers.checkDate(bookingDate);
-      BookingErrorHandlers.isAlreadyCastrated(booking.type, dogData.castrated);
-      await BookingErrorHandlers.isAlreadyBooked(ctx.prisma, booking, dog);
-      await BookingErrorHandlers.checkMaxBookings(ctx.prisma, booking);
-
-      if (booking.type === BookingType.VACCINE) {
-        if (booking.vaccineType === "B") {
-          await BookingErrorHandlers.checkVaccineB(
-            ctx.prisma,
-            booking,
-            dogData
-          );
-        }
+      const user = ctx.session?.user;
+      if (!input.payment && !user) {
+        throw new Error("No puedes solicitar un turno gratuito sin una cuenta");
       }
 
-      return ctx.prisma.booking.create({
-        data: {
-          ...booking,
-          dog: {
-            connect: { id: dog },
-          },
-          user: {
-            connect: {
-              id:
-                ctx.session.user.role === UserRoles.VET
-                  ? user
-                  : ctx.session.user.id,
+      if (
+        user &&
+        (await ctx.prisma.booking.findFirst({
+          where: {
+            userId: user.id,
+            date: {
+              gte: dayjs().startOf("day").toDate(),
             },
           },
-        },
-      });
-    }),
+        }))
+      ) {
+        throw new Error(
+          "No puedes solicitar mas de un turno gratuito a la vez"
+        );
+      }
 
-  //Returns all future bookings
-  getAll: publicProcedure
-    .input(BookingGetAllSchema)
-    .query(async ({ ctx, input: { status } }) => {
-      const bookings = ctx.prisma.booking.findMany({
-        where: {
-          userId: isVet(ctx.session?.user) ? undefined : ctx.session?.user.id,
-          ...BookingStatusQueries[status],
-        },
-        include: {
-          dog: true,
-          user: true,
-        },
-      });
-
-      //Sort the bookings by date
-      // TODO: sort with database queries
-      await bookings.then((bookings) => {
-        bookings.sort((a, b) => {
-          const dateA = dayjs(a.date);
-          const dateB = dayjs(b.date);
-
-          if (dateA.isBefore(dateB)) {
-            return -1;
-          }
-          if (dateA.isAfter(dateB)) {
-            return 1;
-          }
-          return 0;
-        });
-      });
-
-      return bookings;
-    }),
-
-  // Update a booking
-  update: clientProcedure
-    .input(BookingUpdateSchema)
-    .mutation(async ({ input, ctx }) => {
-      const {
-        dog,
-        booking: { id, ...newData },
-      } = input;
-      const booking = await getBooking(ctx.prisma, id);
-      const dogData = await ctx.prisma.pet
+      const service = await ctx.prisma.service
         .findFirstOrThrow({
           where: {
-            id: dog,
+            id: input.serviceId,
           },
         })
         .catch(() => {
-          throw new Error("El perro no existe!");
+          throw new Error("Servicio no encontrado");
         });
 
-      if (booking.status === BookingStatus.APPROVED) {
-        BookingErrorHandlers.canUpdate(dayjs(booking.date));
-      }
-      BookingErrorHandlers.isAlreadyCastrated(booking.type, dogData.castrated);
-      await BookingErrorHandlers.isAlreadyBooked(ctx.prisma, newData, dog);
-      await BookingErrorHandlers.checkMaxBookings(ctx.prisma, newData);
+      const booking = await ctx.prisma.booking.create({
+        data: {
+          date: dayjs(input.date).toDate(),
+          schedule: input.schedule,
+          username: input.username,
+          totalAmount: service.price,
+          service: {
+            connect: {
+              id: input.serviceId,
+            },
+          },
 
-      if (newData.type === BookingType.VACCINE) {
-        if (newData.vaccineType === "B") {
-          await BookingErrorHandlers.checkVaccineB(
-            ctx.prisma,
-            newData,
-            dogData
-          );
+          ...(input.payment
+            ? {
+                payment: {
+                  create: {
+                    amount: input.payment.amount,
+                    paymentId: input.payment.id,
+                  },
+                },
+              }
+            : {}),
+          ...(input.userId
+            ? {
+                user: {
+                  connect: {
+                    id: input.userId,
+                  },
+                },
+              }
+            : {}),
+        },
+      });
+
+      const ownerId = await ctx.prisma.service
+        .findUnique({
+          where: {
+            id: input.serviceId,
+          },
+        })
+        .business()
+        .then((business) => business?.ownerId);
+
+      if (ownerId) {
+        const currentSubscription = await ctx.prisma.subscription.findFirst({
+          orderBy: {
+            createdAt: "desc",
+          },
+          where: {
+            userId: ownerId,
+          },
+        });
+
+        if (currentSubscription && input.payment) {
+          await ctx.prisma.subscription.update({
+            where: {
+              id: currentSubscription.id,
+            },
+            data: {
+              amount: currentSubscription.amount + input.payment.amount / 10,
+            },
+          });
         }
       }
-
-      return ctx.prisma.booking.update({
-        where: {
-          id,
-        },
-        data: {
-          ...newData,
-          status: BookingStatus.PENDING,
-          dog: {
-            connect: { id: dog },
-          },
-        },
-      });
+      return booking;
     }),
 
-  // Cancel a booking
-  cancel: protectedProcedure
-    .input(string()) //BookingSchema ID
-    .mutation(async ({ input, ctx }) => {
-      const booking = await getBooking(ctx.prisma, input);
-      const bookingDate = dayjs(booking.date);
-      // BookingErrorHandlers.checkDate(bookingDate);
-
-      if (booking.status === BookingStatus.APPROVED) {
-        BookingErrorHandlers.canUpdate(bookingDate);
-      }
-      //Look for the user email
-      const user = await ctx.prisma.user
-        .findFirstOrThrow({
-          where: {
-            id: booking.userId ?? "",
-          },
-        })
-        .catch(() => {
-          throw new Error("El usuario no existe!");
-        });
-
-      const to =
-        ctx.session.user.role === UserRoles.VET
-          ? user.email
-          : "v.ohmydog@gmail.com";
-
-      const sender =
-        ctx.session.user.role === UserRoles.VET ? "veterinario" : "cliente";
-
-      await sendEmail({
-        to,
-        from: "v.ohmydog@gmail.com",
-        subject: `Se ha cancelado el turno reservado por ${user.name}.`,
-        text: `El turno del día ${bookingDate.format("DD/MM/YYYY")}, horario ${
-          TimeZoneOptions.find((option) => option.value === booking.timeZone)
-            ?.label as string
-        }. Ha sido cancelado. Por favor, contacte con el ${sender} para reprogramar el turno.`,
-      });
-
-      return ctx.prisma.booking.update({
-        where: {
-          id: input,
-        },
-        data: {
-          status: BookingStatus.CANCELLED,
-        },
-      });
-    }),
-
-  approve: vetProcedure
-    .input(string()) //BookingSchema ID
-    .mutation(async ({ input, ctx }) => {
-      const booking = await getBooking(ctx.prisma, input);
-      const bookingDate = dayjs(booking.date);
-      // BookingErrorHandlers.checkDate(bookingDate);
-
-      //Look for the user email
-      const user = await ctx.prisma.user
-        .findFirstOrThrow({
-          where: {
-            id: booking.userId ?? "",
-          },
-        })
-        .catch(() => {
-          throw new Error("El usuario no existe!");
-        });
-
-      const to =
-        ctx.session.user.role === UserRoles.VET
-          ? user.email
-          : "v.ohmydog@gmail.com";
-
-      await sendEmail({
-        to,
-        from: "v.ohmydog@gmail.com",
-        subject: `Se ha aprobado el turno reservado por ${user.name}.`,
-        text: `El turno del día ${bookingDate.format("DD/MM/YYYY")}, horario ${
-          TimeZoneOptions.find((option) => option.value === booking.timeZone)
-            ?.label as string
-        }. Ha sido aprobado. Muchas gracias por confiar en nosotros!`,
-      });
-      return ctx.prisma.booking.update({
-        where: {
-          id: input,
-        },
-        data: {
-          status: BookingStatus.APPROVED,
-        },
-      });
-    }),
-
-  get: publicProcedure.input(string()).query(async ({ input, ctx }) => {
-    return await ctx.prisma.booking
-      .findFirstOrThrow({
-        where: {
-          id: input,
-        },
-        include: {
-          dog: true,
-          user: true,
-          castration: true,
-          deworming: true,
-          vaccine: true,
-          inquirie: true,
-        },
+  getBy: publicProcedure
+    .input(
+      z.object({
+        id: z.optional(z.string()),
+        paymentId: z.optional(z.string()),
       })
-      .catch(() => {
-        throw new Error(BookingErrors.NOT_FOUND);
-      });
+    )
+    .query(async ({ input, ctx }) => {
+      const baseinput = {
+        include: {
+          service: {
+            include: {
+              business: true,
+            },
+          },
+          payment: true,
+        },
+      };
+
+      if (input.id) {
+        return ctx.prisma.booking.findFirstOrThrow({
+          where: {
+            id: input.id,
+          },
+          ...baseinput,
+        });
+      } else if (input.paymentId) {
+        return await ctx.prisma.booking.findFirstOrThrow({
+          where: {
+            payment: {
+              paymentId: input.paymentId,
+            },
+          },
+          ...baseinput,
+        });
+      }
+
+      throw new Error("No se encontró el turno");
+    }),
+
+  getAll: adminProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.booking.findMany({
+      include: {
+        service: {
+          include: {
+            business: true,
+          },
+        },
+        payment: true,
+        user: true,
+      },
+    });
   }),
 
-  createUrgency: vetProcedure
-    .input(UrgencySchema)
-    .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.$transaction(
-        async (prisma) => {
-          const booking = await prisma.booking.create({
-            data: {
-              date: new Date(),
-              timeZone: input.timeZone,
-              status: BookingStatus.COMPLETED,
-              type: BookingType.URGENCY,
-              vaccineType: input.vaccineType,
-              payAmount: input.payAmount,
-              ...(input.urgency.clientId
-                ? {
-                    user: {
-                      connect: {
-                        id: input.urgency.clientId,
-                      },
-                    },
-                  }
-                : {}),
-              ...(input.urgency.petId
-                ? {
-                    dog: {
-                      connect: {
-                        id: input.urgency.petId,
-                      },
-                    },
-                  }
-                : {}),
-              weight: input.weight,
-            },
-          });
-          const connectBooking = {
-            booking: {
-              connect: {
-                id: booking.id,
-              },
-            },
-          };
-
-          if (input.castration) {
-            await prisma.castration.create({
-              data: {
-                ...connectBooking,
-                ...input.castration,
-              },
-            });
-          }
-
-          if (input.deworming) {
-            await prisma.deworming.create({
-              data: {
-                ...connectBooking,
-                ...input.deworming,
-              },
-            });
-          }
-
-          if (input.vaccine) {
-            await prisma.vaccine.create({
-              data: {
-                ...connectBooking,
-                ...input.vaccine,
-              },
-            });
-          }
-
-          if (input.general) {
-            await prisma.inquirie.create({
-              data: {
-                ...connectBooking,
-                ...input.general,
-              },
-            });
-          }
-          if (input.urgency.clientId) {
-            await prisma.user.update({
-              where: {
-                id: input.urgency.clientId,
-              },
-              data: {
-                discountAmount: 0,
-              },
-            });
-          }
-          if (input.urgency.petId) {
-            await prisma.pet.update({
-              where: {
-                id: input.urgency.petId,
-              },
-              data: {
-                weight: input.weight,
-                height: input.general?.height,
-                castrated: input.castration?.succesful,
-              },
-            });
-          }
-        },
-        {
-          maxWait: 15000,
-          timeout: 25000,
-        }
-      );
-    }),
-
-  complete: vetProcedure
-    .input(BookingCompletionSchema)
-    .mutation(async ({ input, ctx }) => {
-      const booking = await getBooking(ctx.prisma, input.bookingId);
-
-      switch (booking.type) {
-        case BookingType.CASTRATION:
-          const castration = input.castration as CastrationCompletionSchema;
-          await ctx.prisma.castration.create({
-            data: {
-              booking: {
-                connect: {
-                  id: input.bookingId,
-                },
-              },
-              succesful: castration.succesful,
-            },
-          });
-          break;
-        case BookingType.GENERAL:
-          const general = input.general as InquirieCompletionSchema;
-          await ctx.prisma.inquirie.create({
-            data: {
-              booking: {
-                connect: {
-                  id: input.bookingId,
-                },
-              },
-              height: general.height,
-              observations: general.observations,
-            },
-          });
-          break;
-        case BookingType.DEWORMING:
-          const deworming =
-            input.deworming as unknown as DewormingCompletionSchema;
-          await ctx.prisma.deworming.create({
-            data: {
-              booking: {
-                connect: {
-                  id: input.bookingId,
-                },
-              },
-              product: deworming.product,
-              dosis: deworming.dosis,
-            },
-          });
-          break;
-        case BookingType.VACCINE:
-          const vaccine = input.vaccine as unknown as VaccineCompletionSchema;
-          await ctx.prisma.vaccine.create({
-            data: {
-              booking: {
-                connect: {
-                  id: input.bookingId,
-                },
-              },
-              dosis: vaccine.dosis,
-            },
-          });
-          break;
-      }
-      if (booking.dogId) {
-        await ctx.prisma.pet.update({
+  getMine: publicProcedure
+    .input(z.optional(z.array(z.string())))
+    .query(async ({ ctx, input: bookingIds }) => {
+      const user = ctx.session?.user;
+      if (!user && !bookingIds) return [];
+      if (!user)
+        return await ctx.prisma.booking.findMany({
           where: {
-            id: booking.dogId,
+            id: {
+              in: bookingIds,
+            },
           },
-          data: {
-            weight: input.weight,
-            height: input.general?.height,
-            castrated: input.castration?.succesful,
+          include: {
+            service: {
+              include: {
+                business: true,
+              },
+            },
+            payment: true,
+            user: true,
           },
         });
-      }
-      if (booking.userId) {
-        await ctx.prisma.user.update({
-          where: {
-            id: booking.userId,
-          },
-          data: {
-            discountAmount: 0,
-          },
-        });
-      }
-
-      return ctx.prisma.booking.update({
+      return await ctx.prisma.booking.findMany({
         where: {
-          id: input.bookingId,
+          userId: user.id,
         },
-        data: {
-          status: BookingStatus.COMPLETED,
-          weight: input.weight,
-          payAmount: input.payAmount,
+        include: {
+          service: {
+            include: {
+              business: true,
+            },
+          },
+          payment: true,
+          user: true,
         },
       });
     }),
+
+  getBusinesses: protectedProcedure.query(async ({ ctx }) => {
+    const user = ctx.session.user;
+    return await ctx.prisma.booking.findMany({
+      where: {
+        service: {
+          business: {
+            ownerId: user.id,
+          },
+        },
+      },
+      include: {
+        service: {
+          include: {
+            business: true,
+          },
+        },
+        payment: true,
+        user: true,
+      },
+    });
+  }),
 });

@@ -5,15 +5,18 @@ import type { ZodType, z } from "zod";
 import { type SelectOption } from "~/components/_common/Form/Select";
 
 export const useForm = <
-  TFieldValues extends FieldValues = z.infer<typeof schema>,
+  TFieldValues extends FieldValues | null = null,
   TContext = any,
-  T extends ZodType = ZodType<any>
+  TSchema extends ZodType = ZodType<any>,
+  TDefaultFieldValues extends FieldValues = TFieldValues extends null
+    ? z.infer<TSchema>
+    : TFieldValues
 >(
-  props: UseFormProps<TFieldValues, TContext> & { schema: T }
-): UseFormReturn<TFieldValues, TContext> => {
+  props: UseFormProps<TDefaultFieldValues, TContext> & { schema: TSchema }
+): UseFormReturn<TDefaultFieldValues, TContext> => {
   const { schema, ...rest } = props;
 
-  return rhUseForm<TFieldValues, TContext>({
+  return rhUseForm<TDefaultFieldValues, TContext>({
     resolver: zodResolver(schema),
     ...rest,
   });

@@ -59,7 +59,7 @@ const ImageUploader = ({
         className={cn(
           (props.disabled ?? uploading) &&
             "cursor-not-allowed bg-gray-300 bg-opacity-30 hover:border-gray-400",
-          "font-regular relative cursor-pointer rounded-md border border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1 "
+          "font-regular relative cursor-pointer border-2 border-gray-400 py-3.5  px-5 text-sm outline-none transition-colors duration-300 hover:border-primary focus:ring-1 "
         )}
         {...props}
       >

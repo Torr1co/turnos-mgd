@@ -6,13 +6,21 @@ const config = {
       custom: ["Poppins", "sans-serif", "ui-sans-serif", "system-ui"],
     },
     extend: {
+      screens: {
+        sm: "480px",
+      },
+      gradientColorStopPositions: {
+        10: "10%",
+        25: "25%",
+        90: "90%",
+      },
       colors: {
         primary: {
           200: "#FFFAF6",
           300: "#FFCA0F",
-          400: "#F1965B",
-          500: "#F97561",
-          DEFAULT: "#F97561",
+          400: "#315F95",
+          500: "#315F95",
+          DEFAULT: "#315F95",
         },
         gray: {
           300: "#F2F0EF",

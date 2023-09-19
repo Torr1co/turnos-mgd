@@ -71,7 +71,7 @@ const Modal = ({
               className,
               "relative max-h-[90vh] min-w-[100vw] overflow-auto bg-white stroke-0 text-sm shadow-lg sm:min-w-[44rem]"
             )}
-            size="px-10 pb-14 rounded-lg"
+            size="px-10 pb-14"
             style={style}
           >
             <div className="sticky top-0 z-30 -mx-10 h-10 bg-white">

@@ -13,10 +13,11 @@ type EmailAddress =
     }
   | string;
 
-const DEFAULT_EMAIL = "v.ohmydog@gmail.com";
+// const DEFAULT_EMAIL = "v.ohmydog@gmail.com";
+const DEFAULT_EMAIL = "magdalenadigital.web@gmail.com";
 
 export const SYSTEM_ADDRESS: EmailAddress = {
-  name: "¡OhMyDog!" as const,
+  name: "Magdalena Digital" as const,
   address: DEFAULT_EMAIL,
   email: DEFAULT_EMAIL,
 };
@@ -37,7 +38,8 @@ const sendEmail = ({ from: fromMsg = DEFAULT_EMAIL, ...msg }: SendEmail) => {
       from,
       ...msg,
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
       throw new Error("Hubo un error al enviar el email");
     });
 };

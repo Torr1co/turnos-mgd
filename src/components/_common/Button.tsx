@@ -22,6 +22,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: keyof typeof SIZES | string;
   kind?: keyof typeof KINDS | string;
   loading?: boolean;
+  onClick?: () => void | Promise<void>;
 }
 
 const Button = forwardRef<HTMLButtonElement, FC<ButtonProps>>(
@@ -42,9 +43,10 @@ const Button = forwardRef<HTMLButtonElement, FC<ButtonProps>>(
         ref={ref}
         className={cn(
           className,
-          "relative rounded-sm md:rounded-md ",
+          "relative",
           hasKey(SIZES, size) ? SIZES[size] : size,
-          hasKey(KINDS, kind) ? KINDS[kind] : kind
+          hasKey(KINDS, kind) ? KINDS[kind] : kind,
+          loading && "pointer-events-none opacity-50"
         )}
         disabled={disabled ?? loading}
         type="button"

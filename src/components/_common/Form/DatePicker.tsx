@@ -11,7 +11,7 @@ const CustomDatePicker = ({ className, ...props }: DatePickerProps) => {
     <DatePicker
       placeholder="Seleccionar fecha"
       className={cn(
-        "font-regular error: rounded-md border py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1",
+        "font-regular rounded-none border-2 py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1",
         className
       )}
       {...props}
@@ -23,7 +23,7 @@ const CustomRangePicker = ({ className, ...props }: RangePickerProps) => {
   return (
     <DatePicker.RangePicker
       className={cn(
-        "font-regular rounded-md border py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1",
+        "font-regular rounded-none border-2 py-3.5 px-5 font-custom text-gray-600 outline-none placeholder:text-gray-600 hover:border-primary focus:border-primary focus:ring-1",
         className
       )}
       {...props}
@@ -48,11 +48,12 @@ export const FieldDatePicker = ({
             id={path}
             name={path}
             value={field.value ? dayjs(field.value as Date) : null}
-            onChange={(e) => {
-              field.onChange(e?.toDate());
-            }}
             className={cn(error && "border-red-500", className)}
             {...props}
+            onChange={(value, dateString) => {
+              field.onChange(value?.toDate());
+              props.onChange?.(value, dateString);
+            }}
           />
         );
       }}

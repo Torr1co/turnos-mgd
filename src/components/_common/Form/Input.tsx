@@ -27,7 +27,7 @@ const Input = forwardRef<Ref, InputProps>(function ForwardInput(
       className={cn(
         hasKey(KINDS, kind) ? KINDS[kind] : kind,
         className,
-        "font-regular rounded-md border py-3.5 px-5 text-sm outline-none focus:ring-1"
+        "font-regular border-2 py-3.5 px-5 text-sm outline-none focus:ring-1"
       )}
     />
   );

@@ -1,11 +1,7 @@
 import { z } from "zod";
-import {
-  type User,
-  type Donation,
-  DonationCampaignStatus,
-} from "@prisma/client";
+import { type User } from "@prisma/client";
 
-export type DonationRelated = Donation & {
+export type DonationRelated = {
   user?: User | null;
 };
 export const DonationCampaignCreationSchema = z.object({
@@ -44,13 +40,11 @@ export const DonateSchema = z.object({
     .min(1, "Requerido"),
 });
 
-export const DonationCampaignGetAllSchema = z
-  .optional(
-    z.object({
-      status: z.nativeEnum(DonationCampaignStatus),
-    })
-  )
-  .default({ status: DonationCampaignStatus.ACTIVE });
+export const DonationCampaignGetAllSchema = z.optional(
+  z.object({
+    status: z.enum(["active", "finished", "all"]),
+  })
+);
 
 export type DonateSchema = z.infer<typeof DonateSchema>;
 export type DonationCampaignGetAllSchema = z.infer<

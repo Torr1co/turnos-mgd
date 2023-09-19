@@ -16,9 +16,9 @@ export default function UpdateUser() {
   const methods = useForm<SessionUpdate>({
     resolver: zodResolver(SessionUpdateSchema),
     defaultValues: {
-      name: session?.user.name,
+      firstname: session?.user.firstname,
       lastname: session?.user.lastname,
-      telephoneNumber: session?.user.telephoneNumber ?? "",
+      // telephoneNumber: session?.user.telephoneNumber ?? "",
     },
   });
   const { mutate, isLoading } = api.session.update.useMutation({
@@ -42,7 +42,7 @@ export default function UpdateUser() {
         });
       }}
     >
-      <Form.Input
+      {/*  <Form.Input
         path="telephoneNumber"
         label="Telefono"
         onChange={(e) => {
@@ -51,13 +51,13 @@ export default function UpdateUser() {
             e.target.value.replace(/[^\d\s]/g, "")
           );
         }}
-      />
+      /> */}
       <Form.Input
-        path="name"
+        path="firstname"
         label="Nombre"
         onChange={(e) => {
           methods.setValue(
-            "name",
+            "firstname",
             e.target.value.replace(/[^a-zA-ZñÑ\s]/g, "")
           );
         }}
@@ -72,7 +72,6 @@ export default function UpdateUser() {
           );
         }}
       />
-      <div></div>
       <div>
         <Button type="submit" loading={isLoading}>
           Actualizar Cuenta

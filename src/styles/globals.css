@@ -4,15 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (max-width: 1250px) {
-  html {
-    font-size: 12px;
-  }
+html {
+  font-size: 12px;
 }
 
 @media (max-width: 768px) {
   html {
     font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 8px;
   }
 }
 

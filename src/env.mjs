@@ -29,7 +29,6 @@ const server = z.object({
   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string().min(1),
   NEXT_PUBLIC_FIREBASE_APP_ID: z.string().min(1),
   SENDGRID_API_KEY: z.string().min(1),
-  MERCADOPAGO_ACCESS_TOKEN: z.string().min(1),
 });
 
 /**
@@ -63,8 +62,6 @@ const processEnv = {
     process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
-  MERCADOPAGO_ACCESS_TOKEN: process.env.MERCADOPAGO_ACCESS_TOKEN,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
 // Don't touch the part below

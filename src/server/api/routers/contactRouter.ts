@@ -1,4 +1,3 @@
-import {} from "~/schemas/adoptionSchema";
 import { ContactSchema } from "~/schemas/contactSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import sendEmail from "~/server/email";
@@ -7,6 +6,7 @@ export const contactRouter = createTRPCRouter({
   sendEmail: publicProcedure
     .input(ContactSchema)
     .mutation(async ({ input }) => {
+      localStorage.setItem("miGato", "Juan");
       await sendEmail({
         to: input.to,
         from: "v.ohmydog@gmail.com",
@@ -17,7 +17,7 @@ export const contactRouter = createTRPCRouter({
       Puedes contactarlo a través de su correo: ${input.from}.
       ${input.telephone ? `Y su numero de teléfono: ${input.telephone}.` : ""}
       Mensaje: ${input.message}.
-      ¡Muchas gracias por usar Oh my dog!`,
+      ¡Muchas gracias por usar Magdalena Digital!`,
       });
       return;
     }),

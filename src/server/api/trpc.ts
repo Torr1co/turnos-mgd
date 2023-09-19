@@ -120,8 +120,8 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
-const enforceUserIsVet = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || ctx.session.user.role !== UserRoles.VET) {
+const enforceUserIsAdmin = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || ctx.session.user.role !== UserRoles.ADMIN) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
@@ -150,5 +150,5 @@ const enforceUserIsClient = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-export const vetProcedure = t.procedure.use(enforceUserIsVet);
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin);
 export const clientProcedure = t.procedure.use(enforceUserIsClient);

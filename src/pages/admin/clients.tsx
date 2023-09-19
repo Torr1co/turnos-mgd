@@ -1,18 +1,19 @@
 import React from "react";
 import Title from "~/components/_common/Typo/Title";
 import { useModal } from "~/context/ModalContex";
-import ClientList from "~/components/Vet/Clients/ClientList";
-import ClientRegister from "~/components/Vet/Clients/ClientRegister";
 import Button from "~/components/_common/Button";
 import { type GetServerSideProps } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { UserRoles } from "@prisma/client";
 import Input from "~/components/_common/Form/Input";
 import Dropdown from "~/components/_common/Dropdown";
+import ClientRegisterModal from "~/components/Users/UserRegisterModal";
+import ClientList from "~/components/Users/UserList";
+import { api } from "~/utils/api";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
-  if (session?.user.role !== UserRoles.VET) {
+  if (session?.user.role !== UserRoles.ADMIN) {
     return {
       redirect: {
         destination: "/",
@@ -28,10 +29,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const Clients = () => {
   const { handleModal } = useModal();
   const [search, setSearch] = React.useState("");
+  const { data: users = [], isLoading } = api.clients.getAll.useQuery();
 
   return (
     <div>
-      <header className="mb-14 flex items-center justify-between">
+      <header className="flex items-center justify-between py-8">
         <Title>Clientes</Title>
         <div className="flex gap-4">
           <Dropdown
@@ -54,19 +56,20 @@ const Clients = () => {
           </Dropdown>
           <Button
             kind={Button.KINDS.gray}
-            onClick={() => handleModal(<ClientRegister />)}
+            onClick={() => handleModal(<ClientRegisterModal />)}
           >
             Registrar cliente
           </Button>
         </div>
       </header>
+
       <ClientList
-        filterFn={(user) => {
-          return (
+        users={users.filter(
+          (user) =>
             user.email.toLowerCase().includes(search.toLowerCase()) ||
-            user.name.toLowerCase().includes(search.toLowerCase())
-          );
-        }}
+            user.firstname.toLowerCase().includes(search.toLowerCase())
+        )}
+        isLoading={isLoading}
       />
     </div>
   );

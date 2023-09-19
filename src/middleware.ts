@@ -5,7 +5,7 @@ import {
   NextResponse,
 } from "next/server";
 import { UserRoles } from "@prisma/client";
-import { LINKS } from "./utils/navConfig";
+import { LINKS } from "./utils/navUtils";
 import { type Session } from "next-auth";
 /* import NAV_CONFIG from "~/utils/navConfig";
 import { type NavItem } from "./components/Layout/Header/Navbar"; */
@@ -13,10 +13,10 @@ import { type NavItem } from "./components/Layout/Header/Navbar"; */
 export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   const token = (await getToken({ req: request })) as Session | null;
 
-  // If the user is not confirm, redirect to the new password page
+  // If the user is not verified, redirect to the new password page
   if (
     token &&
-    token.user.role === UserRoles.CLIENT &&
+    token.user.role !== UserRoles.ADMIN &&
     !token.user.passwordVerified
   ) {
     const url = new URL(LINKS.newPassword, request.url);
@@ -47,19 +47,5 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: [
-    "/",
-    "/me",
-    "/pets",
-    "/pets/:path*",
-    "/services",
-    "/admin/clients",
-    "/auth/signin",
-    // "/auth/new-password",
-    "/dog-assistance",
-    "/dog-assistance/adoptions",
-    "/dog-assistance/cross-breeds",
-    "/dog-assistance/donation-campaigns",
-    "/dog-assistance/lost-dogs",
-  ],
+  matcher: ["/", "/me"],
 };

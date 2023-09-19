@@ -25,7 +25,7 @@ const TextArea = forwardRef<Ref, TextAreaProps>(function ForwardTextArea(
       className={cn(
         KINDS[kind],
         className,
-        "font-regular max-h-[140px] min-h-[80px] rounded-md border py-3.5 px-5 text-sm outline-none focus:ring-1"
+        "font-regular max-h-[140px] min-h-[80px] border-2 py-3.5 px-5 text-sm outline-none focus:ring-1"
       )}
     />
   );
